@@ -36,7 +36,9 @@ class PokemonCache extends Table {
 
 @DriftDatabase(tables: [PokemonCache])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openConnection());
+  /// [executor] is injectable so tests can run against an in-memory database;
+  /// production uses the lazy file-backed connection.
+  AppDatabase({QueryExecutor? executor}) : super(executor ?? _openConnection());
 
   @override
   int get schemaVersion => 8;
