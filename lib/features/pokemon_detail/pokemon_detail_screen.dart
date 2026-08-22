@@ -278,24 +278,30 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
           Positioned(
             top: MediaQuery.paddingOf(context).top + 24,
             left: 24,
-            child: GestureDetector(
-              onTap: () {
-                if (_activeTab != 'About') {
-                  setState(() {
-                    _activeTab = 'About';
-                    if (_isMenuOpen) _toggleMenu();
-                  });
-                } else {
-                  Navigator.of(context).pop();
-                }
-              },
-              child: Text(
-                '#${pokemon.speciesId.toString().padLeft(3, '0')}',
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.2,
+            child: Semantics(
+              button: true,
+              label: 'Back',
+              child: GestureDetector(
+                // Single predictable behavior: always navigate back.
+                // Tab switching lives in the poke-ball menu on the right.
+                onTap: () => Navigator.of(context).pop(),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.arrow_back_ios_new, color: Colors.white70, size: 18),
+                    const SizedBox(width: 6),
+                    ExcludeSemantics(
+                      child: Text(
+                        '#${pokemon.speciesId.toString().padLeft(3, '0')}',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

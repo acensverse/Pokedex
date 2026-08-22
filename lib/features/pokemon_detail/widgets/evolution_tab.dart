@@ -257,12 +257,19 @@ class EvolutionTab extends ConsumerWidget {
     final pokemon = node.pokemon!;
     final primaryType = pokemon.types.isNotEmpty ? pokemon.types.first.type.name : 'normal';
     final bgColor = AppColors.getTypeColor(primaryType);
+    final semanticLabel = '${PokemonHelpers.formatName(pokemon.name)}, '
+        '${pokemon.types.map((t) => t.type.name).join(' and ')} type';
 
-    return GestureDetector(
-      onTap: () {
-        context.push('/pokemon/${pokemon.id}');
-      },
-      child: Container(
+    // Expose each evolution stage as one tappable button to screen readers.
+    return Semantics(
+      button: true,
+      label: semanticLabel,
+      child: ExcludeSemantics(
+        child: GestureDetector(
+          onTap: () {
+            context.push('/pokemon/${pokemon.id}');
+          },
+          child: Container(
         width: 130,
         decoration: BoxDecoration(
           color: bgColor.withValues(alpha: 0.8),
@@ -341,6 +348,8 @@ class EvolutionTab extends ConsumerWidget {
             
             const SizedBox(height: 8),
           ],
+        ),
+      ),
         ),
       ),
     );

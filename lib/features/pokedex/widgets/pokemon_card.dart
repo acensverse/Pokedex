@@ -18,19 +18,33 @@ class PokemonCard extends ConsumerWidget {
     final isShiny = ref.watch(shinyModeProvider);
     final primaryType = pokemon.types.isNotEmpty ? pokemon.types.first.type.name : 'normal';
     final baseTypeColor = AppColors.getTypeColor(primaryType);
-    
-    final typeColor1 = pokemon.types.length > 1 
+
+    // Slightly stronger left fill so the text zone keeps enough contrast
+    final typeColor1 = pokemon.types.length > 1
         ? baseTypeColor.withValues(alpha: 0.5)
-        : baseTypeColor.withValues(alpha: 0.2); // Even lighter on the left for single type
-        
+        : baseTypeColor.withValues(alpha: 0.35);
+
     final typeColor2 = pokemon.types.length > 1
         ? AppColors.getTypeColor(pokemon.types[1].type.name).withValues(alpha: 0.5)
         : baseTypeColor.withValues(alpha: 0.5);
 
-    // Wrap the card in a RepaintBoundary to isolate paint operations for 120+ FPS scrolling.
+    // White ink fails contrast on light type fills (e.g. electric at low alpha);
+    // switch to dark ink whenever the blended card background is too light.
+    final blendedLeft = Color.alphaBlend(typeColor1, Theme.of(context).scaffoldBackgroundColor);
+    final onCardColor = blendedLeft.computeLuminance() > 0.55 ? AppColors.textPrimary : Colors.white;
+
+    final semanticLabel = '${PokemonHelpers.formatName(pokemon.name)}, '
+        'number ${pokemon.speciesId.toString().padLeft(3, '0')}, '
+        '${pokemon.types.map((t) => t.type.name).join(' and ')} type';
+
+    // Expose the whole card as one tappable button to screen readers.
     return RepaintBoundary(
-      child: GestureDetector(
-        onTap: () => context.push('/pokemon/${pokemon.id}'),
+      child: Semantics(
+        button: true,
+        label: semanticLabel,
+        child: ExcludeSemantics(
+          child: GestureDetector(
+            onTap: () => context.push('/pokemon/${pokemon.id}'),
         child: Container(
           height: 92,
           margin: const EdgeInsets.symmetric(
@@ -78,7 +92,7 @@ class PokemonCard extends ConsumerWidget {
                   child: Text(
                     '#${pokemon.speciesId.toString().padLeft(3, '0')}',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.25),
+                      color: onCardColor.withValues(alpha: 0.25),
                       fontSize: 28,
                       fontWeight: FontWeight.w900,
                     ),
@@ -144,10 +158,10 @@ class PokemonCard extends ConsumerWidget {
                               Expanded(
                                 child: Text(
                                   PokemonHelpers.formatName(pokemon.name),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 17,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: onCardColor,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -157,7 +171,7 @@ class PokemonCard extends ConsumerWidget {
                                 padding: const EdgeInsets.only(right: 4),
                                 child: Icon(
                                   Icons.favorite_border,
-                                  color: Colors.white.withValues(alpha: 0.6),
+                                  color: onCardColor.withValues(alpha: 0.6),
                                   size: 20,
                                 ),
                               ),
@@ -190,8 +204,8 @@ class PokemonCard extends ConsumerWidget {
                                     ),
                                     Text(
                                       typeSlot.type.name.toUpperCase().substring(0, 1) + typeSlot.type.name.substring(1),
-                                      style: const TextStyle(
-                                        color: Colors.white,
+                                      style: TextStyle(
+                                        color: onCardColor,
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -207,11 +221,13 @@ class PokemonCard extends ConsumerWidget {
                   ],
                 ),
               ),
-            ],
-          ),
+              ],
+            ),
+            ),
           ),
         ),
       ),
-    );
+      ),
+     );
   }
 }
