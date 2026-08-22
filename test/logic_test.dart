@@ -88,4 +88,58 @@ void main() {
       expect(extractIdFromUrl('::::not-a-uri'), isNull);
     });
   });
+
+  group('PokemonHelpers.pickLatestFlavorText', () {
+    Map<String, dynamic> entry(String version, String text) => {
+          'flavor_text': text,
+          'language': {'name': 'en'},
+          'version': {'name': version},
+        };
+
+    test('prefers the newest game even when array order is scrambled', () {
+      // Mirrors the real Charizard response: a Black entry sits FIRST.
+      final picked = PokemonHelpers.pickLatestFlavorText([
+        entry('black', 'old black-era text'),
+        entry('red', 'oldest text'),
+        entry('sword', 'swsh text'),
+        entry('lets-go-pikachu', 'lets-go text'),
+      ]);
+      expect(picked, 'swsh text');
+    });
+
+    test('falls back to the newest game that features the species', () {
+      final picked = PokemonHelpers.pickLatestFlavorText([
+        entry('yellow', 'yellow text'),
+        entry('lets-go-eevee', 'lets-go text'),
+      ]);
+      expect(picked, 'lets-go text');
+    });
+
+    test('generation ties resolve to the later array entry (Violet > Scarlet)', () {
+      final picked = PokemonHelpers.pickLatestFlavorText([
+        entry('scarlet', 'scarlet text'),
+        entry('violet', 'violet text'),
+      ]);
+      expect(picked, 'violet text');
+    });
+
+    test('cleans soft hyphens, line breaks and collapsed whitespace', () {
+      final picked = PokemonHelpers.pickLatestFlavorText([
+        entry('shield', 'If CHARIZard be\u00ADcomes furious,\n\nthe flame  wavers.'),
+      ]);
+      expect(picked, 'If CHARIZard becomes furious, the flame wavers.');
+    });
+
+    test('ignores non-English and malformed entries entirely', () {
+      final picked = PokemonHelpers.pickLatestFlavorText([
+        {
+          'flavor_text': 'texte fran\u00e7ais',
+          'language': {'name': 'fr'},
+          'version': {'name': 'sword'},
+        },
+        {'nope': true},
+      ]);
+      expect(picked, isNull);
+    });
+  });
 }

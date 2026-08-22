@@ -118,4 +118,68 @@ class PokemonHelpers {
   static String getHomeShinyAssetPath(int id) {
     return 'assets/home_shiny/$id.png';
   }
+
+  // Game version groups, newest first. Flavor text quality follows the most
+  // recent game that actually features the species, so entries are ranked by
+  // version instead of trusting the API array order (which is not strictly
+  // chronological - e.g. Charizard's list starts with a Black entry).
+  static const _flavorVersionGroupsNewestFirst = [
+    ['scarlet', 'violet'],
+    ['legends-arceus'],
+    ['brilliant-diamond', 'shining-pearl'],
+    ['sword', 'shield'],
+    ['lets-go-pikachu', 'lets-go-eevee'],
+    ['ultra-sun', 'ultra-moon'],
+    ['sun', 'moon'],
+    ['omega-ruby', 'alpha-sapphire'],
+    ['x', 'y'],
+    ['black-2', 'white-2'],
+    ['black', 'white'],
+    ['heartgold', 'soulsilver'],
+    ['platinum'],
+    ['diamond', 'pearl'],
+    ['emerald'],
+    ['firered', 'leafgreen'],
+    ['ruby', 'sapphire'],
+    ['crystal'],
+    ['gold', 'silver'],
+    ['yellow'],
+    ['red', 'blue'],
+  ];
+
+  static int _flavorVersionRank(String version) {
+    for (var i = 0; i < _flavorVersionGroupsNewestFirst.length; i++) {
+      if (_flavorVersionGroupsNewestFirst[i].contains(version)) return i;
+    }
+    return _flavorVersionGroupsNewestFirst.length; // unknown versions rank oldest
+  }
+
+  /// Picks the English Pok\u00e9dex entry from the newest game available for a
+  /// species. Ties within one generation resolve to the later array entry
+  /// (e.g. Violet over Scarlet). Returns cleaned text or null.
+  static String? pickLatestFlavorText(List<dynamic> rawEntries) {
+    String? best;
+    var bestRank = _flavorVersionGroupsNewestFirst.length + 1;
+    var bestIndex = -1;
+    for (var i = 0; i < rawEntries.length; i++) {
+      final e = rawEntries[i];
+      if (e is! Map) continue;
+      if (e['language']?['name'] != 'en') continue;
+      final text = e['flavor_text'];
+      if (text is! String || text.isEmpty) continue;
+      final version = e['version']?['name'];
+      if (version is! String) continue;
+      final rank = _flavorVersionRank(version);
+      if (rank < bestRank || (rank == bestRank && i > bestIndex)) {
+        bestRank = rank;
+        bestIndex = i;
+        best = text
+            .replaceAll('\u00AD', '') // stray soft hyphens in old-game texts
+            .replaceAll(RegExp(r'[\n\f\r]'), ' ')
+            .replaceAll(RegExp(r'\s+'), ' ')
+            .trim();
+      }
+    }
+    return best;
+  }
 }

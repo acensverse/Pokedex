@@ -6,6 +6,7 @@ import 'package:drift/drift.dart' show Value;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../api/poke_api.dart';
 import '../database/app_database.dart';
+import '../../core/utils/pokemon_helpers.dart';
 import '../../models/pokemon.dart';
 
 class PokemonRepository {
@@ -19,12 +20,21 @@ class PokemonRepository {
 
   /// Bump this whenever seed logic or the asset changes so installs
   /// re-run the (cheap) integrity check once more.
-  static const _seedDoneFlag = 'seed_v9_complete';
+  static const _seedDoneFlag = 'seed_v10_complete';
+  static const _seedRevKey = 'seed_asset_rev';
+
+  /// Bumped alongside [_seedDoneFlag] whenever baked asset CONTENT changes.
+  /// Lets a healthy-looking database (rows pass the sniff test below) still
+  /// be recognized as pre-rebake, forcing exactly one re-seed.
+  static const _seedAssetRev = 3; // 3 = version-ranked flavor text rebake
 
   // Seed SQLite from local JSON asset once per install/seed-version
   Future<void> checkAndSeedDatabase() async {
     final prefs = await SharedPreferences.getInstance();
-    if (prefs.getBool(_seedDoneFlag) ?? false) return;
+    if ((prefs.getBool(_seedDoneFlag) ?? false) &&
+        (prefs.getInt(_seedRevKey) ?? 0) >= _seedAssetRev) {
+      return;
+    }
 
     final cachedCount = await _db.searchPokemon('', '');
 
@@ -43,7 +53,10 @@ class PokemonRepository {
       }
     }
 
-    if (!needsUpdate && cachedCount.length >= 1025) {
+    // Healthy database AND current asset revision -> nothing to do.
+    if (!needsUpdate &&
+        cachedCount.length >= 1025 &&
+        (prefs.getInt(_seedRevKey) ?? 0) >= _seedAssetRev) {
       await prefs.setBool(_seedDoneFlag, true);
       return;
     }
@@ -77,6 +90,7 @@ class PokemonRepository {
             isFavorite: false,
           ),
       ]);
+      await prefs.setInt(_seedRevKey, _seedAssetRev);
       await prefs.setBool(_seedDoneFlag, true);
     } catch (e, st) {
       debugPrint('Seeding the local database failed: $e\n$st');
@@ -202,18 +216,12 @@ class PokemonRepository {
         }
         // Real genera all end in "Pok\u00e9mon", so the old !contains('Pok') check
         // never trusted the cache. Only placeholders/corruption are invalid now.
+        // Pick the newest-game entry by explicit version ranking - the API
+        // array order is not strictly chronological.
         if (flavorText == null && data['flavor_text_entries'] is List) {
-          final entries = (data['flavor_text_entries'] as List)
-              .whereType<Map>()
-              .where((e) => e['language']?['name'] == 'en' && e['flavor_text'] is String)
-              .toList();
-          if (entries.isNotEmpty) {
-            // The last English entry comes from the most recent game version
-            flavorText = (entries.last['flavor_text'] as String)
-                .replaceAll('\n', ' ')
-                .replaceAll('\f', ' ')
-                .trim();
-          }
+          flavorText = PokemonHelpers.pickLatestFlavorText(
+            data['flavor_text_entries'] as List,
+          );
         }
       }
       if (cached != null && (category.isNotEmpty || flavorText != null)) {
