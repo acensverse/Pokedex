@@ -127,8 +127,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
   // Most forms use the base species cry; only mega evolutions get unique files.
   static final _cryOverrides = <String, String>{
     'Mega Venusaur': 'venusaur-mega',
-    'Mega Charizard X': 'charizard-mega-x',
-    'Mega Charizard Y': 'charizard-mega-y',
+
     'Mega Blastoise': 'blastoise-mega',
     'Mega Beedrill': 'beedrill-mega',
     'Mega Pidgeot': 'pidgeot-mega',
@@ -139,8 +138,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
     'Mega Pinsir': 'pinsir-mega',
     'Mega Gyarados': 'gyarados-mega',
     'Mega Aerodactyl': 'aerodactyl-mega',
-    'Mega Mewtwo X': 'mewtwo-mega-x',
-    'Mega Mewtwo Y': 'mewtwo-mega-y',
+
     'Mega Ampharos': 'ampharos-mega',
     'Mega Steelix': 'steelix-mega',
     'Mega Scizor': 'scizor-mega',
@@ -186,6 +184,11 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
         break;
       }
     }
+    // Mega variants with X/Y suffix (e.g. "Mega Charizard X" -> "Charizard")
+    // have no unique cry files on Showdown; strip the trailing suffix.
+    if (RegExp(r' [XY]$').hasMatch(name)) {
+      name = name.substring(0, name.length - 2);
+    }
     // Percentage prefixes: "10 Power Construct Zygarde" -> "Zygarde"
     if (RegExp(r'^\d+').hasMatch(name)) {
       name = name.replaceFirst(RegExp(r'^\d+\s*(Power Construct\s*)?'), '');
@@ -206,7 +209,19 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
     try {
       await _audioPlayer.play(UrlSource(url));
     } catch (e) {
-      debugPrint('Failed to play cry: $e');
+      // Fallback to the base species cry if the resolved file is missing.
+      final fallbackId = _sanitizeCryName(widget.pokemon.name.split(' ').last);
+      if (fallbackId != cryId) {
+        try {
+          await _audioPlayer.play(UrlSource(
+            'https://play.pokemonshowdown.com/audio/cries/$fallbackId.mp3',
+          ));
+        } catch (_) {
+          debugPrint('Fallback cry also failed for $fallbackId');
+        }
+      } else {
+        debugPrint('Failed to play cry: $e');
+      }
     }
   }
 
