@@ -31,6 +31,13 @@ final moveDetailProvider = FutureProvider.family<Move, String>((ref, url) async 
   return api.fetchMoveDetails(id);
 });
 
+/// Move lists are the only profile section not kept in SQLite; loading them
+/// lazily lets the rest of the page paint instantly from the local database.
+final pokemonMovesProvider = FutureProvider.family<List<PokemonMoveSlot>, int>((ref, id) async {
+  final repository = ref.read(pokemonRepositoryProvider);
+  return repository.getPokemonMoves(id);
+});
+
 int? extractIdFromUrl(String url) {
   try {
     final segments = Uri.parse(url).pathSegments.where((s) => s.isNotEmpty).toList();
@@ -718,15 +725,39 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
         ),
       );
     } else if (_activeTab == 'Moves') {
+      // Move data is the only section not kept in SQLite; watch it lazily so
+      // the rest of the profile paints without waiting on the network.
+      final movesAsync = ref.watch(pokemonMovesProvider(widget.pokemon.id));
+      if (movesAsync.isLoading) {
+        return _buildMovesCard(const Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 48),
+            child: CircularProgressIndicator(),
+          ),
+        ));
+      }
+      if (movesAsync.hasError && (movesAsync.asData?.value ?? const []).isEmpty) {
+        return _buildMovesCard(Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 16),
+            child: Text(
+              "Couldn't load moves.\n${movesAsync.error}",
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ));
+      }
+      final moves = movesAsync.asData?.value ?? const <PokemonMoveSlot>[];
+
       // Resolve all lists against a single (most recent) version group so
       // levels are not mixed across games and duplicates disappear.
-      final latestGroup = _latestVersionGroupName(widget.pokemon.moves);
+      final latestGroup = _latestVersionGroupName(moves);
       final levelUpMoves = <_MoveEntry>[];
       final tmMoves = <_MoveEntry>[];
       final eggMoves = <_MoveEntry>[];
       final tutorMoves = <_MoveEntry>[];
 
-      for (var slot in widget.pokemon.moves) {
+      for (var slot in moves) {
         final details = slot.versionGroupDetails
             .where((d) => latestGroup == null || d.versionGroup?.name == latestGroup)
             .toList();
@@ -858,6 +889,21 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
         ),
       );
     }
+  }
+
+  /// White rounded container shared by every state of the Moves tab so the
+  /// loading spinner and error card keep the section's geometry.
+  Widget _buildMovesCard(Widget child) {
+    return Container(
+      key: const ValueKey('Moves'),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(32),
+      ),
+      child: child,
+    );
   }
 
   /// Picks the newest game version group present in the move data so every

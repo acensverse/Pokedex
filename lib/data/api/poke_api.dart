@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show compute;
 import '../../models/pokemon.dart';
 import '../../models/move.dart';
 import '../../models/ability.dart';
@@ -21,9 +24,19 @@ class PokeApi {
 
   // Fetch individual Pokemon details
   Future<Pokemon> fetchPokemonDetails(String nameOrId) async {
-    final response = await _dio.get('pokemon/$nameOrId');
-    final Map<String, dynamic> data = response.data;
-    
+    // Payloads run 100-400 KB (mostly the moves array); decode them off the
+    // main isolate so the profile screen never janks while parsing.
+    final response = await _dio.get<String>(
+      'pokemon/$nameOrId',
+      options: Options(responseType: ResponseType.plain),
+    );
+    final raw = response.data;
+    if (raw == null || raw.isEmpty) {
+      throw StateError('Empty response for pokemon/$nameOrId');
+    }
+    final Map<String, dynamic> data =
+        await compute((String s) => jsonDecode(s) as Map<String, dynamic>, raw);
+
     // Transform PokeAPI response to match our freezed model
     if (data['species'] != null && data['species']['url'] != null) {
       final url = data['species']['url'] as String;

@@ -95,4 +95,35 @@ void main() {
           reason: 're-seeding must never wipe favorites');
     });
   });
+
+  group('getPokemonDetails (cache-first)', () {
+    // Any accidental network attempt dies instantly against this dead Dio.
+    PokemonRepository offlineRepo() {
+      final deadDio = Dio(BaseOptions(
+        baseUrl: 'http://127.0.0.1:1',
+        connectTimeout: const Duration(milliseconds: 250),
+        receiveTimeout: const Duration(milliseconds: 250),
+      ));
+      return PokemonRepository(PokeApi(deadDio), db, deadDio);
+    }
+
+    test('serves seeded base species without touching the network', () async {
+      final bulbasaur = await offlineRepo().getPokemonDetails(1);
+      expect(bulbasaur.name, 'Bulbasaur');
+      expect(bulbasaur.types.map((t) => t.type.name), containsAll(['grass', 'poison']));
+      expect(bulbasaur.stats[0].baseStat, greaterThan(0));
+      expect(bulbasaur.abilities, isNotEmpty);
+    });
+
+    test('serves seeded form ids (>10000) without touching the network', () async {
+      final megaVenusaur = await offlineRepo().getPokemonDetails(10033);
+      expect(megaVenusaur.types, isNotEmpty);
+    });
+
+    test('cached models intentionally carry no move slots', () async {
+      final bulbasaur = await offlineRepo().getPokemonDetails(1);
+      expect(bulbasaur.moves, isEmpty,
+          reason: 'moves stream in via getPokemonMoves and must never block the page');
+    });
+  });
 }

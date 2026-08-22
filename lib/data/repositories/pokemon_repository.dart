@@ -88,13 +88,19 @@ class PokemonRepository {
     return dbList.map((dbData) => _mapDbToModel(dbData)).toList();
   }
 
-  // Fetch detailed Pokemon (checks DB first, downloads and caches if missing)
+  // Fetch detailed Pokemon. Cache-first: the seeded database already holds
+  // every field the profile needs except moves, so this returns instantly
+  // and never blocks the UI on a network round-trip.
   Future<Pokemon> getPokemonDetails(int id) async {
     final cached = await _db.getPokemonById(id);
-    
-    // Always fetch from API directly to get the latest models with versionGroupDetails
+    if (cached != null) {
+      return _mapDbToModel(cached);
+    }
+
+    // Slow path: id unknown to SQLite (should not happen post-seed).
+    debugPrint('Cache miss for pokemon $id; fetching from PokeAPI');
     final pokemon = await _api.fetchPokemonDetails(id.toString());
-    
+
     // Cache the updated fields back into SQLite
     final typesString = pokemon.types.map((t) => t.type.name).join(',');
     // Cache abilities incl. real hidden flags as JSON: [{"n":name,"h":hidden}, ...]
@@ -137,6 +143,14 @@ class PokemonRepository {
     await _db.cachePokemon(dbData);
 
     return pokemon.copyWith(name: cached?.name ?? pokemon.name);
+  }
+
+  /// The move list (with version-group details) is the only profile data not
+  /// stored in SQLite. It is fetched separately so opening a Pokemon never
+  /// waits on this ~100-400 KB download; the Moves tab streams it in.
+  Future<List<PokemonMoveSlot>> getPokemonMoves(int id) async {
+    final pokemon = await _api.fetchPokemonDetails(id.toString());
+    return pokemon.moves;
   }
 
   /// Returns the English category ("genus") and Pok\u00e9dex flavor text for a
