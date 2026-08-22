@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart' show Value;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../api/poke_api.dart';
 import '../database/app_database.dart';
 import '../../models/pokemon.dart';
@@ -16,10 +17,17 @@ class PokemonRepository {
   // injected; no ad-hoc Dio instances are created anywhere.
   PokemonRepository(this._api, this._db, this._dio);
 
-  // Seed SQLite from local JSON asset on first startup if empty
+  /// Bump this whenever seed logic or the asset changes so installs
+  /// re-run the (cheap) integrity check once more.
+  static const _seedDoneFlag = 'seed_v8_complete';
+
+  // Seed SQLite from local JSON asset once per install/seed-version
   Future<void> checkAndSeedDatabase() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool(_seedDoneFlag) ?? false) return;
+
     final cachedCount = await _db.searchPokemon('', '');
-    
+
     bool needsUpdate = false;
     if (cachedCount.isNotEmpty) {
       final first = await _db.getPokemonById(1);
@@ -29,7 +37,10 @@ class PokemonRepository {
       }
     }
 
-    if (!needsUpdate && cachedCount.length >= 1025) return;
+    if (!needsUpdate && cachedCount.length >= 1025) {
+      await prefs.setBool(_seedDoneFlag, true);
+      return;
+    }
 
     try {
       final jsonString = await rootBundle.loadString('assets/pokedex_seed.json');
@@ -59,6 +70,7 @@ class PokemonRepository {
             isFavorite: false,
           ),
       ]);
+      await prefs.setBool(_seedDoneFlag, true);
     } catch (e, st) {
       debugPrint('Seeding the local database failed: $e\n$st');
       // Surface the failure: PokedexNotifier catches this and flips hasError,

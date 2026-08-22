@@ -5,6 +5,7 @@ import 'package:pokedex_flutter/data/api/dio_client.dart';
 import 'package:pokedex_flutter/data/api/poke_api.dart';
 import 'package:pokedex_flutter/data/database/app_database.dart';
 import 'package:pokedex_flutter/data/repositories/pokemon_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +14,7 @@ void main() {
   late PokemonRepository repo;
 
   setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
     db = AppDatabase(executor: NativeDatabase.memory());
     repo = PokemonRepository(PokeApi(Dio()), db, DioClient().dio);
     // Seeds the real asset through the production batch path.
