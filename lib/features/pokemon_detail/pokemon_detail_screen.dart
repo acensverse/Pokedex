@@ -105,7 +105,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
     });
   }
 
-  // Transliterates accented characters so names like "Flab\u00e9b\u00e9" resolve to
+  // Transliterates accented characters so names like "Flabébé" resolve to
   // the correct cry file (flabebe.mp3) instead of being truncated.
   String _sanitizeCryName(String raw) {
     const accents = {
@@ -123,9 +123,86 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
     return name.replaceAll(RegExp(r'[^a-z0-9]'), '');
   }
 
+  // Maps a Pokemon's display name to the correct Showdown cry ID.
+  // Most forms use the base species cry; only mega evolutions get unique files.
+  static final _cryOverrides = <String, String>{
+    'Mega Venusaur': 'venusaur-mega',
+    'Mega Charizard X': 'charizard-mega-x',
+    'Mega Charizard Y': 'charizard-mega-y',
+    'Mega Blastoise': 'blastoise-mega',
+    'Mega Beedrill': 'beedrill-mega',
+    'Mega Pidgeot': 'pidgeot-mega',
+    'Mega Alakazam': 'alakazam-mega',
+    'Mega Slowbro': 'slowbro-mega',
+    'Mega Gengar': 'gengar-mega',
+    'Mega Kangaskhan': 'kangaskhan-mega',
+    'Mega Pinsir': 'pinsir-mega',
+    'Mega Gyarados': 'gyarados-mega',
+    'Mega Aerodactyl': 'aerodactyl-mega',
+    'Mega Mewtwo X': 'mewtwo-mega-x',
+    'Mega Mewtwo Y': 'mewtwo-mega-y',
+    'Mega Ampharos': 'ampharos-mega',
+    'Mega Steelix': 'steelix-mega',
+    'Mega Scizor': 'scizor-mega',
+    'Mega Heracross': 'heracross-mega',
+    'Mega Houndoom': 'houndoom-mega',
+    'Mega Tyranitar': 'tyranitar-mega',
+    'Mega Sceptile': 'sceptile-mega',
+    'Mega Swampert': 'swampert-mega',
+    'Mega Gardevoir': 'gardevoir-mega',
+    'Mega Mawile': 'mawile-mega',
+    'Mega Aggron': 'aggron-mega',
+    'Mega Manectric': 'manectric-mega',
+    'Mega Garchomp': 'garchomp-mega',
+    'Mega Lucario': 'lucario-mega',
+    'Mega Abomasnow': 'abomasnow-mega',
+    'Mega Gallade': 'gallade-mega',
+    'Mega Audino': 'audino-mega',
+    'Mega Diancie': 'diancie-mega',
+  };
+
+  String _resolveCryId(String rawName) {
+    // Check the override table first (mega forms with unique cry files).
+    final override = _cryOverrides[rawName];
+    if (override != null) return override;
+
+    // For everything else, strip form prefixes — the base species cry is used
+    // for Alolan, Galarian, Hisuian, Paldean, G-Max, Totem, Primal, Therian,
+    // Zen Mode, costume, and all other non-mega forms on Showdown.
+    var name = rawName;
+    // Compound multi-word prefixes first
+    if (name.contains(' Breed Paldean ')) {
+      name = name.substring(name.indexOf(' Breed Paldean ') + 15);
+    }
+    // Single-word prefixes (longest first to avoid partial matches)
+    for (final prefix in [
+      'Galarian Zen Mode ', 'Totem Disguised ', 'Totem Busted ',
+      'Totem ', 'Mega ', 'Alolan ', 'Galarian ', 'Hisuian ', 'Paldean ',
+      'Gigantamax ', 'Primal ', 'Therian ', 'Zen Mode ', 'Standard ',
+      'Disguised ', 'Busted ', 'Complete ',
+    ]) {
+      if (name.startsWith(prefix)) {
+        name = name.substring(prefix.length);
+        break;
+      }
+    }
+    // Percentage prefixes: "10 Power Construct Zygarde" -> "Zygarde"
+    if (RegExp(r'^\d+').hasMatch(name)) {
+      name = name.replaceFirst(RegExp(r'^\d+\s*(Power Construct\s*)?'), '');
+    }
+    // Pikachu costumes/caps: "Pikachu Rock Star" -> "Pikachu"
+    if (name.startsWith('Pikachu ') && !_cryOverrides.containsKey(rawName)) {
+      name = 'Pikachu';
+    }
+    // Data issue: "O Totem Kommo" after stripping -> "O Kommo"
+    if (name == 'O Kommo') name = 'Kommo-o';
+
+    return _sanitizeCryName(name);
+  }
+
   void _playCry() async {
-    final sanitizedName = _sanitizeCryName(widget.pokemon.name);
-    final url = 'https://play.pokemonshowdown.com/audio/cries/$sanitizedName.mp3';
+    final cryId = _resolveCryId(widget.pokemon.name);
+    final url = 'https://play.pokemonshowdown.com/audio/cries/$cryId.mp3';
     try {
       await _audioPlayer.play(UrlSource(url));
     } catch (e) {

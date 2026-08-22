@@ -19,19 +19,13 @@ class PokemonCard extends ConsumerWidget {
     final primaryType = pokemon.types.isNotEmpty ? pokemon.types.first.type.name : 'normal';
     final baseTypeColor = AppColors.getTypeColor(primaryType);
 
-    // Slightly stronger left fill so the text zone keeps enough contrast
     final typeColor1 = pokemon.types.length > 1
-        ? baseTypeColor.withValues(alpha: 0.5)
-        : baseTypeColor.withValues(alpha: 0.35);
+        ? baseTypeColor.withValues(alpha: 0.55)
+        : baseTypeColor.withValues(alpha: 0.45);
 
     final typeColor2 = pokemon.types.length > 1
-        ? AppColors.getTypeColor(pokemon.types[1].type.name).withValues(alpha: 0.5)
-        : baseTypeColor.withValues(alpha: 0.5);
-
-    // White ink fails contrast on light type fills (e.g. electric at low alpha);
-    // switch to dark ink whenever the blended card background is too light.
-    final blendedLeft = Color.alphaBlend(typeColor1, Theme.of(context).scaffoldBackgroundColor);
-    final onCardColor = blendedLeft.computeLuminance() > 0.55 ? AppColors.textPrimary : Colors.white;
+        ? AppColors.getTypeColor(pokemon.types[1].type.name).withValues(alpha: 0.55)
+        : baseTypeColor.withValues(alpha: 0.55);
 
     final semanticLabel = '${PokemonHelpers.formatName(pokemon.name)}, '
         'number ${pokemon.speciesId.toString().padLeft(3, '0')}, '
@@ -92,7 +86,7 @@ class PokemonCard extends ConsumerWidget {
                   child: Text(
                     '#${pokemon.speciesId.toString().padLeft(3, '0')}',
                     style: TextStyle(
-                      color: onCardColor.withValues(alpha: 0.25),
+                      color: Colors.white.withValues(alpha: 0.25),
                       fontSize: 28,
                       fontWeight: FontWeight.w900,
                     ),
@@ -161,7 +155,7 @@ class PokemonCard extends ConsumerWidget {
                                   style: TextStyle(
                                     fontSize: 17,
                                     fontWeight: FontWeight.bold,
-                                    color: onCardColor,
+                                    color: Colors.white,
                                   ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -171,7 +165,7 @@ class PokemonCard extends ConsumerWidget {
                                 padding: const EdgeInsets.only(right: 4),
                                 child: Icon(
                                   Icons.favorite_border,
-                                  color: onCardColor.withValues(alpha: 0.6),
+                                  color: Colors.white.withValues(alpha: 0.6),
                                   size: 20,
                                 ),
                               ),
@@ -205,7 +199,7 @@ class PokemonCard extends ConsumerWidget {
                                     Text(
                                       typeSlot.type.name.toUpperCase().substring(0, 1) + typeSlot.type.name.substring(1),
                                       style: TextStyle(
-                                        color: onCardColor,
+                                        color: Colors.white,
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
                                       ),
