@@ -93,6 +93,18 @@ void main() {
       }
     });
 
+    test('every entry ships a non-empty flavorText (seed v9)', () {
+      for (final item in seed.cast<Map>()) {
+        final flavor = item['flavorText'];
+        expect(flavor, isA<String>(),
+            reason: 'entry ${item['id']} is missing flavorText');
+        expect(flavor as String, isNotEmpty,
+            reason: 'entry ${item['id']} has empty flavorText');
+        expect(flavor.contains('\n') || flavor.contains('\f'), isFalse,
+            reason: 'entry ${item['id']} flavorText has uncleaned line breaks');
+      }
+    });
+
     test('evolutionInfo entries are valid JSON arrays when present', () {
       for (final item in seed.cast<Map>()) {
         final info = item['evolutionInfo'];

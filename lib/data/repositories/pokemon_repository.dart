@@ -19,7 +19,7 @@ class PokemonRepository {
 
   /// Bump this whenever seed logic or the asset changes so installs
   /// re-run the (cheap) integrity check once more.
-  static const _seedDoneFlag = 'seed_v8_complete';
+  static const _seedDoneFlag = 'seed_v9_complete';
 
   // Seed SQLite from local JSON asset once per install/seed-version
   Future<void> checkAndSeedDatabase() async {
@@ -31,8 +31,14 @@ class PokemonRepository {
     bool needsUpdate = false;
     if (cachedCount.isNotEmpty) {
       final first = await _db.getPokemonById(1);
-      // Stale seed = missing category or mojibake rows from the corrupted asset era
-      if (first != null && (first.species == null || first.species!.isEmpty || first.species!.contains('\uFFFD'))) {
+      // Stale seed = missing category/flavor text or mojibake rows from the
+      // corrupted asset era (flavor text shipped starting with seed v9)
+      if (first != null &&
+          (first.species == null ||
+              first.species!.isEmpty ||
+              first.species!.contains('\uFFFD') ||
+              first.flavorText == null ||
+              first.flavorText!.isEmpty)) {
         needsUpdate = true;
       }
     }
@@ -67,6 +73,7 @@ class PokemonRepository {
             abilities: item['abilities'] as String?,
             forms: item['forms'] as String?,
             evolutionInfo: item['evolutionInfo'] as String?,
+            flavorText: item['flavorText'] as String?,
             isFavorite: false,
           ),
       ]);

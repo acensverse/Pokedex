@@ -126,11 +126,12 @@ void main() {
           reason: 'moves stream in via getPokemonMoves and must never block the page');
     });
 
-    test('getCachedSpeciesInfo serves the seeded category offline', () async {
+    test('getCachedSpeciesInfo serves category + flavor text offline', () async {
       final info = await offlineRepo().getCachedSpeciesInfo(1);
       expect(info.category, 'Seed Pok\u00e9mon');
-      expect(info.flavorText, isNull,
-          reason: 'seed ships no flavor text - it streams via getSpeciesInfo');
+      expect(info.flavorText, isNotNull,
+          reason: 'seed v9 ships flavor text - descriptions must be instant');
+      expect(info.flavorText, isNotEmpty);
     });
   });
 }
