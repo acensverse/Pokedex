@@ -22,6 +22,14 @@ final speciesInfoProvider = FutureProvider.family<({String category, String? fla
   return repository.getSpeciesInfo(id);
 });
 
+/// SQLite-only snapshot: resolves in milliseconds so the header never waits
+/// on the species network fetch that speciesInfoProvider may need.
+final cachedSpeciesProvider =
+    FutureProvider.family<({String? category, String? flavorText}), int>((ref, id) async {
+  final repository = ref.read(pokemonRepositoryProvider);
+  return repository.getCachedSpeciesInfo(id);
+});
+
 final moveDetailProvider = FutureProvider.family<Move, String>((ref, url) async {
   final api = ref.read(pokeApiProvider);
   final id = extractIdFromUrl(url);
@@ -240,12 +248,17 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
     final themeColor = AppColors.getTypeColor(primaryType);
     final speciesData = PokemonHelpers.getPokemonSpeciesData(pokemon.speciesId);
     
-    final categoryAsync = ref.watch(speciesInfoProvider(pokemon.id));
-    final categoryText = categoryAsync.when(
-      data: (info) => info.category,
-      loading: () => '...',
-      error: (_, _) => 'Unknown Pok\u00e9mon',
-    );
+    // The category ships in the seed asset, so the instant DB snapshot almost
+    // always wins; only fall back to (and wait on) the network provider when
+    // the row has no trustworthy category yet.
+    final cachedInfo = ref.watch(cachedSpeciesProvider(pokemon.id)).asData?.value;
+    final categoryText = cachedInfo?.category ??
+        ref.watch(speciesInfoProvider(pokemon.id)).when(
+          data: (info) => info.category,
+          loading: () => '...',
+          error: (_, _) => 'Unknown Pok\u00e9mon',
+        ) ??
+        'Unknown Pok\u00e9mon';
 
     return Scaffold(
       backgroundColor: const Color(0xFFBCAAA4), // Neutral warm background fallback
@@ -490,6 +503,12 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
     final staticEntry = speciesData['entry'] as String?;
     if (staticEntry != null && staticEntry.isNotEmpty) {
       return staticEntry.replaceAll('\n', ' ');
+    }
+    // Previously fetched entries resolve instantly from SQLite; only the
+    // first-ever visit per Pok\u00e9mon streams from the network here.
+    final cachedFlavor = ref.watch(cachedSpeciesProvider(widget.pokemon.id)).asData?.value.flavorText;
+    if (cachedFlavor != null && cachedFlavor.isNotEmpty) {
+      return cachedFlavor;
     }
     final infoAsync = ref.watch(speciesInfoProvider(widget.pokemon.id));
     return infoAsync.when(

@@ -153,6 +153,17 @@ class PokemonRepository {
     return pokemon.moves;
   }
 
+  /// Category + any previously cached flavor text read straight from SQLite.
+  /// Resolves in milliseconds, letting the header paint instantly while
+  /// getSpeciesInfo streams the (network-only) flavor text in the background.
+  Future<({String? category, String? flavorText})> getCachedSpeciesInfo(int id) async {
+    final cached = await _db.getPokemonById(id);
+    return (
+      category: _trustworthyCategory(cached?.species),
+      flavorText: (cached?.flavorText?.isNotEmpty ?? false) ? cached!.flavorText : null,
+    );
+  }
+
   /// Returns the English category ("genus") and Pok\u00e9dex flavor text for a
   /// Pok\u00e9mon. A single species fetch populates both; results are cached.
   Future<({String category, String? flavorText})> getSpeciesInfo(int id) async {

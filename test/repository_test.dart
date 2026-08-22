@@ -125,5 +125,12 @@ void main() {
       expect(bulbasaur.moves, isEmpty,
           reason: 'moves stream in via getPokemonMoves and must never block the page');
     });
+
+    test('getCachedSpeciesInfo serves the seeded category offline', () async {
+      final info = await offlineRepo().getCachedSpeciesInfo(1);
+      expect(info.category, 'Seed Pok\u00e9mon');
+      expect(info.flavorText, isNull,
+          reason: 'seed ships no flavor text - it streams via getSpeciesInfo');
+    });
   });
 }
