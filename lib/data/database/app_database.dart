@@ -31,14 +31,26 @@ class PokemonCache extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-@DriftDatabase(tables: [PokemonCache])
+/// User-built teams for the Team Builder tool (schema v9).
+class Teams extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get name => text()();
+  IntColumn get slot1 => integer().nullable()();
+  IntColumn get slot2 => integer().nullable()();
+  IntColumn get slot3 => integer().nullable()();
+  IntColumn get slot4 => integer().nullable()();
+  IntColumn get slot5 => integer().nullable()();
+  IntColumn get slot6 => integer().nullable()();
+}
+
+@DriftDatabase(tables: [PokemonCache, Teams])
 class AppDatabase extends _$AppDatabase {
   /// [executor] is injectable so tests can run against an in-memory database;
   /// production uses the lazy file-backed connection.
   AppDatabase({QueryExecutor? executor}) : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -65,6 +77,10 @@ class AppDatabase extends _$AppDatabase {
             // Purge legacy per-row API blobs (up to hundreds of KB each);
             // typed columns are the single source of truth now.
             await customStatement('UPDATE pokemon_cache SET json_data = NULL');
+          }
+          if (from < 9) {
+            // v9 adds the user-built teams table for the Team Builder tool.
+            await m.createTable(teams);
           }
         },
       );
@@ -152,6 +168,33 @@ class AppDatabase extends _$AppDatabase {
       (t) => OrderingTerm(expression: t.id, mode: OrderingMode.asc),
     ]);
     return querySelect.get();
+  }
+
+  // ---- Teams (Team Builder) -------------------------------------------------
+
+  /// Live team list for the Team Builder screen. [query] filters by name.
+  Stream<List<Team>> watchTeams({String query = ''}) {
+    var teamsQuery = select(teams);
+    if (query.isNotEmpty) {
+      teamsQuery = teamsQuery..where((t) => t.name.like('%${query.toLowerCase()}%'));
+    }
+    return (teamsQuery
+          ..orderBy([(t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)]))
+        .watch();
+  }
+
+  Future<Team?> getTeamById(int id) {
+    return (select(teams)..where((t) => t.id.equals(id))).getSingleOrNull();
+  }
+
+  Future<int> insertTeam(TeamsCompanion entry) => into(teams).insert(entry);
+
+  Future<void> updateTeam(int id, TeamsCompanion entry) {
+    return (update(teams)..where((t) => t.id.equals(id))).write(entry);
+  }
+
+  Future<void> deleteTeam(int id) {
+    return (delete(teams)..where((t) => t.id.equals(id))).go();
   }
 }
 

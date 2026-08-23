@@ -661,21 +661,8 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
         ],
       );
     } else if (_activeTab == 'Stats') {
-      return Container(
+      return _buildGlassCard(
         key: const ValueKey('Stats'),
-        padding: const EdgeInsets.all(24),
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(32),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -703,7 +690,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
             // Mode Selector (Base, Min, Max)
             Container(
               padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(20)),
+              decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(20)),
               child: Row(
                 children: ['Base', 'Min', 'Max'].map((mode) {
                   final isActive = _statsMode == mode;
@@ -842,7 +829,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
             // Segmented Move Selector
             Container(
               padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(24)),
+              decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(24)),
               child: Row(
                 children: ['Level up', 'TM/HM', 'Eggs', 'Tutor'].map((mode) {
                   final isActive = _activeMoveTab == mode;
@@ -877,21 +864,9 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
         ),
       );
     } else if (_activeTab == 'Defense') {
-      return Container(
+      return _buildGlassCard(
         key: const ValueKey('Defense'),
         padding: const EdgeInsets.only(top: 12, left: 24, right: 24, bottom: 24),
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(32),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
         child: _buildTypeDefenses(widget.pokemon.types),
       );
     } else if (_activeTab == 'Evolution') {
@@ -910,17 +885,50 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> with SingleTic
     }
   }
 
-  /// White rounded container shared by every state of the Moves tab so the
-  /// loading spinner and error card keep the section's geometry.
-  Widget _buildMovesCard(Widget child) {
+  /// Frosted-glass shell shared by every tab card: backdrop blur beneath a
+  /// translucent white fill with a hairline highlight border.
+  Widget _buildGlassCard({
+    Key? key,
+    EdgeInsetsGeometry padding = const EdgeInsets.all(24),
+    required Widget child,
+  }) {
     return Container(
-      key: const ValueKey('Moves'),
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
         borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(32),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+          child: Container(
+            key: key,
+            padding: padding,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.60),
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.65)),
+            ),
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Glass container for every state of the Moves tab so the loading spinner
+  /// and error card keep the section's geometry.
+  Widget _buildMovesCard(Widget child) {
+    return _buildGlassCard(
+      key: const ValueKey('Moves'),
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       child: child,
     );
   }

@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../features/pokedex/pokedex_screen.dart';
 import '../features/pokemon_detail/pokemon_detail_screen.dart';
+import '../features/tools/comparator_screen.dart';
+import '../features/tools/types_screen.dart';
+import '../features/tools/team_builder_screen.dart';
+import '../features/tools/new_team_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -21,6 +25,25 @@ final GoRouter appRouter = GoRouter(
           return const _RouteErrorScreen(message: 'Invalid Pok\u00e9mon ID.');
         }
         return PokemonDetailScreen(pokemonId: id);
+      },
+    ),
+    GoRoute(
+      path: '/tools/comparator',
+      builder: (context, state) => const ComparatorScreen(),
+    ),
+    GoRoute(
+      path: '/tools/types',
+      builder: (context, state) => const TypesScreen(),
+    ),
+    GoRoute(
+      path: '/tools/teams',
+      builder: (context, state) => const TeamBuilderScreen(),
+    ),
+    GoRoute(
+      path: '/tools/teams/new',
+      builder: (context, state) {
+        final id = int.tryParse(state.uri.queryParameters['id'] ?? '');
+        return NewTeamScreen(editId: id);
       },
     ),
   ],

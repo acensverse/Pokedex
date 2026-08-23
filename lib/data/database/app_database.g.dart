@@ -1087,15 +1087,501 @@ class PokemonCacheCompanion extends UpdateCompanion<PokemonCacheData> {
   }
 }
 
+class $TeamsTable extends Teams with TableInfo<$TeamsTable, Team> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $TeamsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _slot1Meta = const VerificationMeta('slot1');
+  @override
+  late final GeneratedColumn<int> slot1 = GeneratedColumn<int>(
+    'slot1',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _slot2Meta = const VerificationMeta('slot2');
+  @override
+  late final GeneratedColumn<int> slot2 = GeneratedColumn<int>(
+    'slot2',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _slot3Meta = const VerificationMeta('slot3');
+  @override
+  late final GeneratedColumn<int> slot3 = GeneratedColumn<int>(
+    'slot3',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _slot4Meta = const VerificationMeta('slot4');
+  @override
+  late final GeneratedColumn<int> slot4 = GeneratedColumn<int>(
+    'slot4',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _slot5Meta = const VerificationMeta('slot5');
+  @override
+  late final GeneratedColumn<int> slot5 = GeneratedColumn<int>(
+    'slot5',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _slot6Meta = const VerificationMeta('slot6');
+  @override
+  late final GeneratedColumn<int> slot6 = GeneratedColumn<int>(
+    'slot6',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    name,
+    slot1,
+    slot2,
+    slot3,
+    slot4,
+    slot5,
+    slot6,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'teams';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Team> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('slot1')) {
+      context.handle(
+        _slot1Meta,
+        slot1.isAcceptableOrUnknown(data['slot1']!, _slot1Meta),
+      );
+    }
+    if (data.containsKey('slot2')) {
+      context.handle(
+        _slot2Meta,
+        slot2.isAcceptableOrUnknown(data['slot2']!, _slot2Meta),
+      );
+    }
+    if (data.containsKey('slot3')) {
+      context.handle(
+        _slot3Meta,
+        slot3.isAcceptableOrUnknown(data['slot3']!, _slot3Meta),
+      );
+    }
+    if (data.containsKey('slot4')) {
+      context.handle(
+        _slot4Meta,
+        slot4.isAcceptableOrUnknown(data['slot4']!, _slot4Meta),
+      );
+    }
+    if (data.containsKey('slot5')) {
+      context.handle(
+        _slot5Meta,
+        slot5.isAcceptableOrUnknown(data['slot5']!, _slot5Meta),
+      );
+    }
+    if (data.containsKey('slot6')) {
+      context.handle(
+        _slot6Meta,
+        slot6.isAcceptableOrUnknown(data['slot6']!, _slot6Meta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Team map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Team(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+      slot1: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}slot1'],
+      ),
+      slot2: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}slot2'],
+      ),
+      slot3: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}slot3'],
+      ),
+      slot4: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}slot4'],
+      ),
+      slot5: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}slot5'],
+      ),
+      slot6: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}slot6'],
+      ),
+    );
+  }
+
+  @override
+  $TeamsTable createAlias(String alias) {
+    return $TeamsTable(attachedDatabase, alias);
+  }
+}
+
+class Team extends DataClass implements Insertable<Team> {
+  final int id;
+  final String name;
+  final int? slot1;
+  final int? slot2;
+  final int? slot3;
+  final int? slot4;
+  final int? slot5;
+  final int? slot6;
+  const Team({
+    required this.id,
+    required this.name,
+    this.slot1,
+    this.slot2,
+    this.slot3,
+    this.slot4,
+    this.slot5,
+    this.slot6,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['name'] = Variable<String>(name);
+    if (!nullToAbsent || slot1 != null) {
+      map['slot1'] = Variable<int>(slot1);
+    }
+    if (!nullToAbsent || slot2 != null) {
+      map['slot2'] = Variable<int>(slot2);
+    }
+    if (!nullToAbsent || slot3 != null) {
+      map['slot3'] = Variable<int>(slot3);
+    }
+    if (!nullToAbsent || slot4 != null) {
+      map['slot4'] = Variable<int>(slot4);
+    }
+    if (!nullToAbsent || slot5 != null) {
+      map['slot5'] = Variable<int>(slot5);
+    }
+    if (!nullToAbsent || slot6 != null) {
+      map['slot6'] = Variable<int>(slot6);
+    }
+    return map;
+  }
+
+  TeamsCompanion toCompanion(bool nullToAbsent) {
+    return TeamsCompanion(
+      id: Value(id),
+      name: Value(name),
+      slot1: slot1 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(slot1),
+      slot2: slot2 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(slot2),
+      slot3: slot3 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(slot3),
+      slot4: slot4 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(slot4),
+      slot5: slot5 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(slot5),
+      slot6: slot6 == null && nullToAbsent
+          ? const Value.absent()
+          : Value(slot6),
+    );
+  }
+
+  factory Team.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Team(
+      id: serializer.fromJson<int>(json['id']),
+      name: serializer.fromJson<String>(json['name']),
+      slot1: serializer.fromJson<int?>(json['slot1']),
+      slot2: serializer.fromJson<int?>(json['slot2']),
+      slot3: serializer.fromJson<int?>(json['slot3']),
+      slot4: serializer.fromJson<int?>(json['slot4']),
+      slot5: serializer.fromJson<int?>(json['slot5']),
+      slot6: serializer.fromJson<int?>(json['slot6']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'name': serializer.toJson<String>(name),
+      'slot1': serializer.toJson<int?>(slot1),
+      'slot2': serializer.toJson<int?>(slot2),
+      'slot3': serializer.toJson<int?>(slot3),
+      'slot4': serializer.toJson<int?>(slot4),
+      'slot5': serializer.toJson<int?>(slot5),
+      'slot6': serializer.toJson<int?>(slot6),
+    };
+  }
+
+  Team copyWith({
+    int? id,
+    String? name,
+    Value<int?> slot1 = const Value.absent(),
+    Value<int?> slot2 = const Value.absent(),
+    Value<int?> slot3 = const Value.absent(),
+    Value<int?> slot4 = const Value.absent(),
+    Value<int?> slot5 = const Value.absent(),
+    Value<int?> slot6 = const Value.absent(),
+  }) => Team(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    slot1: slot1.present ? slot1.value : this.slot1,
+    slot2: slot2.present ? slot2.value : this.slot2,
+    slot3: slot3.present ? slot3.value : this.slot3,
+    slot4: slot4.present ? slot4.value : this.slot4,
+    slot5: slot5.present ? slot5.value : this.slot5,
+    slot6: slot6.present ? slot6.value : this.slot6,
+  );
+  Team copyWithCompanion(TeamsCompanion data) {
+    return Team(
+      id: data.id.present ? data.id.value : this.id,
+      name: data.name.present ? data.name.value : this.name,
+      slot1: data.slot1.present ? data.slot1.value : this.slot1,
+      slot2: data.slot2.present ? data.slot2.value : this.slot2,
+      slot3: data.slot3.present ? data.slot3.value : this.slot3,
+      slot4: data.slot4.present ? data.slot4.value : this.slot4,
+      slot5: data.slot5.present ? data.slot5.value : this.slot5,
+      slot6: data.slot6.present ? data.slot6.value : this.slot6,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Team(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('slot1: $slot1, ')
+          ..write('slot2: $slot2, ')
+          ..write('slot3: $slot3, ')
+          ..write('slot4: $slot4, ')
+          ..write('slot5: $slot5, ')
+          ..write('slot6: $slot6')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, name, slot1, slot2, slot3, slot4, slot5, slot6);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Team &&
+          other.id == this.id &&
+          other.name == this.name &&
+          other.slot1 == this.slot1 &&
+          other.slot2 == this.slot2 &&
+          other.slot3 == this.slot3 &&
+          other.slot4 == this.slot4 &&
+          other.slot5 == this.slot5 &&
+          other.slot6 == this.slot6);
+}
+
+class TeamsCompanion extends UpdateCompanion<Team> {
+  final Value<int> id;
+  final Value<String> name;
+  final Value<int?> slot1;
+  final Value<int?> slot2;
+  final Value<int?> slot3;
+  final Value<int?> slot4;
+  final Value<int?> slot5;
+  final Value<int?> slot6;
+  const TeamsCompanion({
+    this.id = const Value.absent(),
+    this.name = const Value.absent(),
+    this.slot1 = const Value.absent(),
+    this.slot2 = const Value.absent(),
+    this.slot3 = const Value.absent(),
+    this.slot4 = const Value.absent(),
+    this.slot5 = const Value.absent(),
+    this.slot6 = const Value.absent(),
+  });
+  TeamsCompanion.insert({
+    this.id = const Value.absent(),
+    required String name,
+    this.slot1 = const Value.absent(),
+    this.slot2 = const Value.absent(),
+    this.slot3 = const Value.absent(),
+    this.slot4 = const Value.absent(),
+    this.slot5 = const Value.absent(),
+    this.slot6 = const Value.absent(),
+  }) : name = Value(name);
+  static Insertable<Team> custom({
+    Expression<int>? id,
+    Expression<String>? name,
+    Expression<int>? slot1,
+    Expression<int>? slot2,
+    Expression<int>? slot3,
+    Expression<int>? slot4,
+    Expression<int>? slot5,
+    Expression<int>? slot6,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (name != null) 'name': name,
+      if (slot1 != null) 'slot1': slot1,
+      if (slot2 != null) 'slot2': slot2,
+      if (slot3 != null) 'slot3': slot3,
+      if (slot4 != null) 'slot4': slot4,
+      if (slot5 != null) 'slot5': slot5,
+      if (slot6 != null) 'slot6': slot6,
+    });
+  }
+
+  TeamsCompanion copyWith({
+    Value<int>? id,
+    Value<String>? name,
+    Value<int?>? slot1,
+    Value<int?>? slot2,
+    Value<int?>? slot3,
+    Value<int?>? slot4,
+    Value<int?>? slot5,
+    Value<int?>? slot6,
+  }) {
+    return TeamsCompanion(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      slot1: slot1 ?? this.slot1,
+      slot2: slot2 ?? this.slot2,
+      slot3: slot3 ?? this.slot3,
+      slot4: slot4 ?? this.slot4,
+      slot5: slot5 ?? this.slot5,
+      slot6: slot6 ?? this.slot6,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (slot1.present) {
+      map['slot1'] = Variable<int>(slot1.value);
+    }
+    if (slot2.present) {
+      map['slot2'] = Variable<int>(slot2.value);
+    }
+    if (slot3.present) {
+      map['slot3'] = Variable<int>(slot3.value);
+    }
+    if (slot4.present) {
+      map['slot4'] = Variable<int>(slot4.value);
+    }
+    if (slot5.present) {
+      map['slot5'] = Variable<int>(slot5.value);
+    }
+    if (slot6.present) {
+      map['slot6'] = Variable<int>(slot6.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('TeamsCompanion(')
+          ..write('id: $id, ')
+          ..write('name: $name, ')
+          ..write('slot1: $slot1, ')
+          ..write('slot2: $slot2, ')
+          ..write('slot3: $slot3, ')
+          ..write('slot4: $slot4, ')
+          ..write('slot5: $slot5, ')
+          ..write('slot6: $slot6')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $PokemonCacheTable pokemonCache = $PokemonCacheTable(this);
+  late final $TeamsTable teams = $TeamsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [pokemonCache];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [pokemonCache, teams];
 }
 
 typedef $$PokemonCacheTableCreateCompanionBuilder =
@@ -1585,10 +2071,256 @@ typedef $$PokemonCacheTableProcessedTableManager =
       PokemonCacheData,
       PrefetchHooks Function()
     >;
+typedef $$TeamsTableCreateCompanionBuilder =
+    TeamsCompanion Function({
+      Value<int> id,
+      required String name,
+      Value<int?> slot1,
+      Value<int?> slot2,
+      Value<int?> slot3,
+      Value<int?> slot4,
+      Value<int?> slot5,
+      Value<int?> slot6,
+    });
+typedef $$TeamsTableUpdateCompanionBuilder =
+    TeamsCompanion Function({
+      Value<int> id,
+      Value<String> name,
+      Value<int?> slot1,
+      Value<int?> slot2,
+      Value<int?> slot3,
+      Value<int?> slot4,
+      Value<int?> slot5,
+      Value<int?> slot6,
+    });
+
+class $$TeamsTableFilterComposer extends Composer<_$AppDatabase, $TeamsTable> {
+  $$TeamsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get slot1 => $composableBuilder(
+    column: $table.slot1,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get slot2 => $composableBuilder(
+    column: $table.slot2,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get slot3 => $composableBuilder(
+    column: $table.slot3,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get slot4 => $composableBuilder(
+    column: $table.slot4,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get slot5 => $composableBuilder(
+    column: $table.slot5,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get slot6 => $composableBuilder(
+    column: $table.slot6,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$TeamsTableOrderingComposer
+    extends Composer<_$AppDatabase, $TeamsTable> {
+  $$TeamsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get slot1 => $composableBuilder(
+    column: $table.slot1,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get slot2 => $composableBuilder(
+    column: $table.slot2,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get slot3 => $composableBuilder(
+    column: $table.slot3,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get slot4 => $composableBuilder(
+    column: $table.slot4,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get slot5 => $composableBuilder(
+    column: $table.slot5,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get slot6 => $composableBuilder(
+    column: $table.slot6,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$TeamsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $TeamsTable> {
+  $$TeamsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<int> get slot1 =>
+      $composableBuilder(column: $table.slot1, builder: (column) => column);
+
+  GeneratedColumn<int> get slot2 =>
+      $composableBuilder(column: $table.slot2, builder: (column) => column);
+
+  GeneratedColumn<int> get slot3 =>
+      $composableBuilder(column: $table.slot3, builder: (column) => column);
+
+  GeneratedColumn<int> get slot4 =>
+      $composableBuilder(column: $table.slot4, builder: (column) => column);
+
+  GeneratedColumn<int> get slot5 =>
+      $composableBuilder(column: $table.slot5, builder: (column) => column);
+
+  GeneratedColumn<int> get slot6 =>
+      $composableBuilder(column: $table.slot6, builder: (column) => column);
+}
+
+class $$TeamsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $TeamsTable,
+          Team,
+          $$TeamsTableFilterComposer,
+          $$TeamsTableOrderingComposer,
+          $$TeamsTableAnnotationComposer,
+          $$TeamsTableCreateCompanionBuilder,
+          $$TeamsTableUpdateCompanionBuilder,
+          (Team, BaseReferences<_$AppDatabase, $TeamsTable, Team>),
+          Team,
+          PrefetchHooks Function()
+        > {
+  $$TeamsTableTableManager(_$AppDatabase db, $TeamsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$TeamsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$TeamsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$TeamsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> name = const Value.absent(),
+                Value<int?> slot1 = const Value.absent(),
+                Value<int?> slot2 = const Value.absent(),
+                Value<int?> slot3 = const Value.absent(),
+                Value<int?> slot4 = const Value.absent(),
+                Value<int?> slot5 = const Value.absent(),
+                Value<int?> slot6 = const Value.absent(),
+              }) => TeamsCompanion(
+                id: id,
+                name: name,
+                slot1: slot1,
+                slot2: slot2,
+                slot3: slot3,
+                slot4: slot4,
+                slot5: slot5,
+                slot6: slot6,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String name,
+                Value<int?> slot1 = const Value.absent(),
+                Value<int?> slot2 = const Value.absent(),
+                Value<int?> slot3 = const Value.absent(),
+                Value<int?> slot4 = const Value.absent(),
+                Value<int?> slot5 = const Value.absent(),
+                Value<int?> slot6 = const Value.absent(),
+              }) => TeamsCompanion.insert(
+                id: id,
+                name: name,
+                slot1: slot1,
+                slot2: slot2,
+                slot3: slot3,
+                slot4: slot4,
+                slot5: slot5,
+                slot6: slot6,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$TeamsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $TeamsTable,
+      Team,
+      $$TeamsTableFilterComposer,
+      $$TeamsTableOrderingComposer,
+      $$TeamsTableAnnotationComposer,
+      $$TeamsTableCreateCompanionBuilder,
+      $$TeamsTableUpdateCompanionBuilder,
+      (Team, BaseReferences<_$AppDatabase, $TeamsTable, Team>),
+      Team,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$PokemonCacheTableTableManager get pokemonCache =>
       $$PokemonCacheTableTableManager(_db, _db.pokemonCache);
+  $$TeamsTableTableManager get teams =>
+      $$TeamsTableTableManager(_db, _db.teams);
 }

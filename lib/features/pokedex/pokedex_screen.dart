@@ -4,6 +4,7 @@ import '../../app/theme/app_colors.dart';
 import 'widgets/search_bar.dart';
 import 'widgets/pokemon_grid.dart';
 import 'widgets/filter_sheet.dart';
+import 'widgets/tools_sheet.dart';
 import 'pokedex_provider.dart';
 
 class PokedexScreen extends ConsumerStatefulWidget {
@@ -26,33 +27,47 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
       appBar: AppBar(
         title: _isSearching
             ? const PokedexSearchBar()
-            : Row(
-                children: [
-                  Text(
-                    'POKEDEX',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 0.5,
-                        ),
-                  ),
-                  const SizedBox(width: 8),
-                  // Red check dropdown icon
-                  Container(
-                    width: 22,
-                    height: 22,
-                    decoration: const BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.keyboard_arrow_down,
-                        color: Colors.white,
-                        size: 16,
+            : Semantics(
+                button: true,
+                label: 'Open Pok\u00e9dex tools menu',
+                child: GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) => const ToolsSheet(),
+                    );
+                  },
+                  child: Row(
+                    children: [
+                      Text(
+                        'POKEDEX',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.5,
+                            ),
                       ),
-                    ),
+                      const SizedBox(width: 8),
+                      // Red check dropdown icon
+                      Container(
+                        width: 22,
+                        height: 22,
+                        decoration: const BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            Icons.keyboard_arrow_down,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
         actions: [
           // Shiny Mode Switch
