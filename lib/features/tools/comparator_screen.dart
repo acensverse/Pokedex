@@ -7,6 +7,7 @@ import '../../core/utils/type_chart.dart';
 import '../../models/pokemon.dart';
 import 'widgets/pokemon_picker_sheet.dart';
 import 'widgets/tool_widgets.dart';
+import '../pokedex/widgets/tools_sheet.dart';
 
 /// Male/female percentages from the species endpoint; null when unknown,
 /// genderless, or offline.
@@ -35,6 +36,10 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
   Pokemon? _b;
   String _statsMode = 'Base';
 
+  /// Fixed per-slot colors: Pokemon 1 is always blue, Pokemon 2 always red.
+  static const Color _p1 = Color(0xFF1E88E5);
+  static const Color _p2 = Color(0xFFE53935);
+
   Future<void> _pickSlot(bool slotA) async {
     final picked = await PokemonPickerSheet.show(context);
     if (!mounted || picked == null) return;
@@ -54,11 +59,8 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text('Comparator',
-            style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w900,
-                fontSize: 24)),
+        automaticallyImplyLeading: false,
+        title: const ToolsSheetTitle(label: 'Comparator'),
         actions: [
           if (ready)
             IconButton(
@@ -146,16 +148,17 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
     }
 
     final typeList = pokemon.types.map((t) => t.type.name).toList();
-    final primaryColor = AppColors.getTypeColor(typeList.first);
+    // Fixed per-slot color: slot 1 blue, slot 2 red (independent of types).
+    final slotColor = slotNumber == 1 ? _p1 : _p2;
     return InkWell(
       borderRadius: BorderRadius.circular(18),
       onTap: () => _pickSlot(slotNumber == 1),
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: primaryColor.withValues(alpha: 0.18),
+          color: slotColor.withValues(alpha: 0.18),
           borderRadius: BorderRadius.circular(18),
-          border: Border(bottom: BorderSide(color: primaryColor, width: 5)),
+          border: Border(bottom: BorderSide(color: slotColor, width: 5)),
         ),
         child: Column(
           children: [
@@ -164,34 +167,46 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
               height: 84,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: primaryColor, width: 3),
+                border: Border.all(color: slotColor, width: 3),
                 color: Colors.white.withValues(alpha: 0.7),
               ),
-              padding: const EdgeInsets.all(6),
+              padding: const EdgeInsets.all(4),
               child: Image.asset(
-                PokemonHelpers.getThumbnailAssetPath(pokemon.id),
+                PokemonHelpers.getHomeAssetPath(pokemon.id),
                 fit: BoxFit.contain,
-                errorBuilder: (_, _, _) =>
-                    Icon(Icons.catching_pokemon, size: 40, color: primaryColor),
+                cacheWidth: PokemonHelpers.cacheWidth(context, 76),
+                errorBuilder: (context, error, stackTrace) => Image.asset(
+                  PokemonHelpers.getThumbnailAssetPath(pokemon.id),
+                  fit: BoxFit.contain,
+                  cacheWidth: PokemonHelpers.cacheWidth(context, 72),
+                  errorBuilder: (context, error, stackTrace) => Icon(
+                      Icons.catching_pokemon, size: 40, color: slotColor),
+                ),
               ),
             ),
             const SizedBox(height: 10),
             Text(
               PokemonHelpers.formatName(pokemon.name),
-              maxLines: 1,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
               style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
             ),
             const SizedBox(height: 6),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [for (final t in typeList) ...[
-                TypeBadgeDot(t, size: 18),
-                const SizedBox(width: 4),
-              ]],
+            // One pill per row keeps both cards uniform: pills always sit
+            // below the name regardless of type-name widths.
+            Column(
+              children: [
+                for (final t in typeList)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: TypePill(t, fontSize: 11),
+                  ),
+              ],
             ),
             const SizedBox(height: 6),
-            Text('#${pokemon.id.toString().padLeft(3, '0')}',
+            // Actual Pokedex number (base species), matching the home grid.
+            Text('#${pokemon.speciesId.toString().padLeft(3, '0')}',
                 style: TextStyle(color: Colors.black54, fontSize: 11)),
           ],
         ),
@@ -207,7 +222,9 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
       child: Column(
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            // stretch would force children to fill the scroll view's
+            // unbounded height and crash layout; cards size intrinsically.
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(child: _slotCard(context, 1, a)),
               const SizedBox(width: 12),
@@ -281,10 +298,12 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
           PokemonHelpers.getHomeAssetPath(p.id),
           width: 110,
           height: 110,
+          cacheWidth: PokemonHelpers.cacheWidth(context, 110),
           errorBuilder: (_, _, _) => Image.asset(
             PokemonHelpers.getThumbnailAssetPath(p.id),
             width: 90,
             height: 90,
+            cacheWidth: PokemonHelpers.cacheWidth(context, 90),
             errorBuilder: (_, _, _) =>
                 Icon(Icons.catching_pokemon, size: 64, color: Colors.grey.shade400),
           ),
@@ -301,8 +320,18 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
                   children: [
                     GenderDonut(malePercent: ratio.male, femalePercent: ratio.female),
                     const SizedBox(height: 4),
-                    Text('\u2642 ${ratio.male.toStringAsFixed(1)}%   \u2640 ${ratio.female.toStringAsFixed(1)}%',
-                        style: const TextStyle(fontSize: 11, color: Colors.black54)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.male, size: 13, color: Colors.blueAccent),
+                        Text(' ${ratio.male.toStringAsFixed(1)}%',
+                            style: const TextStyle(fontSize: 11, color: Colors.black54)),
+                        const SizedBox(width: 12),
+                        Icon(Icons.female, size: 13, color: Colors.pinkAccent),
+                        Text(' ${ratio.female.toStringAsFixed(1)}%',
+                            style: const TextStyle(fontSize: 11, color: Colors.black54)),
+                      ],
+                    ),
                   ],
                 ),
           loading: () => const SizedBox(
@@ -340,46 +369,14 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
 
   Widget _statsBody(Pokemon a, Pokemon b) {
     const labels = ['HP', 'Attack', 'Defense', 'Sp. Attack', 'Sp. Defense', 'Speed'];
-    final colorA = AppColors.getTypeColor(a.types.first.type.name);
-    final colorB = AppColors.getTypeColor(b.types.first.type.name);
+    const colorA = _p1;
+    const colorB = _p2;
 
     return Column(
       children: [
         Row(
           children: [
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Row(
-                  children: [
-                    for (final mode in ['Base', 'Min', 'Max'])
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => setState(() => _statsMode = mode),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 7),
-                            decoration: BoxDecoration(
-                              color: _statsMode == mode ? colorA : Colors.transparent,
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            child: Center(
-                              child: Text(mode,
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: _statsMode == mode ? Colors.white : Colors.black45)),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
+            Expanded(child: _segmentedControl(colorA)),
             Icon(Icons.trending_up, color: colorB, size: 22),
           ],
         ),
@@ -415,6 +412,66 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
           textAlign: TextAlign.center,
         ),
       ],
+    );
+  }
+
+  /// Base/Min/Max segmented control with a sliding highlight that animates
+  /// between segments.
+  Widget _segmentedControl(Color color) {
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Stack(
+        children: [
+          AnimatedAlign(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            alignment: switch (_statsMode) {
+              'Min' => Alignment.center,
+              'Max' => Alignment.centerRight,
+              _ => Alignment.centerLeft,
+            },
+            child: FractionallySizedBox(
+              widthFactor: 1 / 3,
+              child: Container(
+                height: 32,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              for (final mode in ['Base', 'Min', 'Max'])
+                Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => setState(() => _statsMode = mode),
+                    child: Container(
+                      height: 32,
+                      alignment: Alignment.center,
+                      child: Text(
+                        mode,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: _statsMode == mode
+                              ? Colors.white
+                              : Colors.black45,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -503,7 +560,11 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
               borderRadius: BorderRadius.circular(5),
             ),
           ),
-          Container(
+          // AnimatedContainer smoothly slides the fill width when switching
+          // between Base/Min/Max.
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
             height: 9,
             width: constraints.maxWidth * fraction,
             decoration: BoxDecoration(
@@ -524,21 +585,26 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(child: _effectivenessColumn(a, typesA)),
+        Expanded(child: _effectivenessColumn(typesA, _p1)),
         const SizedBox(width: 12),
-        Expanded(child: _effectivenessColumn(b, typesB)),
+        Expanded(child: _effectivenessColumn(typesB, _p2)),
       ],
     );
   }
 
-  Widget _effectivenessColumn(Pokemon p, List<String> types) {
+  Widget _effectivenessColumn(List<String> types, Color slotColor) {
     final eff = TypeChart.getEffectiveness(types);
     final weak = <String>[];
+    final veryWeak = <String>[];
     final resist = <String>[];
     final veryResist = <String>[];
     final immune = <String>[];
     eff.forEach((type, multiplier) {
-      if (multiplier > 1) {
+      // 4x must be split out before the generic >1 check, otherwise dual
+      // types show 4x matchups mislabeled as 2x.
+      if (multiplier == 4.0) {
+        veryWeak.add(type);
+      } else if (multiplier > 1) {
         weak.add(type);
       } else if (multiplier == 0.5) {
         resist.add(type);
@@ -552,13 +618,14 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: AppColors.getTypeColor(types.first).withValues(alpha: 0.06),
+        color: slotColor.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (final group in [
+            ('Very weak against:', '4x damage', veryWeak),
             ('Weak against:', '2x damage', weak),
             ('Resistant against:', '1/2x damage', resist),
             ('Very resistant against:', '1/4x damage', veryResist),

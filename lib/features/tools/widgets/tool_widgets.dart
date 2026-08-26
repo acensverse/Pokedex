@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/utils/type_icons.dart';
 
-/// Colored pill chip with a small type icon, e.g. [icon Fire].
+/// Type pill in the app's standard style: natural colored SVG type icon on a
+/// tinted background with a matching colored label.
 class TypePill extends StatelessWidget {
   final String type;
   final double fontSize;
@@ -20,18 +22,22 @@ class TypePill extends StatelessWidget {
         vertical: fontSize * 0.55,
       ),
       decoration: BoxDecoration(
-        color: color,
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(fontSize * 1.8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(typeIcon(type), color: Colors.white, size: fontSize + 3),
+          SvgPicture.asset(
+            'assets/types/$type.svg',
+            width: fontSize + 5,
+            height: fontSize + 5,
+          ),
           SizedBox(width: fontSize * 0.5),
           Text(
             label,
             style: TextStyle(
-              color: Colors.white,
+              color: color,
               fontWeight: FontWeight.bold,
               fontSize: fontSize,
             ),
@@ -249,25 +255,4 @@ class _DonutPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _DonutPainter oldDelegate) =>
       oldDelegate.maleFraction != maleFraction;
-}
-
-/// Small circular badge with the type's icon on its color.
-class TypeBadgeDot extends StatelessWidget {
-  final String type;
-  final double size;
-
-  const TypeBadgeDot(this.type, {super.key, this.size = 22});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: AppColors.getTypeColor(type),
-        shape: BoxShape.circle,
-      ),
-      child: Icon(typeIcon(type), color: Colors.white, size: size * 0.58),
-    );
-  }
 }

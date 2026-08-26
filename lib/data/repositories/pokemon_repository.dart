@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/foundation.dart' show debugPrint, compute;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart' show Value;
@@ -9,10 +9,42 @@ import '../database/app_database.dart';
 import '../../core/utils/pokemon_helpers.dart';
 import '../../models/pokemon.dart';
 
+List<PokemonCacheData> _parsePokedexSeed(String jsonString) {
+  final List<dynamic> jsonList = jsonDecode(jsonString);
+  return [
+    for (final item in jsonList)
+      PokemonCacheData(
+        id: item['id'] as int,
+        speciesId: item['speciesId'] as int?,
+        name: item['name'] as String,
+        types: item['types'] as String,
+        species: item['species'] as String?,
+        generation: item['generation'] as int?,
+        hp: item['hp'] as int?,
+        attack: item['attack'] as int?,
+        defense: item['defense'] as int?,
+        spAttack: item['spAttack'] as int?,
+        spDefense: item['spDefense'] as int?,
+        speed: item['speed'] as int?,
+        height: (item['height'] as num?)?.toDouble(),
+        weight: (item['weight'] as num?)?.toDouble(),
+        abilities: item['abilities'] as String?,
+        forms: item['forms'] as String?,
+        evolutionInfo: item['evolutionInfo'] as String?,
+        flavorText: item['flavorText'] as String?,
+        isFavorite: false,
+      ),
+  ];
+}
+
 class PokemonRepository {
   final PokeApi _api;
   final AppDatabase _db;
   final Dio _dio;
+
+  /// Lazy-loaded map: pokemonId → set of ability names that are hidden for
+  /// that Pokemon, built from assets/abilities_seed.json at first use.
+  Map<int, Set<String>>? _hiddenAbilityMap;
 
   // The shared, timeout-configured Dio from dioClientProvider is always
   // injected; no ad-hoc Dio instances are created anywhere.
@@ -20,13 +52,13 @@ class PokemonRepository {
 
   /// Bump this whenever seed logic or the asset changes so installs
   /// re-run the (cheap) integrity check once more.
-  static const _seedDoneFlag = 'seed_v10_complete';
+  static const _seedDoneFlag = 'seed_v14_complete';
   static const _seedRevKey = 'seed_asset_rev';
 
   /// Bumped alongside [_seedDoneFlag] whenever baked asset CONTENT changes.
   /// Lets a healthy-looking database (rows pass the sniff test below) still
   /// be recognized as pre-rebake, forcing exactly one re-seed.
-  static const _seedAssetRev = 3; // 3 = version-ranked flavor text rebake
+  static const _seedAssetRev = 7; // 7 = filled missing Z-A mega abilities from base species
 
   // Seed SQLite from local JSON asset once per install/seed-version
   Future<void> checkAndSeedDatabase() async {
@@ -45,17 +77,17 @@ class PokemonRepository {
       // corrupted asset era (flavor text shipped starting with seed v9)
       if (first != null &&
           (first.species == null ||
-              first.species!.isEmpty ||
-              first.species!.contains('\uFFFD') ||
-              first.flavorText == null ||
-              first.flavorText!.isEmpty)) {
+               first.species!.isEmpty ||
+               first.species!.contains('\uFFFD') ||
+               first.flavorText == null ||
+               first.flavorText!.isEmpty)) {
         needsUpdate = true;
       }
     }
 
     // Healthy database AND current asset revision -> nothing to do.
     if (!needsUpdate &&
-        cachedCount.length >= 1025 &&
+        cachedCount.length >= 1329 &&
         (prefs.getInt(_seedRevKey) ?? 0) >= _seedAssetRev) {
       await prefs.setBool(_seedDoneFlag, true);
       return;
@@ -63,33 +95,10 @@ class PokemonRepository {
 
     try {
       final jsonString = await rootBundle.loadString('assets/pokedex_seed.json');
-      final List<dynamic> jsonList = jsonDecode(jsonString);
+      final parsed = await compute(_parsePokedexSeed, jsonString);
 
       // Batch insert in a single transaction instead of 1291 row-by-row awaits
-      await _db.cacheAllPokemon([
-        for (final item in jsonList)
-          PokemonCacheData(
-            id: item['id'] as int,
-            speciesId: item['speciesId'] as int?,
-            name: item['name'] as String,
-            types: item['types'] as String,
-            species: item['species'] as String?,
-            generation: item['generation'] as int?,
-            hp: item['hp'] as int?,
-            attack: item['attack'] as int?,
-            defense: item['defense'] as int?,
-            spAttack: item['spAttack'] as int?,
-            spDefense: item['spDefense'] as int?,
-            speed: item['speed'] as int?,
-            height: item['height'] as double?,
-            weight: item['weight'] as double?,
-            abilities: item['abilities'] as String?,
-            forms: item['forms'] as String?,
-            evolutionInfo: item['evolutionInfo'] as String?,
-            flavorText: item['flavorText'] as String?,
-            isFavorite: false,
-          ),
-      ]);
+      await _db.cacheAllPokemon(parsed);
       await prefs.setInt(_seedRevKey, _seedAssetRev);
       await prefs.setBool(_seedDoneFlag, true);
     } catch (e, st) {
@@ -103,6 +112,7 @@ class PokemonRepository {
   // Get Pokemon list from local database (offline-first, no network dependency).
   // Search/type filtering happens client-side in filteredPokemonProvider.
   Future<List<Pokemon>> getLocalPokemonList() async {
+    await _ensureHiddenAbilityMap();
     await checkAndSeedDatabase(); // Ensure seeded on list fetch
 
     final dbList = await _db.searchPokemon('', '');
@@ -113,6 +123,7 @@ class PokemonRepository {
   // every field the profile needs except moves, so this returns instantly
   // and never blocks the UI on a network round-trip.
   Future<Pokemon> getPokemonDetails(int id) async {
+    await _ensureHiddenAbilityMap();
     final cached = await _db.getPokemonById(id);
     if (cached != null) {
       return _mapDbToModel(cached);
@@ -167,13 +178,6 @@ class PokemonRepository {
   }
 
   /// The move list (with version-group details) is the only profile data not
-  /// stored in SQLite. It is fetched separately so opening a Pokemon never
-  /// waits on this ~100-400 KB download; the Moves tab streams it in.
-  Future<List<PokemonMoveSlot>> getPokemonMoves(int id) async {
-    final pokemon = await _api.fetchPokemonDetails(id.toString());
-    return pokemon.moves;
-  }
-
   /// Category + any previously cached flavor text read straight from SQLite.
   /// Resolves in milliseconds, letting the header paint instantly while
   /// getSpeciesInfo streams the (network-only) flavor text in the background.
@@ -282,7 +286,7 @@ class PokemonRepository {
       PokemonStatSlot(baseStat: dbData.speed ?? 0, effort: 0, stat: const PokemonStat(name: 'speed', url: '')),
     ];
 
-    final abilitiesList = _parseAbilities(dbData.abilities);
+    final abilitiesList = _parseAbilities(dbData.abilities, pokemonId: dbData.id);
 
     return Pokemon(
       id: dbData.id,
@@ -301,9 +305,10 @@ class PokemonRepository {
   }
 
   /// Parses cached abilities. Current format is JSON [{"n":name,"h":hidden}, ...]
-  /// with the real hidden flags; legacy rows hold plain comma-separated names,
-  /// which carry no hidden info (so none is fabricated).
-  List<PokemonAbilitySlot> _parseAbilities(String? raw) {
+  /// with the real hidden flags; legacy rows hold plain comma-separated names.
+  /// When [pokemonId] is provided, hidden flags are resolved from the baked
+  /// abilities seed (so seed-only Pokemon show hidden abilities correctly).
+  List<PokemonAbilitySlot> _parseAbilities(String? raw, {int? pokemonId}) {
     if (raw == null || raw.isEmpty) return [];
     try {
       final decoded = jsonDecode(raw);
@@ -333,10 +338,44 @@ class PokemonRepository {
         .entries
         .map((entry) => PokemonAbilitySlot(
               slot: entry.key + 1,
-              isHidden: false,
+              isHidden: _isHiddenAbility(pokemonId, entry.value),
               ability: PokemonAbilityInfo(name: entry.value, url: ''),
             ))
         .toList();
+  }
+
+  /// Checks whether [abilityName] is a hidden ability for [pokemonId]
+  /// using the baked abilities seed.
+  bool _isHiddenAbility(int? pokemonId, String abilityName) {
+    if (pokemonId == null) return false;
+    final map = _hiddenAbilityMap;
+    if (map == null) return false;
+    final hiddenNames = map[pokemonId];
+    if (hiddenNames == null) return false;
+    return hiddenNames.contains(abilityName);
+  }
+
+  /// Lazily loads abilities_seed.json and builds the hidden ability lookup.
+  Future<void> _ensureHiddenAbilityMap() async {
+    if (_hiddenAbilityMap != null) return;
+    try {
+      final raw = await rootBundle.loadString('assets/abilities_seed.json');
+      final list = jsonDecode(raw) as List<dynamic>;
+      final map = <int, Set<String>>{};
+      for (final entry in list) {
+        final name = entry['name'] as String;
+        final hiddenIds = (entry['hidden'] as List<dynamic>? ?? [])
+            .map((e) => e as int)
+            .toList();
+        for (final pid in hiddenIds) {
+          map.putIfAbsent(pid, () => <String>{});
+          map[pid]!.add(name);
+        }
+      }
+      _hiddenAbilityMap = map;
+    } catch (_) {
+      _hiddenAbilityMap = {};
+    }
   }
 }
 

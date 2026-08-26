@@ -11,7 +11,19 @@ import '../pokedex_provider.dart';
 class PokemonCard extends ConsumerWidget {
   final Pokemon pokemon;
 
-  const PokemonCard({super.key, required this.pokemon});
+  /// When provided, taps invoke this instead of navigating to the detail
+  /// screen (used by picker sheets).
+  final VoidCallback? onTap;
+
+  /// Heroes animate between routes; disable inside modal sheets.
+  final bool showHero;
+
+  const PokemonCard({
+    super.key,
+    required this.pokemon,
+    this.onTap,
+    this.showHero = true,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -31,6 +43,38 @@ class PokemonCard extends ConsumerWidget {
         'number ${pokemon.speciesId.toString().padLeft(3, '0')}, '
         '${pokemon.types.map((t) => t.type.name).join(' and ')} type';
 
+    Widget artwork = Image.asset(
+      isShiny
+          ? PokemonHelpers.getHomeShinyAssetPath(pokemon.id)
+          : PokemonHelpers.getHomeAssetPath(pokemon.id),
+      height: 76,
+      width: 76,
+      cacheWidth: PokemonHelpers.cacheWidth(context, 76),
+      filterQuality: FilterQuality.medium,
+      errorBuilder: (context, error, stackTrace) => Image.asset(
+        // If shiny was requested but missing, try normal home asset. If normal missing, try thumbnail.
+        isShiny
+            ? PokemonHelpers.getHomeAssetPath(pokemon.id)
+            : PokemonHelpers.getThumbnailAssetPath(pokemon.id),
+        height: 76,
+        width: 76,
+        cacheWidth: PokemonHelpers.cacheWidth(context, 76),
+        filterQuality: FilterQuality.medium,
+        errorBuilder: (context, error, stackTrace) => Image.asset(
+          PokemonHelpers.getThumbnailAssetPath(pokemon.id),
+          height: 76,
+          width: 76,
+          cacheWidth: PokemonHelpers.cacheWidth(context, 76),
+          filterQuality: FilterQuality.medium,
+          errorBuilder: (context, error, stackTrace) => const Icon(
+            Icons.catching_pokemon,
+            size: 36,
+            color: Colors.white54,
+          ),
+        ),
+      ),
+    );
+
     // Expose the whole card as one tappable button to screen readers.
     return RepaintBoundary(
       child: Semantics(
@@ -38,7 +82,7 @@ class PokemonCard extends ConsumerWidget {
         label: semanticLabel,
         child: ExcludeSemantics(
           child: GestureDetector(
-            onTap: () => context.push('/pokemon/${pokemon.id}'),
+            onTap: onTap ?? () => context.push('/pokemon/${pokemon.id}'),
         child: Container(
           height: 92,
           margin: const EdgeInsets.symmetric(
@@ -104,37 +148,12 @@ class PokemonCard extends ConsumerWidget {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          Hero(
-                            tag: 'pokemon-image-${pokemon.id}',
-                            child: Image.asset(
-                              isShiny 
-                                  ? PokemonHelpers.getHomeShinyAssetPath(pokemon.id)
-                                  : PokemonHelpers.getHomeAssetPath(pokemon.id),
-                              height: 76,
-                              width: 76,
-                              filterQuality: FilterQuality.medium,
-                              errorBuilder: (context, error, stackTrace) => Image.asset(
-                                // If shiny was requested but missing, try normal home asset. If normal missing, try thumbnail.
-                                isShiny 
-                                    ? PokemonHelpers.getHomeAssetPath(pokemon.id)
-                                    : PokemonHelpers.getThumbnailAssetPath(pokemon.id),
-                                height: 76,
-                                width: 76,
-                                filterQuality: FilterQuality.medium,
-                                errorBuilder: (context, error, stackTrace) => Image.asset(
-                                  PokemonHelpers.getThumbnailAssetPath(pokemon.id),
-                                  height: 76,
-                                  width: 76,
-                                  filterQuality: FilterQuality.medium,
-                                  errorBuilder: (context, error, stackTrace) => const Icon(
-                                    Icons.catching_pokemon,
-                                    size: 36,
-                                    color: Colors.white54,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                          showHero
+                              ? Hero(
+                                  tag: 'pokemon-image-${pokemon.id}',
+                                  child: artwork,
+                                )
+                              : artwork,
                         ],
                       ),
                     ),

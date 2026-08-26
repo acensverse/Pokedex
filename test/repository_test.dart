@@ -41,12 +41,17 @@ void main() {
       expect(pikachu.types.map((t) => t.type.name), contains('electric'));
     });
 
-    test('legacy comma ability strings carry no fabricated hidden flag', () async {
+    test('legacy comma ability strings resolve hidden flags from abilities seed', () async {
       final list = await repo.getLocalPokemonList();
       final pikachu = list.firstWhere((p) => p.id == 25);
       expect(pikachu.abilities, isNotEmpty);
-      expect(pikachu.abilities.every((a) => !a.isHidden), isTrue,
-          reason: 'seed rows cannot know hidden flags - none may be invented');
+      // Pikachu's Lightning Rod is its hidden ability in the games;
+      // the abilities seed provides this info.
+      final lightningRod = pikachu.abilities.firstWhere((a) => a.ability.name == 'lightning-rod');
+      expect(lightningRod.isHidden, isTrue);
+      // Static is Pikachu's regular ability.
+      final static = pikachu.abilities.firstWhere((a) => a.ability.name == 'static');
+      expect(static.isHidden, isFalse);
     });
 
     test('ignores stale jsonData blobs and trusts typed columns (E1)', () async {

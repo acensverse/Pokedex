@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class PokemonHelpers {
   // NOTE: type-effectiveness data lives solely in core/utils/type_chart.dart.
 
@@ -8,8 +10,8 @@ class PokemonHelpers {
     // Hardcoded edge cases
     if (rawName.toLowerCase() == 'mr-mime' || rawName.toLowerCase() == 'mr. mime') return 'Mr. Mime';
     if (rawName.toLowerCase() == 'mime-jr' || rawName.toLowerCase() == 'mime jr.') return 'Mime Jr.';
-    if (rawName.toLowerCase() == 'nidoran-m') return 'Nidoran ♂';
-    if (rawName.toLowerCase() == 'nidoran-f') return 'Nidoran ♀';
+    if (rawName.toLowerCase() == 'nidoran-m') return 'Nidoran M';
+    if (rawName.toLowerCase() == 'nidoran-f') return 'Nidoran F';
     if (rawName.toLowerCase() == 'type-null' || rawName.toLowerCase() == 'type: null') return 'Type: Null';
     if (rawName.toLowerCase() == 'ho-oh') return 'Ho-Oh';
     if (rawName.toLowerCase() == 'porygon-z') return 'Porygon-Z';
@@ -94,29 +96,28 @@ class PokemonHelpers {
     };
   }
 
-  // Get generic categories for physical/special/status moves
-  static String getMoveCategory(String moveName) {
-    final statusMoves = {'growl', 'leech seed', 'poison powder', 'sweet scent', 'worry seed', 'growth', 'synthesis', 'sleep powder'};
-    final specialMoves = {'solar beam', 'vine whip', 'razor leaf', 'seed bomb'};
-    
-    if (statusMoves.contains(moveName.toLowerCase())) return 'STATUS';
-    if (specialMoves.contains(moveName.toLowerCase())) return 'SPECIAL';
-    return 'PHYSICAL';
+  // Returns the local asset path for the Pokemon thumbnail.
+  // Assets are lossless WebP (bulk-converted from PNG, 192px max) to keep
+  // the APK small.
+  static String getThumbnailAssetPath(int id) {
+    return 'assets/thumbnails/$id.webp';
   }
 
-  // Returns the local asset path for the Pokemon thumbnail
-  static String getThumbnailAssetPath(int id) {
-    return 'assets/thumbnails/$id.png';
-  }
+  // Decode budget for Image.asset: display size x device pixel ratio.
+  // Prevents decoding a 512px texture (~1MB decoded) for a 76px card cell.
+  static int cacheWidth(BuildContext context, double logicalSize) =>
+      (logicalSize * MediaQuery.devicePixelRatioOf(context)).round();
 
   // Returns the local asset path for the Pokemon Home 3D artwork
+  // (lossless WebP, 256px max).
   static String getHomeAssetPath(int id) {
-    return 'assets/home/$id.png';
+    return 'assets/home/$id.webp';
   }
 
   // Returns the local asset path for the Shiny Pokemon Home 3D artwork
+  // (lossless WebP, 256px max).
   static String getHomeShinyAssetPath(int id) {
-    return 'assets/home_shiny/$id.png';
+    return 'assets/home_shiny/$id.webp';
   }
 
   // Game version groups, newest first. Flavor text quality follows the most

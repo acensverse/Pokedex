@@ -57,8 +57,8 @@ void main() {
     test('handles hardcoded edge cases', () {
       expect(PokemonHelpers.formatName('mr-mime'), 'Mr. Mime');
       expect(PokemonHelpers.formatName('mime-jr'), 'Mime Jr.');
-      expect(PokemonHelpers.formatName('nidoran-f'), 'Nidoran \u2640');
-      expect(PokemonHelpers.formatName('nidoran-m'), 'Nidoran \u2642');
+      expect(PokemonHelpers.formatName('nidoran-f'), 'Nidoran F');
+      expect(PokemonHelpers.formatName('nidoran-m'), 'Nidoran M');
       expect(PokemonHelpers.formatName('type-null'), 'Type: Null');
       expect(PokemonHelpers.formatName('ho-oh'), 'Ho-Oh');
       expect(PokemonHelpers.formatName('porygon-z'), 'Porygon-Z');

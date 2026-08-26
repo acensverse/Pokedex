@@ -25,32 +25,24 @@ class PokemonGrid extends ConsumerWidget {
 
     return RefreshIndicator(
       onRefresh: () => ref.read(pokedexProvider.notifier).refresh(),
-      child: NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification scrollInfo) {
-          if (scrollInfo.metrics.pixels >= scrollInfo.metrics.maxScrollExtent - 200) {
-            ref.read(pokedexProvider.notifier).fetchNextPage();
+      child: ListView.builder(
+        // Set strict itemExtent to enable fast O(1) layout calculations (crucial for 120+ FPS scrolling)
+        itemExtent: 100,
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.only(bottom: 24),
+        itemCount: pokemonList.length + (pokedexState.isLoading ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index < pokemonList.length) {
+            return PokemonCard(pokemon: pokemonList[index]);
+          } else {
+            return const SizedBox(
+              height: 100,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
           }
-          return false; // Let notifications bubble up to other listeners
         },
-        child: ListView.builder(
-          // Set strict itemExtent to enable fast O(1) layout calculations (crucial for 120+ FPS scrolling)
-          itemExtent: 100,
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.only(bottom: 24),
-          itemCount: pokemonList.length + (pokedexState.isLoading ? 1 : 0),
-          itemBuilder: (context, index) {
-            if (index < pokemonList.length) {
-              return PokemonCard(pokemon: pokemonList[index]);
-            } else {
-              return const SizedBox(
-                height: 100,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
-          },
-        ),
       ),
     );
   }

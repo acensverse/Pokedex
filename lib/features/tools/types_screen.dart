@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../app/theme/app_colors.dart';
 import '../../core/utils/type_chart.dart';
 import 'widgets/tool_widgets.dart';
 import 'widgets/type_picker_sheet.dart';
+import '../pokedex/widgets/tools_sheet.dart';
 
 /// "Damage taken / Damage dealt" explorer for one or two selected types.
 class TypesScreen extends ConsumerStatefulWidget {
@@ -22,10 +24,8 @@ class _TypesScreenState extends ConsumerState<TypesScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => FractionallySizedBox(
-        heightFactor: 0.85,
-        child: TypePickerSheet(title: 'Type $slot'),
-      ),
+      builder: (_) =>
+          TypePickerSheet(title: 'Type $slot', selectedType: slot == 1 ? _type1 : _type2),
     );
     if (picked == null || !mounted) return;
     setState(() {
@@ -47,11 +47,8 @@ class _TypesScreenState extends ConsumerState<TypesScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text('Types',
-            style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w900,
-                fontSize: 24)),
+        automaticallyImplyLeading: false,
+        title: const ToolsSheetTitle(label: 'Types'),
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -76,8 +73,14 @@ class _TypesScreenState extends ConsumerState<TypesScreen> {
                 const SectionHeaderPill('Damage taken'),
               ],
             ),
-            if (_type1 != null) _dealtSection(_type1!),
-            if (_type2 != null) _dealtSection(_type2!),
+            if (_type1 != null) ...[
+              const SizedBox(height: 28),
+              _dealtSection(_type1!),
+            ],
+            if (_type2 != null) ...[
+              const SizedBox(height: 28),
+              _dealtSection(_type2!),
+            ],
             const SizedBox(height: 32),
           ],
         ],
@@ -92,20 +95,31 @@ class _TypesScreenState extends ConsumerState<TypesScreen> {
       borderRadius: BorderRadius.circular(21),
       onTap: () => _pickType(slot),
       child: Container(
-        width: 120,
         height: 42,
-        alignment: Alignment.center,
+        padding: EdgeInsets.symmetric(horizontal: filled ? 16 : 20),
         decoration: BoxDecoration(
-          color: color,
+          color: filled ? color.withValues(alpha: 0.15) : Colors.grey.shade200,
           borderRadius: BorderRadius.circular(21),
+          border: filled ? Border.all(color: color, width: 1.5) : null,
         ),
-        child: Text(
-          filled ? '${type[0].toUpperCase()}${type.substring(1)}' : 'Type $slot',
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: filled ? 1 : 0.9),
-            fontWeight: FontWeight.w800,
-            fontSize: 15,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (filled) ...[
+              SvgPicture.asset('assets/types/$type.svg', width: 20, height: 20),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              filled
+                  ? '${type[0].toUpperCase()}${type.substring(1)}'
+                  : 'Type $slot',
+              style: TextStyle(
+                color: filled ? color : Colors.grey.shade600,
+                fontWeight: FontWeight.w800,
+                fontSize: 15,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -186,12 +200,17 @@ extension _DamageBuckets on _TypesScreenState {
     ];
     final eff = TypeChart.getEffectiveness(defenders);
     final weak = <String>[];
+    final veryWeak = <String>[];
     final resist = <String>[];
     final veryResist = <String>[];
     final immune = <String>[];
     final normal = <String>[];
     eff.forEach((attacker, multiplier) {
-      if (multiplier > 1) {
+      // 4x must be split out before the generic >1 check, otherwise dual
+      // defenders show 4x matchups mislabeled as 2x.
+      if (multiplier == 4.0) {
+        veryWeak.add(attacker);
+      } else if (multiplier > 1) {
         weak.add(attacker);
       } else if (multiplier == 0.5) {
         resist.add(attacker);
@@ -207,6 +226,7 @@ extension _DamageBuckets on _TypesScreenState {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        _group('Very weak against:', '4x damage', veryWeak),
         _group('Weak against:', '2x damage', weak),
         _group('Resistant against:', '1/2x damage', resist),
         _group('Very resistant against:', '1/4x damage', veryResist),
@@ -219,6 +239,7 @@ extension _DamageBuckets on _TypesScreenState {
   Widget _dealtSection(String attacker) {
     final superEffective = <String>[];
     final weak = <String>[];
+    final immune = <String>[];
     final normal = <String>[];
     for (final defender in AppColors.typeColors.keys) {
       final multiplier =
@@ -227,7 +248,11 @@ extension _DamageBuckets on _TypesScreenState {
         superEffective.add(defender);
       } else if (multiplier == 0.5) {
         weak.add(defender);
-      } else if (multiplier == 1.0) {
+      } else if (multiplier == 0.0) {
+        // Immune matchups were previously dropped entirely (Electric vs
+        // Ground never appeared on the card).
+        immune.add(defender);
+      } else {
         normal.add(defender);
       }
     }
@@ -250,6 +275,7 @@ extension _DamageBuckets on _TypesScreenState {
             children: [
               _group('Super effective against:', '2x damage', superEffective),
               _group('Weak against:', '1/2x damage', weak),
+              _group('No effect against:', '0x damage', immune),
               _group('Normal damage to:', '1x damage', normal),
             ],
           ),

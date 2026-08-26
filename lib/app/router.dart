@@ -3,8 +3,13 @@ import 'package:go_router/go_router.dart';
 import '../features/pokedex/pokedex_screen.dart';
 import '../features/pokemon_detail/pokemon_detail_screen.dart';
 import '../features/tools/comparator_screen.dart';
+import '../features/tools/abilities_screen.dart';
+import '../features/tools/items_screen.dart';
+import '../features/tools/moves_screen.dart';
+import '../features/tools/natures_screen.dart';
 import '../features/tools/types_screen.dart';
 import '../features/tools/team_builder_screen.dart';
+import '../features/tools/team_detail_screen.dart';
 import '../features/tools/new_team_screen.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -36,8 +41,34 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const TypesScreen(),
     ),
     GoRoute(
+      path: '/tools/moves',
+      builder: (context, state) => const MovesScreen(),
+    ),
+    GoRoute(
+      path: '/tools/items',
+      builder: (context, state) => const ItemsScreen(),
+    ),
+    GoRoute(
+      path: '/tools/abilities',
+      builder: (context, state) => const AbilitiesScreen(),
+    ),
+    GoRoute(
+      path: '/tools/natures',
+      builder: (context, state) => const NaturesScreen(),
+    ),
+    GoRoute(
       path: '/tools/teams',
       builder: (context, state) => const TeamBuilderScreen(),
+    ),
+    GoRoute(
+      path: '/tools/teams/detail',
+      builder: (context, state) {
+        final id = int.tryParse(state.uri.queryParameters['id'] ?? '');
+        if (id == null) {
+          return const _RouteErrorScreen(message: 'Invalid team ID.');
+        }
+        return TeamDetailScreen(teamId: id);
+      },
     ),
     GoRoute(
       path: '/tools/teams/new',

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../app/theme/app_colors.dart';
 import 'widgets/search_bar.dart';
 import 'widgets/pokemon_grid.dart';
 import 'widgets/filter_sheet.dart';
+import 'widgets/gen_filter_sheet.dart';
 import 'widgets/tools_sheet.dart';
 import 'pokedex_provider.dart';
 
@@ -16,110 +18,109 @@ class PokedexScreen extends ConsumerStatefulWidget {
 
 class _PokedexScreenState extends ConsumerState<PokedexScreen> {
   bool _isSearching = false;
+  bool _showFilters = false;
+
+  String _genLabel(int gen) => gen == 0 ? 'All Gens' : 'Gen $gen';
+
+  String _typeLabel(List<String> types) {
+    if (types.isEmpty) return 'All Type';
+    return types.map((t) => t[0].toUpperCase() + t.substring(1)).join(' + ');
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final activeFilter = ref.watch(typeFilterProvider);
-    final isShiny = ref.watch(shinyModeProvider);
+    final abilityFilter = ref.watch(toolAbilityFilterProvider);
+    final learnerFilter = ref.watch(toolLearnerFilterProvider);
+    final activeTypes = ref.watch(selectedTypesProvider);
+    final activeGen = ref.watch(genFilterProvider);
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: _isSearching
-            ? const PokedexSearchBar()
-            : Semantics(
-                button: true,
-                label: 'Open Pok\u00e9dex tools menu',
-                child: GestureDetector(
-                  onTap: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      backgroundColor: Colors.transparent,
-                      builder: (context) => const ToolsSheet(),
-                    );
-                  },
-                  child: Row(
-                    children: [
-                      Text(
-                        'POKEDEX',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 0.5,
-                            ),
-                      ),
-                      const SizedBox(width: 8),
-                      // Red check dropdown icon
-                      Container(
-                        width: 22,
-                        height: 22,
-                        decoration: const BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.keyboard_arrow_down,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-        actions: [
-          // Shiny Mode Switch
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: Row(
-              children: [
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  child: Icon(
-                    Icons.auto_awesome,
-                    color: isShiny ? Colors.amber : Colors.grey.shade400,
-                    size: 20,
-                  ),
-                ),
-                Switch(
-                  value: isShiny,
-                  onChanged: (val) {
-                    ref.read(shinyModeProvider.notifier).state = val;
-                  },
-                ),
-              ],
-            ),
-          ),
-          if (!_isSearching)
-            IconButton(
-              icon: const Icon(Icons.search, color: Colors.black54, size: 28),
-              onPressed: () {
-                setState(() {
-                  _isSearching = true;
-                });
-              },
-            ),
-          if (_isSearching)
-            IconButton(
-              icon: const Icon(Icons.close, color: Colors.black54),
-              onPressed: () {
-                setState(() {
-                  _isSearching = false;
-                  ref.read(searchQueryProvider.notifier).state = '';
-                });
-              },
-            ),
-          IconButton(
-            icon: const Icon(Icons.tune, color: Colors.black54, size: 28),
-            onPressed: () {
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) {
+          ref.read(toolAbilityFilterProvider.notifier).state = null;
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Semantics(
+          button: true,
+          label: 'Open Pok\u00e9dex tools menu',
+          child: GestureDetector(
+            onTap: () {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
                 backgroundColor: Colors.transparent,
-                builder: (context) => const FilterSheet(),
+                builder: (context) => const ToolsSheet(),
               );
+            },
+            child: Row(
+              children: [
+                Text(
+                  'POKEDEX',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  width: 22,
+                  height: 22,
+                  decoration: const BoxDecoration(
+                    color: AppColors.primary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Center(
+                    child: Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.search,
+              color: _isSearching ? AppColors.primary : Colors.black54,
+              size: 28,
+            ),
+            onPressed: () {
+              setState(() {
+                _isSearching = !_isSearching;
+                if (!_isSearching) {
+                  ref.read(searchQueryProvider.notifier).state = '';
+                  ref.read(debouncedSearchQueryProvider.notifier).state = '';
+                }
+              });
+            },
+          ),
+          IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+            icon: AnimatedRotation(
+              turns: _showFilters ? 0.5 : 0,
+              duration: const Duration(milliseconds: 450),
+              curve: Curves.easeInOutBack,
+              child: const _PokeballIcon(size: 28),
+            ),
+            onPressed: () {
+              setState(() {
+                _showFilters = !_showFilters;
+              });
             },
           ),
           const SizedBox(width: 8),
@@ -127,31 +128,424 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
       ),
       body: Column(
         children: [
-          if (activeFilter.isNotEmpty)
+          AnimatedSize(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            child: _isSearching
+                ? Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 2, 16, 4),
+                    child: PokedexSearchBar(
+                      onExit: () {
+                        setState(() {
+                          _isSearching = false;
+                        });
+                        ref.read(searchQueryProvider.notifier).state = '';
+                        ref.read(debouncedSearchQueryProvider.notifier).state = '';
+                      },
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOut,
+            child: _showFilters
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        _FilterPill(
+                          label: _genLabel(activeGen),
+                          isActive: activeGen > 0,
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) => const GenFilterSheet(),
+                            );
+                          },
+                        ),
+                        _FilterPill(
+                          label: _typeLabel(activeTypes),
+                          isActive: activeTypes.isNotEmpty,
+                          onTap: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (context) => const FilterSheet(),
+                            );
+                          },
+                        ),
+                        _FilterPill(
+                          label: 'Shiny',
+                          isActive: ref.watch(shinyModeProvider),
+                          activeColor: Colors.amber,
+                          onTap: () {
+                            ref.read(shinyModeProvider.notifier).state =
+                                !ref.read(shinyModeProvider);
+                          },
+                        ),
+                        _FilterPill(
+                          label: 'Favorites',
+                          isActive: ref.watch(favoritesOnlyProvider),
+                          onTap: () {
+                            ref.read(favoritesOnlyProvider.notifier).state =
+                                !ref.read(favoritesOnlyProvider);
+                          },
+                        ),
+                      ],
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
+          if (learnerFilter != null)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
               child: Row(
                 children: [
                   Chip(
                     backgroundColor: Colors.white,
                     side: BorderSide(color: Colors.grey.shade300),
                     label: Text(
-                      'TYPE: ${activeFilter.toUpperCase()}',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11),
+                      '${learnerFilter.kind.toUpperCase()}: ${learnerFilter.name.toUpperCase()}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                      ),
                     ),
                     deleteIcon: const Icon(Icons.close, size: 14),
                     onDeleted: () {
-                      ref.read(typeFilterProvider.notifier).state = '';
+                      ref.read(toolLearnerFilterProvider.notifier).state = null;
+                      final router = GoRouter.of(context);
+                      if (router.canPop()) router.pop();
                     },
                   ),
                 ],
               ),
             ),
-          const Expanded(
-            child: PokemonGrid(),
-          ),
+          if (abilityFilter != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey.shade200),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 14, 12, 0),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  abilityFilter.name.toUpperCase(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 13,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ),
+                              const Spacer(),
+                              GestureDetector(
+                                onTap: () {
+                                  ref.read(toolAbilityFilterProvider.notifier).state = null;
+                                },
+                                child: const Icon(Icons.close, size: 18, color: Colors.black45),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (abilityFilter.flavor.isNotEmpty) ...[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 12, 16, 2),
+                            child: Text(
+                              'Description',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.grey.shade500,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+                            child: Text(
+                              abilityFilter.flavor,
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                color: Colors.grey.shade700,
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                        ],
+                        if (abilityFilter.eff.isNotEmpty) ...[
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 4, 16, 2),
+                            child: Text(
+                              'Effect',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.grey.shade500,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                            child: Text(
+                              abilityFilter.eff,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey.shade600,
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey.shade200),
+                    ),
+                    padding: const EdgeInsets.all(4),
+                    child: Row(
+                      children: [
+                        _AbilityModeButton(
+                          label: 'All',
+                          isActive: abilityFilter.mode == 'all',
+                          onTap: () {
+                            final c = ref.read(toolAbilityFilterProvider);
+                            if (c != null && c.mode != 'all') {
+                              ref.read(toolAbilityFilterProvider.notifier).state = (
+                                name: c.name, mode: 'all', allIds: c.allIds,
+                                normalIds: c.normalIds, hiddenIds: c.hiddenIds,
+                                flavor: c.flavor, eff: c.eff,
+                              );
+                            }
+                          },
+                        ),
+                        _AbilityModeButton(
+                          label: 'Normal',
+                          isActive: abilityFilter.mode == 'normal',
+                          onTap: () {
+                            final c = ref.read(toolAbilityFilterProvider);
+                            if (c != null && c.mode != 'normal') {
+                              ref.read(toolAbilityFilterProvider.notifier).state = (
+                                name: c.name, mode: 'normal', allIds: c.allIds,
+                                normalIds: c.normalIds, hiddenIds: c.hiddenIds,
+                                flavor: c.flavor, eff: c.eff,
+                              );
+                            }
+                          },
+                        ),
+                        _AbilityModeButton(
+                          label: 'Hidden',
+                          isActive: abilityFilter.mode == 'hidden',
+                          onTap: () {
+                            final c = ref.read(toolAbilityFilterProvider);
+                            if (c != null && c.mode != 'hidden') {
+                              ref.read(toolAbilityFilterProvider.notifier).state = (
+                                name: c.name, mode: 'hidden', allIds: c.allIds,
+                                normalIds: c.normalIds, hiddenIds: c.hiddenIds,
+                                flavor: c.flavor, eff: c.eff,
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          const Expanded(child: PokemonGrid()),
         ],
+      ),
+    ),
+    );
+  }
+}
+
+class _AbilityModeButton extends StatelessWidget {
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _AbilityModeButton({
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          decoration: BoxDecoration(
+            color: isActive ? AppColors.primary : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: isActive ? Colors.white : Colors.grey.shade600,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
+}
+
+class _FilterPill extends StatelessWidget {
+  final String label;
+  final bool isActive;
+  final Color activeColor;
+  final VoidCallback onTap;
+
+  const _FilterPill({
+    required this.label,
+    required this.isActive,
+    this.activeColor = AppColors.primary,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isActive
+              ? activeColor.withValues(alpha: 0.1)
+              : Colors.grey.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isActive ? activeColor : Colors.grey.shade300,
+            width: isActive ? 1.5 : 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: isActive ? activeColor : Colors.grey.shade700,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PokeballIcon extends StatelessWidget {
+  final double size;
+
+  const _PokeballIcon({required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: CustomPaint(painter: _PokeballPainter()),
+    );
+  }
+}
+
+class _PokeballPainter extends CustomPainter {
+  static const _outlineColor = Color(0xFF303030);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    final bandHeight = size.height * 0.12;
+    final buttonRadius = radius * 0.34;
+
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      3.14159,
+      3.14159,
+      true,
+      Paint()..color = AppColors.primary,
+    );
+
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      0,
+      3.14159,
+      true,
+      Paint()..color = Colors.white,
+    );
+
+    canvas.drawRect(
+      Rect.fromLTWH(0, size.height / 2 - bandHeight / 2, size.width, bandHeight),
+      Paint()..color = _outlineColor,
+    );
+
+    canvas.drawCircle(center, buttonRadius, Paint()..color = _outlineColor);
+    canvas.drawCircle(
+        center, buttonRadius * 0.66, Paint()..color = Colors.white);
+    canvas.drawCircle(
+        center, buttonRadius * 0.28, Paint()..color = _outlineColor);
+
+    canvas.drawCircle(
+      center,
+      radius - 0.75,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.5
+        ..color = _outlineColor,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Release builds do not inherit the debug manifest's INTERNET permission;
+         the app fetches species/gender data from PokeAPI at runtime. -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="pokedex_flutter"
+        android:label="Pokédex"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -164,14 +164,19 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
               color: Colors.grey.shade200,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 26,
-                  backgroundColor: Colors.grey.shade300,
-                  child:
-                      Icon(Icons.catching_pokemon, color: Colors.grey.shade500),
-                ),
+              child: Row(
+                children: [
+                  // Empty slots match the filled square preview box size.
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                        Icons.catching_pokemon, color: Colors.grey.shade500),
+                  ),
                 const SizedBox(width: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,14 +216,30 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
               ),
               child: Row(
                 children: [
-                  Image.asset(
-                    PokemonHelpers.getThumbnailAssetPath(id),
-                    width: 52,
-                    height: 52,
-                    errorBuilder: (_, _, _) => Icon(
-                        Icons.catching_pokemon,
-                        size: 40,
-                        color: Colors.grey.shade400),
+                  // Square preview box with Pokemon Home artwork.
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.7),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.all(4),
+                    child: Image.asset(
+                      PokemonHelpers.getHomeAssetPath(id),
+                      fit: BoxFit.contain,
+                      cacheWidth: PokemonHelpers.cacheWidth(context, 64),
+                      errorBuilder: (context, error, stackTrace) =>
+                          Image.asset(
+                        PokemonHelpers.getThumbnailAssetPath(id),
+                        fit: BoxFit.contain,
+                        cacheWidth: PokemonHelpers.cacheWidth(context, 52),
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                            Icons.catching_pokemon,
+                            size: 36,
+                            color: Colors.grey.shade400),
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(

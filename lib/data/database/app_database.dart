@@ -189,6 +189,10 @@ class AppDatabase extends _$AppDatabase {
 
   Future<int> insertTeam(TeamsCompanion entry) => into(teams).insert(entry);
 
+  /// Re-inserts a previously deleted team (undo support), preserving its id.
+  Future<void> restoreTeam(Team team) =>
+      into(teams).insert(team, mode: InsertMode.insertOrReplace);
+
   Future<void> updateTeam(int id, TeamsCompanion entry) {
     return (update(teams)..where((t) => t.id.equals(id))).write(entry);
   }

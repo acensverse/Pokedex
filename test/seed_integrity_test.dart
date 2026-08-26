@@ -61,19 +61,21 @@ void main() {
               reason: 'entry $id field "$statKey" out of range');
         }
 
-        // Physical stats in metres/kg. Base species must be positive;
-        // alternate forms (id >= 10001) may legitimately be 0, e.g. the
-        // "???" weight of Eternamax Eternatus (form of #890).
-        expect(item['height'], isA<double>());
-        expect(item['weight'], isA<double>());
+        // Physical stats in metres/kg. JSON decodes whole numbers (e.g. "1")
+        // as int and fractions as double, so accept any num — the repository
+        // normalizes via (as num?)?.toDouble().
+        // Base species must be positive; alternate forms (id >= 10001) may
+        // legitimately be 0, e.g. the "???" weight of Eternamax Eternatus.
+        expect(item['height'], isA<num>());
+        expect(item['weight'], isA<num>());
         if (id < 10001) {
-          expect(item['height'] as double, greaterThan(0),
+          expect((item['height'] as num).toDouble(), greaterThan(0),
               reason: 'base species $id has non-positive height');
-          expect(item['weight'] as double, greaterThan(0),
+          expect((item['weight'] as num).toDouble(), greaterThan(0),
               reason: 'base species $id has non-positive weight');
         } else {
-          expect(item['height'] as double, greaterThanOrEqualTo(0));
-          expect(item['weight'] as double, greaterThanOrEqualTo(0));
+          expect((item['height'] as num).toDouble(), greaterThanOrEqualTo(0));
+          expect((item['weight'] as num).toDouble(), greaterThanOrEqualTo(0));
         }
 
         // Abilities: non-empty comma-separated slugs

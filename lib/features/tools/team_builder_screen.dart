@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/theme/app_colors.dart';
 import '../../core/providers.dart';
 import '../../core/utils/pokemon_helpers.dart';
+import '../pokedex/widgets/tools_sheet.dart';
 import '../../data/database/app_database.dart';
 
 /// Team list with search; swipe to delete, FAB to create.
@@ -25,11 +26,8 @@ class _TeamBuilderScreenState extends ConsumerState<TeamBuilderScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text('Team builder',
-            style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w900,
-                fontSize: 24)),
+        automaticallyImplyLeading: false,
+        title: const ToolsSheetTitle(label: 'Team builder'),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
@@ -110,14 +108,20 @@ class _TeamBuilderScreenState extends ConsumerState<TeamBuilderScreen> {
       ),
       onDismissed: (_) async {
         final messenger = ScaffoldMessenger.of(context);
-        final name = team.name;
-        await ref.read(databaseProvider).deleteTeam(team.id);
+        final db = ref.read(databaseProvider);
+        await db.deleteTeam(team.id);
         if (!mounted) return;
-        messenger.showSnackBar(SnackBar(content: Text('"$name" deleted')));
+        messenger.showSnackBar(SnackBar(
+          content: Text('"${team.name}" deleted'),
+          action: SnackBarAction(
+            label: 'Undo',
+            onPressed: () => db.restoreTeam(team),
+          ),
+        ));
       },
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () => context.push('/tools/teams/new?id=${team.id}'),
+        onTap: () => context.push('/tools/teams/detail?id=${team.id}'),
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(16),
@@ -132,7 +136,9 @@ class _TeamBuilderScreenState extends ConsumerState<TeamBuilderScreen> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.w800)),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.black)),
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 width: 44,
@@ -144,14 +150,18 @@ class _TeamBuilderScreenState extends ConsumerState<TeamBuilderScreen> {
                     style:
                         TextStyle(fontSize: 12, color: Colors.grey.shade500))
               else
-                SizedBox(
-                  height: 76,
-                  child: Row(
-                    children: [
-                      for (final id in members)
-                        Expanded(child: _MemberBox(pokemonId: id)),
-                    ],
-                  ),
+                // Equal-width squares shrink to fit: all members always on
+                // one line, no scrolling, no overflow.
+                Row(
+                  children: [
+                    for (final id in members)
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 6),
+                          child: _MemberBox(pokemonId: id),
+                        ),
+                      ),
+                  ],
                 ),
             ],
           ),
@@ -169,44 +179,60 @@ class _MemberBox extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final db = ref.watch(databaseProvider);
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: FutureBuilder<PokemonCacheData?>(
-        future: db.getPokemonById(pokemonId),
-        builder: (context, snapshot) {
-          final row = snapshot.data;
-          final tint = row == null
-              ? Colors.grey.shade200
-              : AppColors.getTypeColor(row.types.split(',').first.trim())
-                  .withValues(alpha: 0.25);
-          return GestureDetector(
-            onTap: () => context.push('/pokemon/$pokemonId'),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
+    return FutureBuilder<PokemonCacheData?>(
+      future: db.getPokemonById(pokemonId),
+      builder: (context, snapshot) {
+        final row = snapshot.data;
+        final tint = row == null
+            ? Colors.grey.shade200
+            : AppColors.getTypeColor(row.types.split(',').first.trim())
+                .withValues(alpha: 0.18);
+        return GestureDetector(
+          onTap: () => context.push('/pokemon/$pokemonId'),
+          child: AspectRatio(
+            aspectRatio: 1,
+            child: Container(
+              decoration: BoxDecoration(
                 color: tint,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Center(
-                      child: Icon(Icons.catching_pokemon,
-                          size: 44, color: Colors.white.withValues(alpha: 0.5)),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade300, width: 1),
+              ),
+              child: Stack(
+                children: [
+                  // Faint pokeball watermark, clipped top-right.
+                  Positioned(
+                    right: -7,
+                    top: -7,
+                    child: Icon(
+                      Icons.catching_pokemon,
+                      size: 34,
+                      color: Colors.white.withValues(alpha: 0.55),
                     ),
-                    Center(
-                      child: Image.asset(
+                  ),
+                  Center(
+                    child: Image.asset(
+                      // Pokemon Home 3D artwork, thumbnail fallback.
+                      PokemonHelpers.getHomeAssetPath(pokemonId),
+                      fit: BoxFit.contain,
+                      cacheWidth: PokemonHelpers.cacheWidth(context, 46),
+                      errorBuilder: (context, error, stackTrace) =>
+                          Image.asset(
                         PokemonHelpers.getThumbnailAssetPath(pokemonId),
                         fit: BoxFit.contain,
-                        errorBuilder: (_, _, _) =>
-                            const SizedBox.shrink(),
+                        cacheWidth: PokemonHelpers.cacheWidth(context, 40),
+                        errorBuilder: (context, error, stackTrace) => Icon(
+                            Icons.catching_pokemon,
+                            size: 22,
+                            color: Colors.grey.shade400),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

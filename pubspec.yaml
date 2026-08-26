@@ -32,6 +32,18 @@ dev_dependencies:
   # Pinned below 2.34.1+1: newer drift_dev requires analyzer ^13 which
   # conflicts with freezed 3.x (analyzer <11).
   drift_dev: ^2.34.0
+  flutter_launcher_icons: ^0.14.4
+  image: 4.9.2
+flutter_launcher_icons:
+  image_path: "assets/icon/pokedex.png"
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  windows:
+    generate: true
+    icon_size: 48
+  web:
+    generate: true
 
 flutter:
   uses-material-design: true
@@ -41,3 +53,7 @@ flutter:
     - assets/home_shiny/
     - assets/types/
     - assets/pokedex_seed.json
+    - assets/moves_seed.json
+    - assets/items_seed.json
+    - assets/abilities_seed.json
+    - assets/natures_seed.json

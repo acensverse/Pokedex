@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/providers.dart';
-import '../../../core/utils/pokemon_helpers.dart';
-import '../../../core/utils/type_icons.dart';
 import '../../../models/pokemon.dart';
+import '../../pokedex/widgets/pokemon_card.dart';
 
-/// Modal sheet with a search field over the full local dex; returns the
-/// picked [Pokemon] via Navigator.pop.
+/// Modal sheet with a search field over the full local dex, rendered with
+/// the same cards as the home Pokedex grid; returns the picked [Pokemon]
+/// via Navigator.pop.
 class PokemonPickerSheet extends ConsumerStatefulWidget {
   const PokemonPickerSheet({super.key});
 
@@ -35,7 +35,7 @@ class _PokemonPickerSheetState extends ConsumerState<PokemonPickerSheet> {
     final listAsync = ref.watch(localPokemonListProvider);
     return Container(
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: AppColors.background,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
@@ -59,7 +59,7 @@ class _PokemonPickerSheetState extends ConsumerState<PokemonPickerSheet> {
                 hintText: 'Search for a Pok\u00e9mon...',
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
-                fillColor: Colors.grey.shade200,
+                fillColor: Colors.white,
                 contentPadding: EdgeInsets.zero,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
@@ -83,38 +83,15 @@ class _PokemonPickerSheetState extends ConsumerState<PokemonPickerSheet> {
                   return const Center(child: Text('No matches'));
                 }
                 return ListView.builder(
+                  padding: const EdgeInsets.only(bottom: 16),
                   itemCount: results.length,
                   itemBuilder: (context, i) {
                     final p = results[i];
-                    return ListTile(
-                      leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          PokemonHelpers.getThumbnailAssetPath(p.id),
-                          width: 44,
-                          height: 44,
-                          errorBuilder: (_, _, _) =>
-                              Icon(Icons.catching_pokemon, size: 32, color: Colors.grey.shade400),
-                        ),
-                      ),
-                      title: Text(
-                        PokemonHelpers.formatName(p.name),
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      subtitle: Text('#${p.id.toString().padLeft(4, '0')}'),
-                      trailing: Wrap(
-                        spacing: 4,
-                        children: [
-                          for (final t in p.types)
-                            CircleAvatar(
-                              radius: 9,
-                              backgroundColor:
-                                  AppColors.getTypeColor(t.type.name),
-                              child: Icon(kTypeIcons[t.type.name],
-                                  size: 11, color: Colors.white),
-                            ),
-                        ],
-                      ),
+                    // Same cards as the home Pokedex grid; tap returns the
+                    // Pokemon to the caller instead of navigating.
+                    return PokemonCard(
+                      pokemon: p,
+                      showHero: false,
                       onTap: () => Navigator.pop(context, p),
                     );
                   },

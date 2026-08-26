@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../app/theme/app_colors.dart';
 
 /// Bottom sheet listing all 18 types; pops with the picked type name,
-/// an empty string for CLEAR, or null when dismissed.
+/// an empty string for CLEAR, or null when dismissed. [selectedType] gets
+/// a thick border highlight.
 class TypePickerSheet extends StatelessWidget {
   final String title;
+  final String? selectedType;
   final void Function(String type)? onSelected;
 
-  const TypePickerSheet({super.key, required this.title, this.onSelected});
+  const TypePickerSheet({
+    super.key,
+    required this.title,
+    this.selectedType,
+    this.onSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +57,7 @@ class TypePickerSheet extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
-            childAspectRatio: 3.0,
+            childAspectRatio: 2.4,
             children: [
               for (final t in AppColors.typeColors.keys)
                 Material(
@@ -60,18 +68,36 @@ class TypePickerSheet extends StatelessWidget {
                     onTap: () => Navigator.pop(context, t),
                     child: Container(
                       height: double.infinity,
-                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
                       decoration: BoxDecoration(
-                        color: AppColors.getTypeColor(t),
+                        color: AppColors.getTypeColor(t).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        '${t[0].toUpperCase()}${t.substring(1)}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
+                        border: Border.all(
+                          color: t == selectedType
+                              ? AppColors.getTypeColor(t)
+                              : Colors.transparent,
+                          width: 2.5,
                         ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset('assets/types/$t.svg',
+                              width: 22, height: 22),
+                          const SizedBox(width: 5),
+                          Flexible(
+                            child: Text(
+                              '${t[0].toUpperCase()}${t.substring(1)}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: AppColors.getTypeColor(t),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12.5,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

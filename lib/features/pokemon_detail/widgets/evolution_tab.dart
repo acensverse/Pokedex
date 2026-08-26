@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,119 +22,107 @@ class EvoNode {
   });
 }
 
-final evolutionChainProvider = FutureProvider.family<EvoNode, int>((ref, speciesId) async {
-  // Reuse the shared DioClient (has connect/receive timeouts) instead of a raw Dio()
-  final dio = ref.watch(dioClientProvider).dio;
+/// Builds the evolution tree from the baked seed data
+/// (evolutionInfo: [{id, name, evolves_from, condition}]) — fully offline.
+/// Node models resolve from the seeded SQLite cache (cache-first).
+final evolutionChainProvider = FutureProvider.family<EvoNode?, String>(
+    (ref, evolutionInfoJson) async {
+  final entries = (jsonDecode(evolutionInfoJson) as List? ?? const [])
+      .cast<Map>()
+      .map((e) => {
+            'id': e['id'] as int,
+            'name': (e['name'] ?? '') as String,
+            'evolves_from': e['evolves_from'] as int?,
+            'condition': (e['condition'] ?? '') as String,
+          })
+      .toList();
+  if (entries.isEmpty) return null;
 
-  // 1. Get species to find evolution chain URL
-  final speciesRes = await dio.get('https://pokeapi.co/api/v2/pokemon-species/$speciesId');
-  final speciesData = speciesRes.data;
-  final chainUrl = (speciesData is Map)
-      ? (speciesData['evolution_chain']?['url'] as String?)
-      : null;
-  if (chainUrl == null || chainUrl.isEmpty) {
-    throw StateError('No evolution chain available for this Pokémon.');
+  // Create nodes, then link children to their parents.
+  final nodes = <int, EvoNode>{
+    for (final e in entries)
+      e['id'] as int: EvoNode(
+        pokemonId: e['id'] as int,
+        condition: e['condition'] as String,
+        evolvesTo: [],
+      ),
+  };
+  EvoNode? root;
+  for (final e in entries) {
+    final node = nodes[e['id'] as int]!;
+    final from = e['evolves_from'] as int?;
+    if (from == null) {
+      root ??= node;
+    } else {
+      nodes[from]?.evolvesTo.add(node);
+    }
   }
+  if (root == null) return null;
 
-  // 2. Get chain
-  final chainRes = await dio.get(chainUrl);
-
-  // 3. Parse tree
-  int extractId(String url) {
-    final segments = Uri.tryParse(url)?.pathSegments.where((s) => s.isNotEmpty).toList() ?? const [];
-    for (final segment in segments.reversed) {
-      final id = int.tryParse(segment);
-      if (id != null && id > 0) return id;
-    }
-    return -1;
-  }
-
-  List<EvoNode> parseNode(Map<String, dynamic> json) {
-    final sId = extractId(json['species']?['url'] ?? '');
-    final detailsList = json['evolution_details'] as List? ?? [];
-    
-    // Parse children
-    final evolvesToData = json['evolves_to'] as List? ?? [];
-    final List<EvoNode> children = [];
-    for (var childJson in evolvesToData) {
-      children.addAll(parseNode(childJson));
-    }
-
-    if (detailsList.isEmpty) {
-      return [EvoNode(pokemonId: sId, condition: '', evolvesTo: children)];
-    }
-
-    final List<EvoNode> resultNodes = [];
-    for (var d in detailsList) {
-      final pId = sId;
-
-      String condition = '';
-      final trigger = d['trigger']?['name'];
-      if (trigger == 'level-up') {
-        if (d['min_level'] != null) {
-          condition = 'Level ${d['min_level']}';
-        } else if (d['min_happiness'] != null) {
-          condition = 'Happiness';
-        } else {
-          condition = 'Level Up';
-        }
-      } else if (trigger == 'use-item') {
-        condition = 'Use ${PokemonHelpers.formatName(d['item']?['name'] ?? 'item')}';
-      } else if (trigger == 'trade') {
-        condition = 'Trade';
-      } else {
-        condition = PokemonHelpers.formatName(trigger ?? 'Evolve');
-      }
-      
-      if (d['time_of_day'] == 'day') condition += '\nat Daytime';
-      if (d['time_of_day'] == 'night') condition += '\nat Nighttime';
-      if (d['needs_overworld_rain'] == true) condition += '\nduring rain';
-      if (d['known_move_type'] != null) condition += '\nknowing ${d['known_move_type']['name'].toString().toUpperCase()} move';
-      if (d['region'] != null) condition += '\nin ${PokemonHelpers.formatName(d['region']['name'])}';
-      if (d['held_item'] != null) condition += '\nholding ${PokemonHelpers.formatName(d['held_item']['name'])}';
-      
-      resultNodes.add(EvoNode(pokemonId: pId, condition: condition, evolvesTo: children));
-    }
-    
-    return resultNodes;
-  }
-  
-  final rootNodes = parseNode(chainRes.data['chain']);
-  final root = rootNodes.first;
-  
-  // 4. Resolve Pokemon models
+  // Resolve display models from the seeded DB (cache-first, no network).
   final repo = ref.read(pokemonRepositoryProvider);
-  
+  final entryById = {for (final e in entries) e['id'] as int: e};
+
   Future<void> resolveModels(EvoNode node) async {
     try {
       node.pokemon = await repo.getPokemonDetails(node.pokemonId);
-    } catch (e, st) {
-      debugPrint('Error resolving evolution node ${node.pokemonId}: $e\n$st');
+    } catch (_) {
+      // Fallback: minimal model from the baked entry so the node still
+      // renders (grey card, name, no type pills).
+      final entry = entryById[node.pokemonId];
+      node.pokemon = Pokemon(
+        id: node.pokemonId,
+        speciesId: node.pokemonId,
+        name: (entry?['name'] as String?) ?? '',
+        height: 0,
+        weight: 0,
+        types: const [],
+        stats: const [],
+        abilities: const [],
+        moves: const [],
+      );
     }
-    for (var child in node.evolvesTo) {
+    for (final child in node.evolvesTo) {
       await resolveModels(child);
     }
   }
-  
+
   await resolveModels(root);
   return root;
 });
 
 class EvolutionTab extends ConsumerWidget {
-  final int speciesId;
-  const EvolutionTab({super.key, required this.speciesId});
+  final String evolutionInfoJson;
+  final Widget? header;
+
+  const EvolutionTab({
+    super.key,
+    required this.evolutionInfoJson,
+    this.header,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncChain = ref.watch(evolutionChainProvider(speciesId));
+    final asyncChain = ref.watch(evolutionChainProvider(evolutionInfoJson));
 
-    return asyncChain.when(
-      data: (root) => _buildChainContent(context, root),
-      loading: () => const Center(child: CircularProgressIndicator(color: Colors.white)),
-      error: (e, st) => Center(child: Text('Error: $e', style: const TextStyle(color: Colors.white))),
+    return Column(
+      children: [
+        if (header != null) header!,
+        Expanded(
+          child: asyncChain.when(
+            data: (root) => root == null
+                ? const Center(
+                    child: Text('No evolution chain available.',
+                        style: TextStyle(color: Colors.white70)),
+                  )
+                : _buildChainContent(context, root),
+            loading: () => const Center(child: CircularProgressIndicator(color: Colors.white)),
+            error: (e, st) => Center(child: Text('Error: $e', style: const TextStyle(color: Colors.white))),
+          ),
+        ),
+      ],
     );
   }
-
   Widget _buildChainContent(BuildContext context, EvoNode root) {
     // If it's Eevee (id 133) and has 8 evolutions, we use a radial/grid layout
     if (root.pokemonId == 133 && root.evolvesTo.length == 8) {
@@ -141,6 +131,7 @@ class EvolutionTab extends ConsumerWidget {
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
+      physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
       child: _buildTree(context, root),
     );
@@ -296,9 +287,11 @@ class EvolutionTab extends ConsumerWidget {
                   child: Image.asset(
                     PokemonHelpers.getHomeAssetPath(pokemon.id),
                     height: 80,
+                    cacheWidth: PokemonHelpers.cacheWidth(context, 80),
                     errorBuilder: (_, _, _) => Image.asset(
                       PokemonHelpers.getThumbnailAssetPath(pokemon.id),
                       height: 80,
+                      cacheWidth: PokemonHelpers.cacheWidth(context, 80),
                     ),
                   ),
                 ),

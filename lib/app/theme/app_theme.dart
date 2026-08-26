@@ -15,6 +15,11 @@ class AppTheme {
       colorScheme: scheme,
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.background,
+      // Kill tap feedback app-wide: no ripple, highlight or hover tint.
+      splashFactory: NoSplash.splashFactory,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      hoverColor: Colors.transparent,
       textTheme: const TextTheme(
         titleLarge: AppTypography.titleLarge,
         titleMedium: AppTypography.titleMedium,
@@ -26,6 +31,7 @@ class AppTheme {
         backgroundColor: AppColors.background,
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: false,
       ),
       switchTheme: SwitchThemeData(

@@ -14,6 +14,61 @@ class _ToolAction {
 
 const Color _sheetRed = AppColors.primary;
 
+/// Tappable tool-screen header title (label + dropdown dot) that opens the
+/// tools menu sheet — same behavior as the POKEDEX title on the home screen.
+class ToolsSheetTitle extends StatelessWidget {
+  final String label;
+
+  const ToolsSheetTitle({super.key, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: 'Open tools menu',
+      child: GestureDetector(
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => const ToolsSheet(),
+          );
+        },
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w900,
+                fontSize: 24,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              width: 22,
+              height: 22,
+              decoration: const BoxDecoration(
+                color: AppColors.primary,
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.keyboard_arrow_down,
+                  color: Colors.white,
+                  size: 16,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// Bottom sheet opened from the POKEDEX header title.
 class ToolsSheet extends StatelessWidget {
   const ToolsSheet({super.key});
@@ -38,13 +93,13 @@ class ToolsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gridTools = [
-      _ToolAction('Moves', Icons.shield, const [Color(0xFFF57C00), Color(0xFFFFCA28)]),
-      _ToolAction('Abilities', Icons.diamond, const [Color(0xFF26A69A), Color(0xFF66BB6A)]),
-      _ToolAction('Natures', Icons.eco, const [Color(0xFF1E88E5), Color(0xFF26C6DA)]),
-      _ToolAction('Items', Icons.backpack, const [Color(0xFF2196F3), Color(0xFF00BCD4)]),
+      _ToolAction('Moves', Icons.shield, const [Color(0xFFF57C00), Color(0xFFFFCA28)], '/tools/moves'),
+      _ToolAction('Abilities', Icons.diamond, const [Color(0xFF26A69A), Color(0xFF66BB6A)], '/tools/abilities'),
+      _ToolAction('Natures', Icons.eco, const [Color(0xFF1E88E5), Color(0xFF26C6DA)], '/tools/natures'),
+      _ToolAction('Items', Icons.backpack, const [Color(0xFF2196F3), Color(0xFF00BCD4)], '/tools/items'),
       _ToolAction('Locations', Icons.place, const [Color(0xFFEC407A), Color(0xFF8E24AA)]),
       _ToolAction('Types', Icons.layers, const [Color(0xFF3949AB), Color(0xFF7E57C2)], '/tools/types'),
-      _ToolAction('Trainers', Icons.workspace_premium, const [Color(0xFFF4511E), Color(0xFFD81B60)]),
+      _ToolAction('Team Builder', Icons.hub, const [Color(0xFFCDDC39), Color(0xFF26A69A)], '/tools/teams'),
       _ToolAction(
           'Comparator', Icons.compare_arrows, const [Color(0xFFBA68C8), Color(0xFF7E57C2)], '/tools/comparator'),
     ];
@@ -81,7 +136,10 @@ class ToolsSheet extends StatelessWidget {
               icon: Icons.catching_pokemon,
               colors: const [Color(0xFFEF5350), _sheetRed],
               height: 56,
-              onTap: () => Navigator.of(context).pop(),
+              onTap: () {
+                Navigator.of(context).pop();
+                GoRouter.of(context).go('/');
+              },
             ),
             const SizedBox(height: AppSpacing.md),
             GridView.count(
@@ -100,38 +158,6 @@ class ToolsSheet extends StatelessWidget {
                     onTap: () => _handle(context, tool),
                   ),
               ],
-            ),
-            const SizedBox(height: AppSpacing.lg - 4),
-            Column(
-              children: [
-                const Text(
-                  'Trainer tools',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-                ),
-                const SizedBox(height: 6),
-                Container(width: 64, height: 3, color: _sheetRed),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            _SheetButton(
-              label: 'Team Builder',
-              icon: Icons.hub,
-              colors: const [Color(0xFFCDDC39), Color(0xFF26A69A)],
-              height: 54,
-              onTap: () => _handle(
-                context,
-                const _ToolAction('Team Builder', Icons.hub,
-                    [Color(0xFFCDDC39), Color(0xFF26A69A)], '/tools/teams'),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm + 2),
-            _SheetButton(
-              label: 'My Pok\u00e9dex',
-              icon: Icons.fact_check,
-              colors: const [Color(0xFFFF9800), Color(0xFFEC407A)],
-              height: 54,
-              onTap: () => _handle(context, const _ToolAction(
-                  'My Pok\u00e9dex', Icons.fact_check, [Colors.orange, Colors.pink])),
             ),
             const SizedBox(height: AppSpacing.md),
           ],
@@ -191,13 +217,16 @@ class _SheetButton extends StatelessWidget {
                   ),
                 ),
                 Center(
-                  child: Text(
-                    label.toUpperCase(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1.1,
-                      fontSize: 15,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      label.toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.1,
+                        fontSize: 15,
+                      ),
                     ),
                   ),
                 ),

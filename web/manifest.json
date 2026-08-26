@@ -1,11 +1,11 @@
 {
-    "name": "pokedex_flutter",
-    "short_name": "pokedex_flutter",
+    "name": "Pokédex",
+    "short_name": "Pokédex",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "An offline-first Pokédex.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
