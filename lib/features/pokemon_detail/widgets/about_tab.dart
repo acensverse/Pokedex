@@ -175,9 +175,8 @@ class AboutTab extends ConsumerWidget {
                     final abilityName = rawName.split(' ').map((w) => w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '').join(' ');
                     return GestureDetector(
                       onTap: () async {
-                        final seed = ref.read(abilitiesSeedProvider).value;
-                        if (seed == null) return;
-                        final slug = a.ability.name;
+                        final seed = await ref.read(abilitiesSeedProvider.future);
+                        final slug = a.ability.name.toLowerCase().replaceAll(' ', '-');
                         final match = seed.firstWhere(
                           (e) => e['name'] == slug,
                           orElse: () => {},
