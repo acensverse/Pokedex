@@ -313,6 +313,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
   @override
   Widget build(BuildContext context) {
     final isShiny = ref.watch(shinyModeProvider);
+    final isFavorite = ref.watch(favoriteIdsProvider).value?.contains(widget.pokemon.id) ?? false;
     final pokemon = widget.pokemon;
     final primaryType = pokemon.types.isNotEmpty
         ? pokemon.types.first.type.name
@@ -487,6 +488,16 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                     ),
                     Row(
                       children: [
+                        _GlassButton(
+                          icon: isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: isFavorite ? Colors.redAccent : Colors.white,
+                          onTap: () {
+                            ref
+                                .read(pokemonRepositoryProvider)
+                                .toggleFavorite(pokemon.id, !isFavorite);
+                          },
+                        ),
+                        const SizedBox(width: 12),
                         _GlassButton(
                           icon: LucideIcons.sparkles,
                           color: isShiny ? Colors.amber : Colors.white,

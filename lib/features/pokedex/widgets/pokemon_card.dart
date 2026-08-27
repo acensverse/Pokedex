@@ -6,6 +6,7 @@ import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../core/utils/pokemon_helpers.dart';
 import '../../../models/pokemon.dart';
+import '../../../core/providers.dart';
 import '../pokedex_provider.dart';
 
 class PokemonCard extends ConsumerWidget {
@@ -28,6 +29,7 @@ class PokemonCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isShiny = ref.watch(shinyModeProvider);
+    final isFavorite = ref.watch(favoriteIdsProvider).value?.contains(pokemon.id) ?? false;
     final primaryType = pokemon.types.isNotEmpty
         ? pokemon.types.first.type.name
         : 'normal';
@@ -192,14 +194,23 @@ class PokemonCard extends ConsumerWidget {
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 4),
-                                      child: Icon(
-                                        Icons.favorite_border,
-                                        color: Colors.white.withValues(
-                                          alpha: 0.6,
+                                    GestureDetector(
+                                      onTap: () {
+                                        ref
+                                            .read(pokemonRepositoryProvider)
+                                            .toggleFavorite(pokemon.id, !isFavorite);
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(right: 4),
+                                        child: Icon(
+                                          isFavorite
+                                              ? Icons.favorite
+                                              : Icons.favorite_border,
+                                          color: isFavorite
+                                              ? Colors.redAccent
+                                              : Colors.white.withValues(alpha: 0.6),
+                                          size: 20,
                                         ),
-                                        size: 20,
                                       ),
                                     ),
                                   ],
