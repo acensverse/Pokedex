@@ -91,6 +91,9 @@ class ChampionsDataService {
 
 
   void _injectMissingForms(List rosterRaw) {
+    final meowsticBase = rosterRaw.firstWhere((r) => r['name'] == 'Meowstic', orElse: () => null);
+    final meowsticMega = rosterRaw.firstWhere((r) => r['name'] == 'Mega Meowstic', orElse: () => null);
+
     final missingForms = [
       {'name': 'Blaze Breed Paldean Tauros', 'dexNumber': 128, 'types': ['Fighting', 'Fire'], 'form': 'Regional'},
       {'name': 'Aqua Breed Paldean Tauros', 'dexNumber': 128, 'types': ['Fighting', 'Water'], 'form': 'Regional'},
@@ -103,7 +106,15 @@ class ChampionsDataService {
       {'name': 'Mega Raichu Y', 'dexNumber': 26, 'types': ['Electric', 'Fairy'], 'form': 'Mega'},
       {'name': 'Midnight Lycanroc', 'dexNumber': 745, 'types': ['Rock'], 'form': 'Regional'},
       {'name': 'Dusk Lycanroc', 'dexNumber': 745, 'types': ['Rock'], 'form': 'Regional'},
+      {'name': 'Male Meowstic', 'dexNumber': 678, 'types': ['Psychic'], 'form': 'Base', if (meowsticBase != null) 'abilities': meowsticBase['abilities']},
+      {'name': 'Female Meowstic', 'dexNumber': 678, 'types': ['Psychic'], 'form': 'Base', if (meowsticBase != null) 'abilities': meowsticBase['abilities']},
+      {'name': 'Mega Meowstic Male', 'dexNumber': 678, 'types': ['Psychic'], 'form': 'Mega', if (meowsticMega != null) 'abilities': meowsticMega['abilities']},
+      {'name': 'Mega Meowstic Female', 'dexNumber': 678, 'types': ['Psychic'], 'form': 'Mega', if (meowsticMega != null) 'abilities': meowsticMega['abilities']},
     ];
+    
+    // Remove generic un-gendered meowstic to avoid duplicates/broken images
+    rosterRaw.removeWhere((r) => r['name'] == 'Meowstic' || r['name'] == 'Mega Meowstic');
+
     for (final m in missingForms) {
       if (!rosterRaw.any((r) => r['name'] == m['name'])) {
         rosterRaw.add(m);
@@ -184,7 +195,14 @@ class ChampionsDataService {
         }
       }
 
-      final s = statsMap[lowerName] ?? {};
+      var statsName = lowerName;
+      if (statsName == 'male meowstic' || statsName == 'female meowstic') {
+        statsName = 'meowstic';
+      } else if (statsName == 'mega meowstic male' || statsName == 'mega meowstic female') {
+        statsName = 'mega meowstic';
+      }
+
+      final s = statsMap[statsName] ?? {};
 
       final typesList =
           (r['types'] as List?)
@@ -418,17 +436,29 @@ class ChampionsDataService {
         } else if (mappingName == 'lycanroc') {
           mappingName = 'midday lycanroc';
         }
-        var pId = nameToIdMap[mappingName];
-        if (pId == null) {
-          // Find fallback ID from rosterRaw
-          final rIndex = rosterRaw.indexWhere((r) => (r['name'] as String).toLowerCase() == lowerPokemonName);
-          if (rIndex >= 0) {
-            final r = rosterRaw[rIndex];
-            pId = r['form'] == 'Base' ? r['dexNumber'] as int : 10000 + (r['dexNumber'] as int) + rIndex;
+        
+        List<int> pIds = [];
+        
+        if (mappingName == 'meowstic') {
+          if (nameToIdMap['male meowstic'] != null) pIds.add(nameToIdMap['male meowstic']!);
+          if (nameToIdMap['female meowstic'] != null) pIds.add(nameToIdMap['female meowstic']!);
+        } else if (mappingName == 'mega meowstic') {
+          if (nameToIdMap['mega meowstic male'] != null) pIds.add(nameToIdMap['mega meowstic male']!);
+          if (nameToIdMap['mega meowstic female'] != null) pIds.add(nameToIdMap['mega meowstic female']!);
+        } else {
+          var pId = nameToIdMap[mappingName];
+          if (pId == null) {
+            // Find fallback ID from rosterRaw
+            final rIndex = rosterRaw.indexWhere((r) => (r['name'] as String).toLowerCase() == lowerPokemonName);
+            if (rIndex >= 0) {
+              final r = rosterRaw[rIndex];
+              pId = r['form'] == 'Base' ? r['dexNumber'] as int : 10000 + (r['dexNumber'] as int) + rIndex;
+            }
           }
+          if (pId != null) pIds.add(pId);
         }
         
-        if (pId != null) {
+        for (final pId in pIds) {
           for (final moveObj in data['moves']) {
             if (moveObj is Map && moveObj['name'] is String) {
               final moveName = (moveObj['name'] as String).toLowerCase();
