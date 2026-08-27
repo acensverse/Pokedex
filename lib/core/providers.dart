@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import '../data/database/app_database.dart';
 import '../data/api/dio_client.dart';
 import '../data/api/poke_api.dart';

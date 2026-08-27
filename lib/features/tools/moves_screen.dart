@@ -12,7 +12,6 @@ import '../../core/utils/pokemon_helpers.dart';
 import '../../core/utils/type_chart.dart';
 import '../pokedex/pokedex_provider.dart';
 import '../pokedex/widgets/tools_sheet.dart';
-import '../../core/providers.dart';
 
 
 class MoveEntry {

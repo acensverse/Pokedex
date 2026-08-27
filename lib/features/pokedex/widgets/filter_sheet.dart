@@ -141,6 +141,33 @@ class FilterSheet extends ConsumerWidget {
                     ],
                   ),
                 ),
+                const SizedBox(height: AppSpacing.md),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: FilledButton(
+                    onPressed: selectedTypes.isEmpty
+                        ? null
+                        : () {
+                            ref.read(selectedTypesProvider.notifier).state = [];
+                          },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      disabledBackgroundColor: Colors.grey.shade300,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: const Text(
+                      'Clear Filters',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),

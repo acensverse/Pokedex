@@ -8,7 +8,6 @@ import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_spacing.dart';
 import '../../core/utils/pokemon_helpers.dart';
 import '../pokedex/widgets/tools_sheet.dart';
-import '../../core/providers.dart';
 
 
 class ItemEntry {
