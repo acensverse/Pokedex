@@ -52,6 +52,7 @@ flutter:
     - assets/home/
     - assets/home_shiny/
     - assets/types/
+    - assets/images/
     - assets/pokedex_seed.json
     - assets/moves_seed.json
     - assets/items_seed.json

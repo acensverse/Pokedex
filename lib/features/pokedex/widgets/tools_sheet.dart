@@ -144,7 +144,7 @@ class ToolsSheet extends StatelessWidget {
             _SheetButton(
               label: 'Pok\u00e9mon Champions',
               icon: Icons.emoji_events,
-              colors: const [Color(0xFFFFCA28), Color(0xFFFF8F00)],
+              bgImagePath: 'assets/images/pokemon_champions.png',
               height: 56,
               onTap: () {
                 Navigator.of(context).pop();
@@ -185,17 +185,19 @@ class ToolsSheet extends StatelessWidget {
 
 class _SheetButton extends StatelessWidget {
   final String label;
-  final IconData icon;
-  final List<Color> colors;
+  final IconData? icon;
+  final List<Color>? colors;
   final VoidCallback onTap;
   final double height;
+  final String? bgImagePath;
 
   const _SheetButton({
     required this.label,
-    required this.icon,
-    required this.colors,
+    this.icon,
+    this.colors,
     required this.onTap,
     this.height = 48,
+    this.bgImagePath,
   });
 
   @override
@@ -211,36 +213,49 @@ class _SheetButton extends StatelessWidget {
           child: Container(
             height: height,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
+              gradient: bgImagePath == null ? LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
-                colors: colors,
-              ),
+                colors: colors ?? [Colors.grey, Colors.grey],
+              ) : null,
+              image: bgImagePath != null ? DecorationImage(
+                image: AssetImage(bgImagePath!),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.3), BlendMode.darken),
+              ) : null,
               borderRadius: BorderRadius.circular(14),
             ),
             child: Stack(
               clipBehavior: Clip.none,
               fit: StackFit.expand,
               children: [
-                Positioned(
-                  right: -6,
-                  bottom: -height * 0.22,
-                  child: Icon(
-                    icon,
-                    size: height * 1.05,
-                    color: Colors.white.withValues(alpha: 0.35),
+                if (icon != null)
+                  Positioned(
+                    right: -6,
+                    bottom: -height * 0.22,
+                    child: Icon(
+                      icon,
+                      size: height * 1.05,
+                      color: Colors.white.withValues(alpha: 0.35),
+                    ),
                   ),
-                ),
                 Center(
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
                       label.toUpperCase(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.1,
                         fontSize: 15,
+                        shadows: bgImagePath != null ? [
+                          Shadow(
+                            color: Colors.black.withValues(alpha: 0.8),
+                            offset: const Offset(1, 1),
+                            blurRadius: 3,
+                          )
+                        ] : null,
                       ),
                     ),
                   ),
