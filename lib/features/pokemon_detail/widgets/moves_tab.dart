@@ -156,6 +156,7 @@ class _MovesTabState extends ConsumerState<MovesTab> {
           const SizedBox(height: 16),
           Expanded(
             child: SingleChildScrollView(
+              padding: EdgeInsets.only(bottom: 16 + MediaQuery.paddingOf(context).bottom),
               child: _buildMoveTable(currentMoves, isLevelUp: isLevelUp),
             ),
           ),

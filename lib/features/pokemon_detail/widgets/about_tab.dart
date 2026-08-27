@@ -111,7 +111,7 @@ class AboutTab extends ConsumerWidget {
         if (header != null) header!,
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 32.0),
+            padding: EdgeInsets.only(bottom: 32.0 + MediaQuery.paddingOf(context).bottom),
             child: Column(
               children: [
                 // Description

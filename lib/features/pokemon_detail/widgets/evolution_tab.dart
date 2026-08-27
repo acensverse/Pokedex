@@ -132,7 +132,7 @@ class EvolutionTab extends ConsumerWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       physics: const ClampingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+      padding: EdgeInsets.only(top: 32, bottom: 32 + MediaQuery.paddingOf(context).bottom, left: 24, right: 24),
       child: _buildTree(context, root),
     );
   }
@@ -204,7 +204,7 @@ class EvolutionTab extends ConsumerWidget {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+      padding: EdgeInsets.only(top: 16, bottom: 16 + MediaQuery.paddingOf(context).bottom, left: 16, right: 16),
       child: Column(
         children: [
           Row(

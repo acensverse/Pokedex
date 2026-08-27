@@ -280,6 +280,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
         'Unknown Pok\u00e9mon';
 
     return Scaffold(
+      extendBody: true,
       backgroundColor: const Color(0xFFBCAAA4),
       body: LayoutBuilder(builder: (context, constraints) {
         final fullHeader = Stack(
@@ -505,7 +506,8 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
           _navigateToPage(index);
         },
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         selectedItemColor: themeColor,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,

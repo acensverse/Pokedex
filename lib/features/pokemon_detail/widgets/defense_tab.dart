@@ -110,6 +110,7 @@ class DefenseTab extends StatelessWidget {
           const SizedBox(height: 16),
           Expanded(
             child: SingleChildScrollView(
+              padding: EdgeInsets.only(bottom: 16 + MediaQuery.paddingOf(context).bottom),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

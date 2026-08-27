@@ -145,7 +145,7 @@ class _StatsTabState extends State<StatsTab> {
         if (widget.header != null) widget.header!,
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.only(top: 0, bottom: 16, left: 24, right: 24),
+            padding: EdgeInsets.only(top: 0, bottom: 16 + MediaQuery.paddingOf(context).bottom, left: 24, right: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
