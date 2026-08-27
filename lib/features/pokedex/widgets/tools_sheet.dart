@@ -264,6 +264,12 @@ class ToolsSheet extends ConsumerWidget {
 }
 
 class _SheetButton extends StatelessWidget {
+  final String label;
+  final IconData? icon;
+  final String? customIconPath;
+  final List<Color>? colors;
+  final VoidCallback onTap;
+  final double height;
   final bool isActive;
 
   const _SheetButton({
