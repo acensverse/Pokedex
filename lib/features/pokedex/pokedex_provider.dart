@@ -147,7 +147,9 @@ class PokedexNotifier extends StateNotifier<PokedexState> {
       }
 
       state = state.copyWith(pokemonList: allPokemon, isLoading: false);
-    } catch (e) {
+    } catch (e, st) {
+      print('POKEDEX LOAD ERROR: $e');
+      print(st);
       state = state.copyWith(isLoading: false, hasError: true);
     }
   }

@@ -87,6 +87,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w900,
                       letterSpacing: 0.5,
+                      fontSize: isChampions ? 18 : null,
                     ),
                   ),
                   const SizedBox(width: 8),

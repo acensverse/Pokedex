@@ -39,6 +39,13 @@ class ChampionsDataService {
         final file = await _getFile(f);
         if (!await file.exists() || (await file.length()) == 0) return false;
       }
+      
+      final rosterFile = await _getFile('roster.json');
+      final decoded = jsonDecode(await rosterFile.readAsString());
+      if (decoded is String) {
+        return false;
+      }
+
       return true;
     } catch (_) {
       return false;
@@ -66,7 +73,10 @@ class ChampionsDataService {
       final file = await _getFile(entry.key);
       final response = await _dio.get(entry.value);
       if (response.data != null) {
-        await file.writeAsString(jsonEncode(response.data));
+        final dataStr = response.data is String 
+            ? response.data as String 
+            : jsonEncode(response.data);
+        await file.writeAsString(dataStr);
       }
       current += 1.0;
       if (onProgress != null) {
