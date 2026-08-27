@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/pokemon.dart';
+import '../../../core/providers.dart';
+import '../../../core/services/champions_data_service.dart';
 import 'section_header.dart';
 
-class StatsTab extends StatefulWidget {
+class StatsTab extends ConsumerStatefulWidget {
   final Pokemon pokemon;
   final Color themeColor;
   final Widget? header;
@@ -15,11 +18,38 @@ class StatsTab extends StatefulWidget {
   });
 
   @override
-  State<StatsTab> createState() => _StatsTabState();
+  ConsumerState<StatsTab> createState() => _StatsTabState();
 }
 
-class _StatsTabState extends State<StatsTab> {
+class _StatsTabState extends ConsumerState<StatsTab> {
   String _statsMode = 'Base';
+  List<PokemonStatSlot>? champsStats;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchChampsStats();
+  }
+
+  Future<void> _fetchChampsStats() async {
+    final isChampions = ref.read(isChampionsModeProvider);
+    if (isChampions) {
+      final service = ref.read(championsDataServiceProvider);
+      try {
+        final roster = await service.getPokemonList();
+        for (final p in roster) {
+          if (p.id == widget.pokemon.id) {
+            if (mounted) {
+              setState(() {
+                champsStats = p.stats;
+              });
+            }
+            break;
+          }
+        }
+      } catch (_) {}
+    }
+  }
 
   String _getDisplayLabel(String name) {
     switch (name.toLowerCase()) {
@@ -40,8 +70,8 @@ class _StatsTabState extends State<StatsTab> {
     }
   }
 
-  int _calculateTotal() {
-    return widget.pokemon.stats.fold<int>(0, (sum, s) {
+  int _calculateTotal(List<PokemonStatSlot> stats) {
+    return stats.fold<int>(0, (sum, s) {
       int baseValue = s.baseStat;
       final label = _getDisplayLabel(s.stat.name);
 
@@ -88,7 +118,7 @@ class _StatsTabState extends State<StatsTab> {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
           SizedBox(
@@ -97,11 +127,12 @@ class _StatsTabState extends State<StatsTab> {
               label,
               style: const TextStyle(
                 color: Colors.black54,
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
+          const SizedBox(width: 12),
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
@@ -158,6 +189,8 @@ class _StatsTabState extends State<StatsTab> {
 
   @override
   Widget build(BuildContext context) {
+    final localChampsStats = champsStats;
+
     return Column(
       key: const ValueKey('Stats'),
       children: [
@@ -270,7 +303,7 @@ class _StatsTabState extends State<StatsTab> {
                     ),
                     const Expanded(child: SizedBox()),
                     Text(
-                      _calculateTotal().toString(),
+                      _calculateTotal(widget.pokemon.stats).toString(),
                       style: const TextStyle(
                         color: Colors.black87,
                         fontSize: 14,
@@ -279,6 +312,48 @@ class _StatsTabState extends State<StatsTab> {
                     ),
                   ],
                 ),
+
+                if (localChampsStats != null) ...[
+                  const SizedBox(height: 32),
+                  SectionHeader(
+                    title: 'Champions Statistics',
+                    themeColor: widget.themeColor,
+                  ),
+                  const SizedBox(height: 32),
+                  ...localChampsStats.map((s) {
+                    final label = _getDisplayLabel(s.stat.name);
+                    return _buildStatBar(label, s.baseStat, widget.themeColor);
+                  }),
+                  const Divider(
+                    color: Colors.black12,
+                    height: 32,
+                    thickness: 1.5,
+                  ),
+                  Row(
+                    children: [
+                      const SizedBox(
+                        width: 70,
+                        child: Text(
+                          'Total',
+                          style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const Expanded(child: SizedBox()),
+                      Text(
+                        _calculateTotal(localChampsStats).toString(),
+                        style: const TextStyle(
+                          color: Colors.black87,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ],
             ),
           ),
