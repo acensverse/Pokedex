@@ -6,8 +6,8 @@ import '../../models/pokemon.dart';
 // Search Query Provider (immediate, drives the TextField)
 final searchQueryProvider = StateProvider<String>((ref) => '');
 
-// Debounced search value (drives filtering; 150ms behind the TextField)
 final debouncedSearchQueryProvider = StateProvider<String>((ref) => '');
+final searchClearTriggerProvider = StateProvider<int>((ref) => 0);
 
 // Type Filter Providers
 // Holds 0-2 selected types: max 1 in single mode, max 2 in dual mode.

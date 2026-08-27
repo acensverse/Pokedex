@@ -41,6 +41,19 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
     final activeTypes = ref.watch(selectedTypesProvider);
     final activeGen = ref.watch(genFilterProvider);
 
+    ref.listen(searchClearTriggerProvider, (_, __) {
+      if (_isSearching) {
+        setState(() {
+          _isSearching = false;
+        });
+        ref.read(searchQueryProvider.notifier).state = '';
+        ref.read(debouncedSearchQueryProvider.notifier).state = '';
+        if (_scrollController.hasClients) {
+          _scrollController.jumpTo(0);
+        }
+      }
+    });
+
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, _) {

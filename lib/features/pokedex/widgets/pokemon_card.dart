@@ -84,6 +84,7 @@ class PokemonCard extends ConsumerWidget {
           child: GestureDetector(
             onTap: onTap ?? () {
               FocusManager.instance.primaryFocus?.unfocus();
+              ref.read(searchClearTriggerProvider.notifier).state++;
               context.push('/pokemon/${pokemon.id}');
             },
         child: Container(
