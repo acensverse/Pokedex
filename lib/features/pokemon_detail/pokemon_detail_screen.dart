@@ -488,18 +488,18 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                     Row(
                       children: [
                         _GlassButton(
-                          icon: LucideIcons.volume2,
-                          color: Colors.white,
-                          onTap: _playCry,
-                        ),
-                        const SizedBox(width: 12),
-                        _GlassButton(
                           icon: LucideIcons.sparkles,
                           color: isShiny ? Colors.amber : Colors.white,
                           onTap: () {
                             ref.read(shinyModeProvider.notifier).state =
                                 !isShiny;
                           },
+                        ),
+                        const SizedBox(width: 12),
+                        _GlassButton(
+                          icon: LucideIcons.volume2,
+                          color: Colors.white,
+                          onTap: _playCry,
                         ),
                       ],
                     ),
