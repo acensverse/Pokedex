@@ -9,7 +9,8 @@ import '../../models/pokemon.dart';
 import '../../core/providers.dart';
 import 'widgets/pokemon_picker_sheet.dart';
 
-final selectedBreedingPokemonProvider = StateProvider<Pokemon?>((ref) => null);
+final selectedBreedingPokemonProvider =
+    StateProvider.autoDispose<Pokemon?>((ref) => null);
 
 final breedingInfoProvider =
     FutureProvider.autoDispose<
@@ -37,93 +38,139 @@ class BreedingScreen extends ConsumerWidget {
         automaticallyImplyLeading: false,
         title: const ToolsSheetTitle(label: 'Breeding'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Choose Pokemon Box
-            GestureDetector(
-              onTap: () async {
-                final result = await PokemonPickerSheet.show(context);
-                if (result != null) {
-                  ref.read(selectedBreedingPokemonProvider.notifier).state =
-                      result;
-                }
-              },
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade200),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 56,
-                      height: 56,
-                      decoration: BoxDecoration(
+      body: selectedPokemon == null
+          ? Center(
+              child: GestureDetector(
+                onTap: () async {
+                  final result = await PokemonPickerSheet.show(context);
+                  if (result != null) {
+                    ref.read(selectedBreedingPokemonProvider.notifier).state =
+                        result;
+                  }
+                },
+                child: Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: Colors.pink.shade100, width: 2),
+                    boxShadow: [
+                      BoxShadow(
                         color: Colors.pink.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
+                        blurRadius: 16,
+                        offset: const Offset(0, 4),
                       ),
-                      child: selectedPokemon != null
-                          ? Image.asset(
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.pink.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(LucideIcons.search,
+                            size: 48, color: Colors.pink),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Choose Pok\u00e9mon',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.pink,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Choose Pokemon Box
+                  GestureDetector(
+                    onTap: () async {
+                      final result = await PokemonPickerSheet.show(context);
+                      if (result != null) {
+                        ref
+                            .read(selectedBreedingPokemonProvider.notifier)
+                            .state = result;
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey.shade200),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 56,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              color: Colors.pink.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Image.asset(
                               PokemonHelpers.getThumbnailAssetPath(
                                 selectedPokemon.id,
                               ),
                               errorBuilder: (_, __, ___) =>
                                   const Icon(Icons.pets, color: Colors.pink),
-                            )
-                          : const Icon(LucideIcons.search, color: Colors.pink),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            selectedPokemon != null
-                                ? PokemonHelpers.formatName(
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  PokemonHelpers.formatName(
                                     selectedPokemon.name,
-                                  )
-                                : 'Choose Pok\u00e9mon',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.textPrimary,
+                                  ),
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w800,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Tap to change Pok\u00e9mon',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(height: 4),
-                          Text(
-                            selectedPokemon != null
-                                ? 'Tap to change Pok\u00e9mon'
-                                : 'Select a Pok\u00e9mon to view breeding info',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
+                          const Icon(Icons.chevron_right,
+                              color: Colors.black26),
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right, color: Colors.black26),
-                  ],
-                ),
-              ),
-            ),
+                  ),
 
-            const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-            // Breeding Info Card
-            if (selectedPokemon != null)
+                  // Breeding Info Card
               breedingInfoAsync.when(
                 loading: () => const Center(
                   child: Padding(
