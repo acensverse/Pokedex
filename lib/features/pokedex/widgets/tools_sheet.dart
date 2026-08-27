@@ -97,7 +97,7 @@ class ToolsSheet extends StatelessWidget {
       _ToolAction('Abilities', Icons.diamond, const [Color(0xFF26A69A), Color(0xFF66BB6A)], '/tools/abilities'),
       _ToolAction('Natures', Icons.eco, const [Color(0xFF1E88E5), Color(0xFF26C6DA)], '/tools/natures'),
       _ToolAction('Items', Icons.backpack, const [Color(0xFF2196F3), Color(0xFF00BCD4)], '/tools/items'),
-      _ToolAction('Breeding', Icons.egg, const [Color(0xFFEC407A), Color(0xFF8E24AA)]),
+      _ToolAction('Breeding', Icons.egg, const [Color(0xFFEC407A), Color(0xFF8E24AA)], '/tools/breeding'),
       _ToolAction('Types', Icons.layers, const [Color(0xFF3949AB), Color(0xFF7E57C2)], '/tools/types'),
       _ToolAction('Team Builder', Icons.hub, const [Color(0xFFCDDC39), Color(0xFF26A69A)], '/tools/teams'),
       _ToolAction(

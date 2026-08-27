@@ -11,6 +11,7 @@ import '../features/tools/types_screen.dart';
 import '../features/tools/team_builder_screen.dart';
 import '../features/tools/team_detail_screen.dart';
 import '../features/tools/new_team_screen.dart';
+import '../features/tools/breeding_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
@@ -55,6 +56,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/tools/natures',
       builder: (context, state) => const NaturesScreen(),
+    ),
+    GoRoute(
+      path: '/tools/breeding',
+      builder: (context, state) => const BreedingScreen(),
     ),
     GoRoute(
       path: '/tools/teams',

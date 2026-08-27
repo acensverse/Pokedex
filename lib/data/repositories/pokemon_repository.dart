@@ -254,6 +254,24 @@ class PokemonRepository {
     return species;
   }
 
+  /// Returns breeding information: egg groups, gender rate, and hatch counter.
+  Future<({List<String> eggGroups, int genderRate, int hatchCounter})> getBreedingInfo(int speciesId) async {
+    try {
+      final response = await _dio.get('https://pokeapi.co/api/v2/pokemon-species/$speciesId');
+      final data = response.data;
+      if (data is Map) {
+        final eggGroupsList = data['egg_groups'] as List?;
+        final eggGroups = eggGroupsList?.whereType<Map>().map((e) => e['name'] as String).toList() ?? [];
+        final genderRate = data['gender_rate'] as int? ?? -1;
+        final hatchCounter = data['hatch_counter'] as int? ?? 0;
+        return (eggGroups: eggGroups, genderRate: genderRate, hatchCounter: hatchCounter);
+      }
+    } catch (e, st) {
+      debugPrint('Failed to load breeding info for $speciesId: $e\n$st');
+    }
+    return (eggGroups: [], genderRate: -1, hatchCounter: 0);
+  }
+
   // Toggle favorite status
   Future<void> toggleFavorite(int id, bool isFavorite) async {
     await _db.toggleFavorite(id, isFavorite);
