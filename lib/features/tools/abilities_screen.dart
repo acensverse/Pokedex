@@ -7,10 +7,9 @@ import 'package:go_router/go_router.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_spacing.dart';
 import '../../core/utils/pokemon_helpers.dart';
+import '../../core/utils/type_chart.dart';
 import '../pokedex/pokedex_provider.dart';
 import '../pokedex/widgets/tools_sheet.dart';
-import '../../core/providers.dart';
-import '../../core/services/champions_data_service.dart';
 
 class AbilityEntry {
   final int id;
@@ -53,10 +52,6 @@ class AbilityEntry {
 
 /// All abilities baked from assets/abilities_seed.json (offline-first).
 final abilitiesSeedProvider = FutureProvider<List<AbilityEntry>>((ref) async {
-  final isChampions = ref.watch(isChampionsModeProvider);
-  if (isChampions) {
-    return ref.watch(championsDataServiceProvider).getAbilities();
-  }
   final raw = await rootBundle.loadString('assets/abilities_seed.json');
   final list = jsonDecode(raw) as List<dynamic>;
   return list
