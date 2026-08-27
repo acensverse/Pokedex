@@ -34,6 +34,7 @@ class ChampionsDataService {
         'abilities.json',
         'items.json',
         'moves.json',
+        'learnsets.json',
       ];
       for (final f in files) {
         final file = await _getFile(f);
@@ -64,6 +65,8 @@ class ChampionsDataService {
           'https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/items/items.json',
       'moves.json':
           'https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/moves/moves.json',
+      'learnsets.json':
+          'https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/learnsets/learnsets.json',
     };
 
     double total = targets.length.toDouble();
@@ -388,10 +391,47 @@ class ChampionsDataService {
       }
     }
 
-    // Since we don't have explicit move learnsets for Pokemon in moves.json (it's in learnsets/),
-    // and learning moves isn't strictly used by anything other than detail lists,
-    // we can default the learn list or leave it empty, or we can check learnsets/ if needed.
-    // However, the user said "same with moves only show which are in api" which is handled by filtering inChampions.
+    // Download and load learnsets.json
+    final learnsetsFile = await _getFile('learnsets.json');
+    Map<String, dynamic> learnsetsMap = {};
+    if (await learnsetsFile.exists()) {
+      learnsetsMap = jsonDecode(await learnsetsFile.readAsString()) as Map<String, dynamic>;
+    }
+
+    // Build reverse map of moves -> list of pokemon IDs that learn it
+    final moveLearners = <String, List<int>>{};
+    
+    // learnsetsMap is keyed by Pokemon name
+    learnsetsMap.forEach((pokemonName, data) {
+      if (data is Map && data['moves'] is List) {
+        final lowerPokemonName = pokemonName.toLowerCase();
+        
+        // Find standard ID for this pokemon
+        var mappingName = lowerPokemonName;
+        if (mappingName == 'paldean tauros') {
+          mappingName = 'combat breed paldean tauros';
+        }
+        var pId = nameToIdMap[mappingName];
+        if (pId == null) {
+          // Find fallback ID from rosterRaw
+          final rIndex = rosterRaw.indexWhere((r) => (r['name'] as String).toLowerCase() == lowerPokemonName);
+          if (rIndex >= 0) {
+            final r = rosterRaw[rIndex];
+            pId = r['form'] == 'Base' ? r['dexNumber'] as int : 10000 + (r['dexNumber'] as int) + rIndex;
+          }
+        }
+        
+        if (pId != null) {
+          for (final moveObj in data['moves']) {
+            if (moveObj is Map && moveObj['name'] is String) {
+              final moveName = (moveObj['name'] as String).toLowerCase();
+              moveLearners.putIfAbsent(moveName, () => []).add(pId);
+            }
+          }
+        }
+      }
+    });
+
     final list = <MoveEntry>[];
     for (var i = 0; i < raw.length; i++) {
       final m = raw[i];
@@ -421,7 +461,7 @@ class ChampionsDataService {
           ail: 'none',
           eff: desc,
           flavor: desc,
-          learn: const [],
+          learn: moveLearners[name.toLowerCase()] ?? [],
           contest: null,
           learnDetails: const [],
         ),
