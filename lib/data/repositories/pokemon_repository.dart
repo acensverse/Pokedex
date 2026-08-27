@@ -269,7 +269,7 @@ class PokemonRepository {
     } catch (e, st) {
       debugPrint('Failed to load breeding info for $speciesId: $e\n$st');
     }
-    return (eggGroups: [], genderRate: -1, hatchCounter: 0);
+    return (eggGroups: <String>[], genderRate: -1, hatchCounter: 0);
   }
 
   // Toggle favorite status
