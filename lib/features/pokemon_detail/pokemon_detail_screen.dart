@@ -605,10 +605,10 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
             _navigateToPage(index);
           },
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
+          backgroundColor: themeColor,
           elevation: 0,
-          selectedItemColor: themeColor,
-          unselectedItemColor: Colors.grey,
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.white.withValues(alpha: 0.6),
           showUnselectedLabels: true,
           selectedFontSize: 12,
           unselectedFontSize: 11,
