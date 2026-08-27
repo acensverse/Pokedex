@@ -19,6 +19,7 @@ class PokedexScreen extends ConsumerStatefulWidget {
 class _PokedexScreenState extends ConsumerState<PokedexScreen> {
   bool _isSearching = false;
   bool _showFilters = false;
+  final ScrollController _scrollController = ScrollController();
 
   String _genLabel(int gen) => gen == 0 ? 'All Gens' : 'Gen $gen';
 
@@ -29,6 +30,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -104,6 +106,9 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                 if (!_isSearching) {
                   ref.read(searchQueryProvider.notifier).state = '';
                   ref.read(debouncedSearchQueryProvider.notifier).state = '';
+                  if (_scrollController.hasClients) {
+                    _scrollController.jumpTo(0);
+                  }
                 }
               });
             },
@@ -141,6 +146,9 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                         });
                         ref.read(searchQueryProvider.notifier).state = '';
                         ref.read(debouncedSearchQueryProvider.notifier).state = '';
+                        if (_scrollController.hasClients) {
+                          _scrollController.jumpTo(0);
+                        }
                       },
                     ),
                   )
@@ -394,7 +402,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                 ],
               ),
             ),
-          const Expanded(child: PokemonGrid()),
+          Expanded(child: PokemonGrid(scrollController: _scrollController)),
         ],
       ),
     ),

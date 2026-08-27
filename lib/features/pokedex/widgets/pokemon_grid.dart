@@ -4,7 +4,8 @@ import '../pokedex_provider.dart';
 import 'pokemon_card.dart';
 
 class PokemonGrid extends ConsumerWidget {
-  const PokemonGrid({super.key});
+  final ScrollController? scrollController;
+  const PokemonGrid({super.key, this.scrollController});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,6 +27,7 @@ class PokemonGrid extends ConsumerWidget {
     return RefreshIndicator(
       onRefresh: () => ref.read(pokedexProvider.notifier).refresh(),
       child: ListView.builder(
+        controller: scrollController,
         // Set strict itemExtent to enable fast O(1) layout calculations (crucial for 120+ FPS scrolling)
         itemExtent: 100,
         physics: const AlwaysScrollableScrollPhysics(),
