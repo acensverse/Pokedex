@@ -236,14 +236,13 @@ class _SheetButton extends StatelessWidget {
                   ),
                 if (customIconPath != null)
                   Positioned(
-                    right: -6,
-                    bottom: -height * 0.22,
+                    right: 8,
+                    top: 8,
+                    bottom: 8,
                     child: Opacity(
                       opacity: 0.35,
                       child: Image.asset(
                         customIconPath!,
-                        width: height * 1.05,
-                        height: height * 1.05,
                         fit: BoxFit.contain,
                       ),
                     ),
