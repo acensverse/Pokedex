@@ -334,12 +334,31 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
             ) ??
         'Unknown Pok\u00e9mon';
 
+    final lightThemeColor = HSLColor.fromColor(themeColor)
+        .withLightness(
+          (HSLColor.fromColor(themeColor).lightness + 0.2).clamp(0.0, 1.0),
+        )
+        .toColor();
+
     return Scaffold(
       extendBody: true,
-      backgroundColor: const Color(0xFFBCAAA4),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final fullHeader = Stack(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              themeColor,
+              lightThemeColor,
+              lightThemeColor,
+            ],
+            stops: const [0.0, 0.5, 1.0],
+          ),
+        ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final fullHeader = Stack(
             key: const ValueKey('full-header'),
             alignment: Alignment.topCenter,
             children: [
@@ -570,6 +589,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
           );
         },
       ),
+    ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentPage,
         onTap: (index) {
