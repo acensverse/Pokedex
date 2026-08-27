@@ -330,19 +330,31 @@ class _SheetButton extends StatelessWidget {
                     ),
                   ),
                 if (isActive)
-                  const Positioned(
-                    left: 14,
+                  Positioned(
+                    left: 16,
                     top: 0,
                     bottom: 0,
-                    child: Icon(
-                      Icons.check_circle_rounded,
-                      color: Colors.white,
-                      size: 20,
+                    child: Center(
+                      child: Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.white.withValues(alpha: 0.8),
+                              blurRadius: 6,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 Center(
                   child: Padding(
-                    padding: EdgeInsets.only(left: isActive ? 24.0 : 0.0),
+                    padding: EdgeInsets.only(left: isActive ? 32.0 : 0.0),
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
