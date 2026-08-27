@@ -13,7 +13,7 @@ import '../../core/utils/type_chart.dart';
 import '../pokedex/pokedex_provider.dart';
 import '../pokedex/widgets/tools_sheet.dart';
 import '../../core/providers.dart';
-import '../../core/services/champions_data_service.dart';
+
 
 class MoveEntry {
   final int id;
@@ -86,10 +86,7 @@ class MoveEntry {
 
 /// All moves baked from assets/moves_seed.json (offline-first).
 final movesSeedProvider = FutureProvider<List<MoveEntry>>((ref) async {
-  final isChampions = ref.watch(isChampionsModeProvider);
-  if (isChampions) {
-    return ref.watch(championsDataServiceProvider).getMoves();
-  }
+
   final raw = await rootBundle.loadString('assets/moves_seed.json');
   final list = jsonDecode(raw) as List<dynamic>;
   return list

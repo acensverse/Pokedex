@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import '../../core/providers.dart';
 import '../../models/pokemon.dart';
-import '../../core/services/champions_data_service.dart';
 
 // Search Query Provider (immediate, drives the TextField)
 final searchQueryProvider = StateProvider<String>((ref) => '');
@@ -150,16 +149,8 @@ class PokedexNotifier extends StateNotifier<PokedexState> {
     state = state.copyWith(isLoading: true, hasError: false);
 
     try {
-      final isChampions = _ref.read(isChampionsModeProvider);
-      final List<Pokemon> allPokemon;
-      if (isChampions) {
-        allPokemon = await _ref
-            .read(championsDataServiceProvider)
-            .getPokemonList();
-      } else {
-        final repository = _ref.read(pokemonRepositoryProvider);
-        allPokemon = await repository.getLocalPokemonList();
-      }
+      final repository = _ref.read(pokemonRepositoryProvider);
+      final allPokemon = await repository.getLocalPokemonList();
 
       state = state.copyWith(pokemonList: allPokemon, isLoading: false);
     } catch (e, st) {
@@ -178,7 +169,6 @@ class PokedexNotifier extends StateNotifier<PokedexState> {
 final pokedexProvider = StateNotifierProvider<PokedexNotifier, PokedexState>((
   ref,
 ) {
-  ref.watch(isChampionsModeProvider);
   return PokedexNotifier(ref);
 });
 

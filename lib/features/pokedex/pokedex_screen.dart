@@ -9,7 +9,7 @@ import 'widgets/filter_sheet.dart';
 import 'widgets/gen_filter_sheet.dart';
 import 'widgets/tools_sheet.dart';
 import 'pokedex_provider.dart';
-import '../../core/providers.dart';
+
 
 class PokedexScreen extends ConsumerStatefulWidget {
   const PokedexScreen({super.key});
@@ -57,8 +57,6 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
       }
     });
 
-    final isChampions = ref.watch(isChampionsModeProvider);
-
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, _) {
@@ -85,12 +83,11 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
               child: Row(
                 children: [
                   Text(
-                    isChampions ? 'Pok\u00e9mon Champions' : 'Pok\u00e9dex',
+                    'Pok\u00e9dex',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w900,
                       letterSpacing: 0.5,
-                      fontSize: isChampions ? 20 : null,
-                      color: isChampions ? Colors.deepPurple : Colors.red,
+                      color: Colors.red,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -98,9 +95,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                     width: 22,
                     height: 22,
                     decoration: BoxDecoration(
-                      color: isChampions
-                          ? const Color(0xFF7E57C2)
-                          : AppColors.primary,
+                      color: AppColors.primary,
                       shape: BoxShape.circle,
                     ),
                     child: const Center(

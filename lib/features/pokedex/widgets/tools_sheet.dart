@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_spacing.dart';
 import '../../../core/providers.dart';
-import '../../../core/services/champions_data_service.dart';
 import '../pokedex_provider.dart';
 
 class _ToolAction {
@@ -96,32 +95,8 @@ class ToolsSheet extends ConsumerWidget {
       );
   }
 
-  void _downloadChampionsData(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogCtx) => _DownloadDialog(
-        onComplete: () {
-          ref.read(isChampionsModeProvider.notifier).state = true;
-          // Clear active filters
-          ref.read(selectedTypesProvider.notifier).state = [];
-          ref.read(genFilterProvider.notifier).state = 0;
-          ref.read(searchQueryProvider.notifier).state = '';
-          ref.read(debouncedSearchQueryProvider.notifier).state = '';
-          ref.read(toolLearnerFilterProvider.notifier).state = null;
-          ref.read(toolAbilityFilterProvider.notifier).state = null;
-          ref.read(toolMoveFilterProvider.notifier).state = null;
-          Navigator.of(dialogCtx).pop(); // close dialog
-          Navigator.of(context).pop(); // close sheet
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isChampions = ref.watch(isChampionsModeProvider);
-
     final gridTools = [
       _ToolAction('Moves', Icons.shield, const [
         Color(0xFFF57C00),
@@ -194,9 +169,8 @@ class ToolsSheet extends ConsumerWidget {
                 icon: Icons.catching_pokemon,
                 colors: const [Color(0xFFEF5350), _sheetRed],
                 height: 56,
-                isActive: !isChampions,
+                isActive: true,
                 onTap: () async {
-                  ref.read(isChampionsModeProvider.notifier).state = false;
                   // Clear active filters
                   ref.read(selectedTypesProvider.notifier).state = [];
                   ref.read(genFilterProvider.notifier).state = 0;
@@ -209,37 +183,6 @@ class ToolsSheet extends ConsumerWidget {
                   if (context.mounted) {
                     Navigator.of(context).pop();
                     GoRouter.of(context).go('/');
-                  }
-                },
-              ),
-              _SheetButton(
-                label: 'Pok\u00e9mon Champions',
-                colors: const [Color(0xFF7E57C2), Color(0xFF5E35B1)],
-                customIconPath: 'assets/images/pokemon_champions.png',
-                height: 56,
-                isActive: isChampions,
-                onTap: () async {
-                  final service = ref.read(championsDataServiceProvider);
-                  final downloaded = await service.isDownloaded();
-                  if (downloaded) {
-                    ref.read(isChampionsModeProvider.notifier).state = true;
-                    // Clear active filters
-                    ref.read(selectedTypesProvider.notifier).state = [];
-                    ref.read(genFilterProvider.notifier).state = 0;
-                    ref.read(searchQueryProvider.notifier).state = '';
-                    ref.read(debouncedSearchQueryProvider.notifier).state = '';
-                    ref.read(toolLearnerFilterProvider.notifier).state = null;
-                    ref.read(toolAbilityFilterProvider.notifier).state = null;
-                    ref.read(toolMoveFilterProvider.notifier).state = null;
-                    await Future.delayed(const Duration(milliseconds: 300));
-                    if (context.mounted) {
-                      Navigator.of(context).pop();
-                      GoRouter.of(context).go('/');
-                    }
-                  } else {
-                    if (context.mounted) {
-                      _downloadChampionsData(context, ref);
-                    }
                   }
                 },
               ),
@@ -379,95 +322,6 @@ class _SheetButton extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _DownloadDialog extends ConsumerStatefulWidget {
-  final VoidCallback onComplete;
-  const _DownloadDialog({required this.onComplete});
-
-  @override
-  ConsumerState<_DownloadDialog> createState() => _DownloadDialogState();
-}
-
-class _DownloadDialogState extends ConsumerState<_DownloadDialog> {
-  double _progress = 0;
-  String _status = 'Starting download...';
-  bool _hasError = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _startDownload();
-  }
-
-  void _startDownload() async {
-    try {
-      final service = ref.read(championsDataServiceProvider);
-      await service.downloadAll(
-        onProgress: (p) {
-          setState(() {
-            _progress = p;
-            _status =
-                'Downloading Pokémon Champions data... (${(p * 100).toInt()}%)';
-          });
-        },
-      );
-      widget.onComplete();
-    } catch (e) {
-      setState(() {
-        _hasError = true;
-        _status =
-            'Failed to download data. Please check your internet connection and try again.';
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: const Text(
-        'Downloading Data',
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (!_hasError) ...[
-            CircularProgressIndicator(value: _progress > 0 ? _progress : null),
-            const SizedBox(height: 20),
-          ] else ...[
-            const Icon(Icons.error_outline, color: Colors.red, size: 48),
-            const SizedBox(height: 16),
-          ],
-          Text(
-            _status,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 14),
-          ),
-        ],
-      ),
-      actions: [
-        if (_hasError)
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-        if (_hasError)
-          FilledButton(
-            onPressed: () {
-              setState(() {
-                _hasError = false;
-                _progress = 0;
-                _status = 'Starting download...';
-              });
-              _startDownload();
-            },
-            child: const Text('Retry'),
-          ),
-      ],
     );
   }
 }

@@ -9,7 +9,7 @@ import '../../app/theme/app_spacing.dart';
 import '../../core/utils/pokemon_helpers.dart';
 import '../pokedex/widgets/tools_sheet.dart';
 import '../../core/providers.dart';
-import '../../core/services/champions_data_service.dart';
+
 
 class ItemEntry {
   final int id;
@@ -44,10 +44,6 @@ class ItemEntry {
 
 /// All items baked from assets/items_seed.json (offline-first).
 final itemsSeedProvider = FutureProvider<List<ItemEntry>>((ref) async {
-  final isChampions = ref.watch(isChampionsModeProvider);
-  if (isChampions) {
-    return ref.watch(championsDataServiceProvider).getItems();
-  }
   final raw = await rootBundle.loadString('assets/items_seed.json');
   final list = jsonDecode(raw) as List<dynamic>;
   return list
