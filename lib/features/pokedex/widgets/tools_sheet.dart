@@ -194,7 +194,7 @@ class ToolsSheet extends ConsumerWidget {
                 colors: const [Color(0xFFEF5350), _sheetRed],
                 height: 56,
                 isActive: !isChampions,
-                onTap: () {
+                onTap: () async {
                   ref.read(isChampionsModeProvider.notifier).state = false;
                   // Clear active filters
                   ref.read(selectedTypesProvider.notifier).state = [];
@@ -203,8 +203,11 @@ class ToolsSheet extends ConsumerWidget {
                   ref.read(debouncedSearchQueryProvider.notifier).state = '';
                   ref.read(toolLearnerFilterProvider.notifier).state = null;
                   ref.read(toolAbilityFilterProvider.notifier).state = null;
-                  Navigator.of(context).pop();
-                  GoRouter.of(context).go('/');
+                  await Future.delayed(const Duration(milliseconds: 300));
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                    GoRouter.of(context).go('/');
+                  }
                 },
               ),
               _SheetButton(
@@ -225,6 +228,7 @@ class ToolsSheet extends ConsumerWidget {
                     ref.read(debouncedSearchQueryProvider.notifier).state = '';
                     ref.read(toolLearnerFilterProvider.notifier).state = null;
                     ref.read(toolAbilityFilterProvider.notifier).state = null;
+                    await Future.delayed(const Duration(milliseconds: 300));
                     if (context.mounted) {
                       Navigator.of(context).pop();
                       GoRouter.of(context).go('/');
@@ -343,21 +347,7 @@ class _SheetButton extends StatelessWidget {
                       child: AnimatedOpacity(
                         opacity: isActive ? 1.0 : 0.0,
                         duration: const Duration(milliseconds: 200),
-                        child: Container(
-                          width: 10,
-                          height: 10,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.white.withValues(alpha: 0.8),
-                                blurRadius: 6,
-                                spreadRadius: 2,
-                              ),
-                            ],
-                          ),
-                        ),
+                        child: const _AmbientDot(),
                       ),
                     ),
                   ),
@@ -475,6 +465,61 @@ class _DownloadDialogState extends ConsumerState<_DownloadDialog> {
             child: const Text('Retry'),
           ),
       ],
+    );
+  }
+}
+
+class _AmbientDot extends StatefulWidget {
+  const _AmbientDot();
+
+  @override
+  State<_AmbientDot> createState() => _AmbientDotState();
+}
+
+class _AmbientDotState extends State<_AmbientDot> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _glowAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..repeat(reverse: true);
+    
+    _glowAnimation = Tween<double>(begin: 2.0, end: 8.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _glowAnimation,
+      builder: (context, child) {
+        return Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.white.withValues(alpha: 0.9),
+                blurRadius: _glowAnimation.value + 4.0,
+                spreadRadius: _glowAnimation.value / 2,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
