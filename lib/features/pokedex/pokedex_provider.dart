@@ -57,6 +57,21 @@ final toolAbilityFilterProvider =
       })?
     >((ref) => null);
 
+/// Move filter from Pokemon detail page: shows only Pokemon that learn [name]
+final toolMoveFilterProvider =
+    StateProvider<
+      ({
+        String name,
+        String flavor,
+        String? type,
+        String? category,
+        int? power,
+        int? accuracy,
+        int? pp,
+        Set<int> ids,
+      })?
+    >((ref) => null);
+
 /// Returns the correct ID set for the given ability filter mode.
 Set<int> _abilityIdsForMode(
   ({
@@ -177,6 +192,7 @@ final filteredPokemonProvider = Provider<List<Pokemon>>((ref) {
   final favoriteIds = ref.watch(favoriteIdsProvider).value ?? const <int>{};
   final learnerFilter = ref.watch(toolLearnerFilterProvider);
   final abilityFilter = ref.watch(toolAbilityFilterProvider);
+  final moveFilter = ref.watch(toolMoveFilterProvider);
 
   return pokedexState.pokemonList.where((pokemon) {
     final matchesSearch =
@@ -221,12 +237,15 @@ final filteredPokemonProvider = Provider<List<Pokemon>>((ref) {
     final matchesAbility =
         abilityFilter == null ||
         _abilityIdsForMode(abilityFilter).contains(pokemon.id);
+    final matchesMove =
+        moveFilter == null || moveFilter.ids.contains(pokemon.id);
 
     return matchesSearch &&
         matchesType &&
         matchesGen &&
         matchesFavorite &&
         matchesLearner &&
-        matchesAbility;
+        matchesAbility &&
+        matchesMove;
   }).toList();
 });

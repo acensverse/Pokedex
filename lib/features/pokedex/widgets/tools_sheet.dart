@@ -110,6 +110,7 @@ class ToolsSheet extends ConsumerWidget {
           ref.read(debouncedSearchQueryProvider.notifier).state = '';
           ref.read(toolLearnerFilterProvider.notifier).state = null;
           ref.read(toolAbilityFilterProvider.notifier).state = null;
+          ref.read(toolMoveFilterProvider.notifier).state = null;
           Navigator.of(dialogCtx).pop(); // close dialog
           Navigator.of(context).pop(); // close sheet
         },
@@ -203,6 +204,7 @@ class ToolsSheet extends ConsumerWidget {
                   ref.read(debouncedSearchQueryProvider.notifier).state = '';
                   ref.read(toolLearnerFilterProvider.notifier).state = null;
                   ref.read(toolAbilityFilterProvider.notifier).state = null;
+                  ref.read(toolMoveFilterProvider.notifier).state = null;
                   await Future.delayed(const Duration(milliseconds: 300));
                   if (context.mounted) {
                     Navigator.of(context).pop();
@@ -228,6 +230,7 @@ class ToolsSheet extends ConsumerWidget {
                     ref.read(debouncedSearchQueryProvider.notifier).state = '';
                     ref.read(toolLearnerFilterProvider.notifier).state = null;
                     ref.read(toolAbilityFilterProvider.notifier).state = null;
+                    ref.read(toolMoveFilterProvider.notifier).state = null;
                     await Future.delayed(const Duration(milliseconds: 300));
                     if (context.mounted) {
                       Navigator.of(context).pop();

@@ -4,6 +4,8 @@ import '../../../models/pokemon.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../tools/moves_screen.dart' show MoveEntry, movesSeedProvider;
 import 'section_header.dart';
+import 'package:go_router/go_router.dart';
+import '../../pokedex/pokedex_provider.dart';
 
 class MovesTab extends ConsumerStatefulWidget {
   final Pokemon pokemon;
@@ -307,7 +309,7 @@ class _LocalMove {
   const _LocalMove({required this.entry, required this.level});
 }
 
-class _LocalMoveRow extends StatelessWidget {
+class _LocalMoveRow extends ConsumerWidget {
   final _LocalMove move;
   final String methodText;
 
@@ -320,62 +322,90 @@ class _LocalMoveRow extends StatelessWidget {
       .join(' ');
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final m = move.entry;
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.black12)),
-      ),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 32,
-            child: Text(
-              methodText,
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
-              textAlign: TextAlign.right,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            flex: 3,
-            child: Text(
-              _formatName(m.name),
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueAccent,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        ref.read(searchQueryProvider.notifier).state = '';
+        ref.read(debouncedSearchQueryProvider.notifier).state = '';
+        ref.read(selectedTypesProvider.notifier).state = [];
+        ref.read(genFilterProvider.notifier).state = 0;
+        ref.read(favoritesOnlyProvider.notifier).state = false;
+        ref.read(toolLearnerFilterProvider.notifier).state = null;
+        ref.read(toolAbilityFilterProvider.notifier).state = null;
+
+        ref.read(toolMoveFilterProvider.notifier).state = (
+          name: _formatName(m.name),
+          flavor: m.flavor ?? m.eff ?? '',
+          type: m.type,
+          category: m.cls,
+          power: m.power,
+          accuracy: m.acc,
+          pp: m.pp,
+          ids: m.learn.toSet(),
+        );
+
+        if (context.mounted) {
+          FocusManager.instance.primaryFocus?.unfocus();
+          context.push('/');
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: Colors.black12)),
+        ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 32,
+              child: Text(
+                methodText,
+                style: const TextStyle(fontSize: 12, color: Colors.black54),
+                textAlign: TextAlign.right,
               ),
             ),
-          ),
-          Expanded(
-            flex: 5,
-            child: Row(
-              children: [
-                Expanded(flex: 2, child: _TypePill(type: m.type)),
-                const SizedBox(width: 4),
-                Expanded(flex: 2, child: _CatPill(cls: m.cls)),
-                SizedBox(
-                  width: 36,
-                  child: Text(
-                    m.power?.toString() ?? '—',
-                    textAlign: TextAlign.right,
-                    style: const TextStyle(fontSize: 12, color: Colors.black87),
-                  ),
+            const SizedBox(width: 12),
+            Expanded(
+              flex: 3,
+              child: Text(
+                _formatName(m.name),
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
                 ),
-                SizedBox(
-                  width: 36,
-                  child: Text(
-                    m.acc?.toString() ?? '∞',
-                    textAlign: TextAlign.right,
-                    style: const TextStyle(fontSize: 12, color: Colors.black87),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              flex: 5,
+              child: Row(
+                children: [
+                  Expanded(flex: 2, child: _TypePill(type: m.type)),
+                  const SizedBox(width: 4),
+                  Expanded(flex: 2, child: _CatPill(cls: m.cls)),
+                  SizedBox(
+                    width: 36,
+                    child: Text(
+                      m.power?.toString() ?? '—',
+                      textAlign: TextAlign.right,
+                      style: const TextStyle(fontSize: 12, color: Colors.black87),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 36,
+                    child: Text(
+                      m.acc?.toString() ?? '∞',
+                      textAlign: TextAlign.right,
+                      style: const TextStyle(fontSize: 12, color: Colors.black87),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

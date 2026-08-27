@@ -368,6 +368,7 @@ class AbilityDetailSheet extends ConsumerWidget {
     ref.read(genFilterProvider.notifier).state = 0;
     ref.read(favoritesOnlyProvider.notifier).state = false;
     ref.read(toolAbilityFilterProvider.notifier).state = null;
+    ref.read(toolMoveFilterProvider.notifier).state = null;
 
     ref.read(toolLearnerFilterProvider.notifier).state = (
       kind: 'Ability',

@@ -40,6 +40,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
   Widget build(BuildContext context) {
     final abilityFilter = ref.watch(toolAbilityFilterProvider);
     final learnerFilter = ref.watch(toolLearnerFilterProvider);
+    final moveFilter = ref.watch(toolMoveFilterProvider);
     final activeTypes = ref.watch(selectedTypesProvider);
     final activeGen = ref.watch(genFilterProvider);
 
@@ -457,10 +458,163 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                   ],
                 ),
               ),
+            if (moveFilter != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey.shade200),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 14, 12, 0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: moveFilter.type != null 
+                                        ? AppColors.getTypeColor(moveFilter.type!)
+                                        : AppColors.primary,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    moveFilter.name.toUpperCase(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 13,
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                ),
+                                const Spacer(),
+                                GestureDetector(
+                                  onTap: () {
+                                    ref
+                                        .read(toolMoveFilterProvider.notifier)
+                                        .state = null;
+                                  },
+                                  child: const Icon(
+                                    Icons.close,
+                                    size: 18,
+                                    color: Colors.black45,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (moveFilter.flavor.isNotEmpty) ...[
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 12, 16, 2),
+                              child: Text(
+                                'Description',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.grey.shade500,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                              child: Text(
+                                moveFilter.flavor,
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  color: Colors.grey.shade700,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          ],
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade50,
+                              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                if (moveFilter.type != null)
+                                  _MoveStatItem(label: 'TYPE', value: moveFilter.type!),
+                                if (moveFilter.category != null)
+                                  _MoveStatItem(label: 'CAT', value: moveFilter.category!),
+                                _MoveStatItem(
+                                  label: 'PWR',
+                                  value: moveFilter.power == null || moveFilter.power == 0 ? '-' : moveFilter.power.toString(),
+                                ),
+                                _MoveStatItem(
+                                  label: 'ACC',
+                                  value: moveFilter.accuracy == null || moveFilter.accuracy == 0 ? '-' : '${moveFilter.accuracy}%',
+                                ),
+                                _MoveStatItem(
+                                  label: 'PP',
+                                  value: moveFilter.pp == null ? '-' : moveFilter.pp.toString(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             Expanded(child: PokemonGrid(scrollController: _scrollController)),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _MoveStatItem extends StatelessWidget {
+  final String label;
+  final String value;
+  const _MoveStatItem({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 9,
+            fontWeight: FontWeight.w800,
+            color: Colors.grey.shade500,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+      ],
     );
   }
 }

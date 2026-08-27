@@ -602,7 +602,13 @@ class MoveDetailSheet extends ConsumerWidget {
   static const _sheetBg = Color(0xFFF1F4F8);
 
   void _openLearnersInPokedex(BuildContext context, WidgetRef ref) {
-    if (move.learn.isEmpty) return;
+    ref.read(searchQueryProvider.notifier).state = '';
+    ref.read(debouncedSearchQueryProvider.notifier).state = '';
+    ref.read(selectedTypesProvider.notifier).state = [];
+    ref.read(genFilterProvider.notifier).state = 0;
+    ref.read(favoritesOnlyProvider.notifier).state = false;
+    ref.read(toolAbilityFilterProvider.notifier).state = null;
+    ref.read(toolMoveFilterProvider.notifier).state = null;
     ref.read(toolLearnerFilterProvider.notifier).state = (
       kind: 'Move',
       name: PokemonHelpers.formatName(move.name),
