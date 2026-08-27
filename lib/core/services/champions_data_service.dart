@@ -87,12 +87,34 @@ class ChampionsDataService {
 
 
 
+  void _injectMissingForms(List rosterRaw) {
+    final missingForms = [
+      {'name': 'Blaze Breed Paldean Tauros', 'dexNumber': 128, 'types': ['Fighting', 'Fire'], 'form': 'Regional'},
+      {'name': 'Aqua Breed Paldean Tauros', 'dexNumber': 128, 'types': ['Fighting', 'Water'], 'form': 'Regional'},
+      {'name': 'Heat Rotom', 'dexNumber': 479, 'types': ['Electric', 'Fire'], 'form': 'Regional'},
+      {'name': 'Wash Rotom', 'dexNumber': 479, 'types': ['Electric', 'Water'], 'form': 'Regional'},
+      {'name': 'Frost Rotom', 'dexNumber': 479, 'types': ['Electric', 'Ice'], 'form': 'Regional'},
+      {'name': 'Fan Rotom', 'dexNumber': 479, 'types': ['Electric', 'Flying'], 'form': 'Regional'},
+      {'name': 'Mow Rotom', 'dexNumber': 479, 'types': ['Electric', 'Grass'], 'form': 'Regional'},
+      {'name': 'Mega Raichu X', 'dexNumber': 26, 'types': ['Electric', 'Fighting'], 'form': 'Mega'},
+      {'name': 'Mega Raichu Y', 'dexNumber': 26, 'types': ['Electric', 'Fairy'], 'form': 'Mega'},
+    ];
+    for (final m in missingForms) {
+      if (!rosterRaw.any((r) => r['name'] == m['name'])) {
+        rosterRaw.add(m);
+      }
+    }
+  }
+
   Future<List<Pokemon>> getPokemonList() async {
     final rosterFile = await _getFile('roster.json');
     final statsFile = await _getFile('stats.json');
 
     final rosterRaw = jsonDecode(await rosterFile.readAsString()) as List;
     final statsRaw = jsonDecode(await statsFile.readAsString()) as List;
+
+    _injectMissingForms(rosterRaw);
+
 
     // Load standard database pokemon list to map names to correct standard IDs
     final standardList = await _ref
@@ -248,6 +270,7 @@ class ChampionsDataService {
 
     final rosterFile = await _getFile('roster.json');
     final rosterRaw = jsonDecode(await rosterFile.readAsString()) as List;
+    _injectMissingForms(rosterRaw);
 
     // Build mapping: ability name -> pokemon IDs
     final standardList = await _ref
