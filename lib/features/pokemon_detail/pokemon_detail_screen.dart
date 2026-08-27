@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:audioplayers/audioplayers.dart';
 import '../../core/providers.dart';
@@ -487,15 +488,13 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                     Row(
                       children: [
                         _GlassButton(
-                          icon: Icons.volume_up,
+                          icon: LucideIcons.volume2,
                           color: Colors.white,
                           onTap: _playCry,
                         ),
                         const SizedBox(width: 12),
                         _GlassButton(
-                          icon: isShiny
-                              ? Icons.auto_awesome
-                              : Icons.auto_awesome_outlined,
+                          icon: LucideIcons.sparkles,
                           color: isShiny ? Colors.amber : Colors.white,
                           onTap: () {
                             ref.read(shinyModeProvider.notifier).state =
@@ -590,35 +589,48 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
         },
       ),
     ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentPage,
-        onTap: (index) {
-          _navigateToPage(index);
-        },
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: _currentPage == 0 ? Colors.transparent : Colors.white,
-        elevation: _currentPage == 0 ? 0 : 8,
-        selectedItemColor: themeColor,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        selectedFontSize: 12,
-        unselectedFontSize: 11,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.info_outline),
-            label: 'About',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Stats'),
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Movesets'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shield_outlined),
-            label: 'Defense',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.timeline),
-            label: 'Evolution',
-          ),
-        ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _currentPage,
+          onTap: (index) {
+            _navigateToPage(index);
+          },
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.white,
+          elevation: 0,
+          selectedItemColor: themeColor,
+          unselectedItemColor: Colors.grey,
+          showUnselectedLabels: true,
+          selectedFontSize: 12,
+          unselectedFontSize: 11,
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(LucideIcons.info),
+              label: 'About',
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(LucideIcons.barChart2), label: 'Stats'),
+            BottomNavigationBarItem(
+                icon: Icon(LucideIcons.swords), label: 'Movesets'),
+            BottomNavigationBarItem(
+              icon: Icon(LucideIcons.shield),
+              label: 'Defense',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(LucideIcons.dna),
+              label: 'Evolution',
+            ),
+          ],
+        ),
       ),
     );
   }
