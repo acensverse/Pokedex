@@ -101,6 +101,8 @@ class ChampionsDataService {
       {'name': 'Mow Rotom', 'dexNumber': 479, 'types': ['Electric', 'Grass'], 'form': 'Regional'},
       {'name': 'Mega Raichu X', 'dexNumber': 26, 'types': ['Electric', 'Fighting'], 'form': 'Mega'},
       {'name': 'Mega Raichu Y', 'dexNumber': 26, 'types': ['Electric', 'Fairy'], 'form': 'Mega'},
+      {'name': 'Midnight Lycanroc', 'dexNumber': 745, 'types': ['Rock'], 'form': 'Regional'},
+      {'name': 'Dusk Lycanroc', 'dexNumber': 745, 'types': ['Rock'], 'form': 'Regional'},
     ];
     for (final m in missingForms) {
       if (!rosterRaw.any((r) => r['name'] == m['name'])) {
@@ -117,7 +119,6 @@ class ChampionsDataService {
     final statsRaw = jsonDecode(await statsFile.readAsString()) as List;
 
     _injectMissingForms(rosterRaw);
-
 
     // Load standard database pokemon list to map names to correct standard IDs
     final standardList = await _ref
@@ -168,6 +169,8 @@ class ChampionsDataService {
       // Alias Paldean Tauros to Combat Breed for standard ID mapping
       if (mappingName == 'paldean tauros') {
         mappingName = 'combat breed paldean tauros';
+      } else if (mappingName == 'lycanroc') {
+        mappingName = 'midday lycanroc';
       }
 
       // Resolve ID
@@ -305,6 +308,8 @@ class ChampionsDataService {
       var lowerName = name.toLowerCase();
       if (lowerName == 'paldean tauros') {
         lowerName = 'combat breed paldean tauros';
+      } else if (lowerName == 'lycanroc') {
+        lowerName = 'midday lycanroc';
       }
       var resolvedId = nameToIdMap[lowerName];
       if (resolvedId == null) {
@@ -410,6 +415,8 @@ class ChampionsDataService {
         var mappingName = lowerPokemonName;
         if (mappingName == 'paldean tauros') {
           mappingName = 'combat breed paldean tauros';
+        } else if (mappingName == 'lycanroc') {
+          mappingName = 'midday lycanroc';
         }
         var pId = nameToIdMap[mappingName];
         if (pId == null) {
