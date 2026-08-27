@@ -375,6 +375,7 @@ class AbilityDetailSheet extends ConsumerWidget {
     );
     Navigator.of(context).pop(); // close the sheet
     // push (not go) so system-back from the filtered home returns here.
+    FocusManager.instance.primaryFocus?.unfocus();
     GoRouter.of(context).push('/');
   }
 

@@ -207,7 +207,10 @@ class AboutTab extends ConsumerWidget {
                           flavor: flavor,
                           eff: eff,
                         );
-                        if (context.mounted) context.push('/');
+                        if (context.mounted) {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          context.push('/');
+                        }
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

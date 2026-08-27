@@ -82,7 +82,10 @@ class PokemonCard extends ConsumerWidget {
         label: semanticLabel,
         child: ExcludeSemantics(
           child: GestureDetector(
-            onTap: onTap ?? () => context.push('/pokemon/${pokemon.id}'),
+            onTap: onTap ?? () {
+              FocusManager.instance.primaryFocus?.unfocus();
+              context.push('/pokemon/${pokemon.id}');
+            },
         child: Container(
           height: 92,
           margin: const EdgeInsets.symmetric(
