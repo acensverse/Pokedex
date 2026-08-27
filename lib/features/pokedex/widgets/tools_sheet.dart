@@ -143,8 +143,8 @@ class ToolsSheet extends StatelessWidget {
             ),
             _SheetButton(
               label: 'Pok\u00e9mon Champions',
-              icon: Icons.emoji_events,
-              bgImagePath: 'assets/images/pokemon_champions.png',
+              colors: const [Color(0xFF7E57C2), Color(0xFF5E35B1)],
+              customIconPath: 'assets/images/pokemon_champions.png',
               height: 56,
               onTap: () {
                 Navigator.of(context).pop();
@@ -186,18 +186,18 @@ class ToolsSheet extends StatelessWidget {
 class _SheetButton extends StatelessWidget {
   final String label;
   final IconData? icon;
+  final String? customIconPath;
   final List<Color>? colors;
   final VoidCallback onTap;
   final double height;
-  final String? bgImagePath;
 
   const _SheetButton({
     required this.label,
     this.icon,
+    this.customIconPath,
     this.colors,
     required this.onTap,
     this.height = 48,
-    this.bgImagePath,
   });
 
   @override
@@ -213,16 +213,11 @@ class _SheetButton extends StatelessWidget {
           child: Container(
             height: height,
             decoration: BoxDecoration(
-              gradient: bgImagePath == null ? LinearGradient(
+              gradient: LinearGradient(
                 begin: Alignment.centerLeft,
                 end: Alignment.centerRight,
                 colors: colors ?? [Colors.grey, Colors.grey],
-              ) : null,
-              image: bgImagePath != null ? DecorationImage(
-                image: AssetImage(bgImagePath!),
-                fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(Colors.black.withValues(alpha: 0.3), BlendMode.darken),
-              ) : null,
+              ),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Stack(
@@ -239,23 +234,30 @@ class _SheetButton extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.35),
                     ),
                   ),
+                if (customIconPath != null)
+                  Positioned(
+                    right: -6,
+                    bottom: -height * 0.22,
+                    child: Opacity(
+                      opacity: 0.35,
+                      child: Image.asset(
+                        customIconPath!,
+                        width: height * 1.05,
+                        height: height * 1.05,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
                 Center(
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
                       label.toUpperCase(),
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.1,
                         fontSize: 15,
-                        shadows: bgImagePath != null ? [
-                          Shadow(
-                            color: Colors.black.withValues(alpha: 0.8),
-                            offset: const Offset(1, 1),
-                            blurRadius: 3,
-                          )
-                        ] : null,
                       ),
                     ),
                   ),
