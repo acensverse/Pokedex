@@ -532,7 +532,18 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                   },
                   children: [
                     Container(
-                      color: Colors.white,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            themeColor.withValues(alpha: 0.4),
+                            const Color(0xFFD6C8B8),
+                            const Color(0xFFC7B19D),
+                          ],
+                          stops: const [0.0, 0.5, 1.0],
+                        ),
+                      ),
                       padding: EdgeInsets.only(
                         top: MediaQuery.paddingOf(context).top + 8,
                       ),

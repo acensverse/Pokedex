@@ -44,12 +44,12 @@ class AboutTab extends ConsumerWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: Colors.black54),
+        Icon(icon, size: 16, color: Colors.white),
         const SizedBox(width: 6),
         Text(
           text,
           style: const TextStyle(
-            color: Colors.black87,
+            color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 16,
           ),
@@ -84,7 +84,7 @@ class AboutTab extends ConsumerWidget {
                 Text(
                   maleText,
                   style: const TextStyle(
-                    color: Colors.black87,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 11,
                   ),
@@ -99,7 +99,7 @@ class AboutTab extends ConsumerWidget {
                 Text(
                   femaleText,
                   style: const TextStyle(
-                    color: Colors.black87,
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 11,
                   ),
@@ -144,7 +144,7 @@ class AboutTab extends ConsumerWidget {
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 15,
-                      color: Colors.black87,
+                      color: Colors.white,
                       height: 1.5,
                       fontWeight: FontWeight.w500,
                     ),
@@ -168,7 +168,7 @@ class AboutTab extends ConsumerWidget {
                           ),
                         ),
                         const VerticalDivider(
-                          color: Colors.black12,
+                          color: Colors.white54,
                           thickness: 1,
                           indent: 0,
                           endIndent: 0,
@@ -182,7 +182,7 @@ class AboutTab extends ConsumerWidget {
                           ),
                         ),
                         const VerticalDivider(
-                          color: Colors.black12,
+                          color: Colors.white54,
                           thickness: 1,
                           indent: 0,
                           endIndent: 0,
@@ -215,9 +215,9 @@ class AboutTab extends ConsumerWidget {
                           right: 16,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade50,
+                          color: Colors.white.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: Colors.grey.shade200, width: 1),
+                          border: Border.all(color: Colors.white24, width: 1),
                         ),
                         width: double.infinity,
                         child: Wrap(
@@ -302,7 +302,7 @@ class AboutTab extends ConsumerWidget {
                                   vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: themeColor,
+                                  color: themeColor.withValues(alpha: 0.6),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
                                     color: themeColor.withValues(alpha: 0.8),
