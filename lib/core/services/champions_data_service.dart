@@ -85,6 +85,26 @@ class ChampionsDataService {
     }
   }
 
+  String _normalizeName(String n) {
+    var name = n.toLowerCase().replaceAll(' ', '-');
+    if (name.startsWith('mega-')) {
+      name = '${name.substring(5)}-mega';
+      if (name.endsWith('-x')) name = name.replaceAll('-x', '') + '-x';
+      if (name.endsWith('-y')) name = name.replaceAll('-y', '') + '-y';
+    } else if (name.startsWith('alolan-')) {
+      name = '${name.substring(7)}-alola';
+    } else if (name.startsWith('galarian-')) {
+      name = '${name.substring(9)}-galar';
+    } else if (name.startsWith('hisuian-')) {
+      name = '${name.substring(8)}-hisui';
+    } else if (name.startsWith('paldean-')) {
+      name = '${name.substring(8)}-paldea';
+    } else if (name.startsWith('primal-')) {
+      name = '${name.substring(7)}-primal';
+    }
+    return name;
+  }
+
   Future<List<Pokemon>> getPokemonList() async {
     final rosterFile = await _getFile('roster.json');
     final statsFile = await _getFile('stats.json');
@@ -117,13 +137,26 @@ class ChampionsDataService {
 
     final mappedList = <Pokemon>[];
 
+    // Ensure order is correct
+    rosterRaw.sort((a, b) {
+      final dexA = (a['dexNumber'] as int?) ?? 0;
+      final dexB = (b['dexNumber'] as int?) ?? 0;
+      if (dexA != dexB) return dexA.compareTo(dexB);
+      
+      final formA = (a['form'] as String?) ?? '';
+      final formB = (b['form'] as String?) ?? '';
+      if (formA == 'Base' && formB != 'Base') return -1;
+      if (formB == 'Base' && formA != 'Base') return 1;
+      return formA.compareTo(formB);
+    });
+
     for (var i = 0; i < rosterRaw.length; i++) {
       final r = rosterRaw[i];
       final name = r['name'] as String;
       final dexNumber = r['dexNumber'] as int;
       final form = r['form'] as String;
 
-      final lowerName = name.toLowerCase();
+      final lowerName = _normalizeName(name);
       // Resolve ID
       var resolvedId = nameToIdMap[lowerName];
       if (resolvedId == null) {
@@ -255,7 +288,7 @@ class ChampionsDataService {
       final name = r['name'] as String;
       final dexNumber = r['dexNumber'] as int;
       final form = r['form'] as String;
-      var resolvedId = nameToIdMap[name.toLowerCase()];
+      var resolvedId = nameToIdMap[_normalizeName(name)];
       if (resolvedId == null) {
         resolvedId = form == 'Base' ? dexNumber : 10000 + dexNumber + i;
       }
