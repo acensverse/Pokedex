@@ -612,7 +612,10 @@ class MoveDetailSheet extends ConsumerWidget {
     ref.read(toolLearnerFilterProvider.notifier).state = (
       kind: 'Move',
       name: PokemonHelpers.formatName(move.name),
-      ids: move.learn.toSet(),
+      ids: {
+        ...move.learn,
+        ...move.learnDetails.map((ld) => ld[0]),
+      },
     );
     Navigator.of(context).pop(); // close the sheet
     // push (not go) so system-back from the filtered home returns here.

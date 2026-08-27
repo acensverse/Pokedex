@@ -343,7 +343,10 @@ class _LocalMoveRow extends ConsumerWidget {
           power: m.power,
           accuracy: m.acc,
           pp: m.pp,
-          ids: m.learn.toSet(),
+          ids: {
+            ...m.learn,
+            ...m.learnDetails.map((ld) => ld[0]),
+          },
         );
 
         if (context.mounted) {

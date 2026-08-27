@@ -232,13 +232,15 @@ final filteredPokemonProvider = Provider<List<Pokemon>>((ref) {
     }
 
     final matchesFavorite = !favoritesOnly || favoriteIds.contains(pokemon.id);
-    final matchesLearner =
-        learnerFilter == null || learnerFilter.ids.contains(pokemon.id);
-    final matchesAbility =
-        abilityFilter == null ||
-        _abilityIdsForMode(abilityFilter).contains(pokemon.id);
-    final matchesMove =
-        moveFilter == null || moveFilter.ids.contains(pokemon.id);
+    final matchesLearner = learnerFilter == null ||
+        learnerFilter.ids.contains(pokemon.id) ||
+        learnerFilter.ids.contains(pokemon.speciesId);
+    final matchesAbility = abilityFilter == null ||
+        _abilityIdsForMode(abilityFilter).contains(pokemon.id) ||
+        _abilityIdsForMode(abilityFilter).contains(pokemon.speciesId);
+    final matchesMove = moveFilter == null ||
+        moveFilter.ids.contains(pokemon.id) ||
+        moveFilter.ids.contains(pokemon.speciesId);
 
     return matchesSearch &&
         matchesType &&
