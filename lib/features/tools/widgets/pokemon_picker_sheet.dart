@@ -1,3 +1,4 @@
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/theme/app_colors.dart';
@@ -57,7 +58,7 @@ class _PokemonPickerSheetState extends ConsumerState<PokemonPickerSheet> {
               onChanged: (v) => setState(() => _query = v),
               decoration: InputDecoration(
                 hintText: 'Search for a Pok\u00e9mon...',
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: const Icon(LucideIcons.search),
                 filled: true,
                 fillColor: Colors.white,
                 contentPadding: EdgeInsets.zero,

@@ -1,3 +1,4 @@
+import 'package:lucide_icons/lucide_icons.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -115,7 +116,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
         actions: [
           IconButton(
             icon: Icon(
-              Icons.search,
+              LucideIcons.search,
               size: 26,
               color: _isSearching ? AppColors.primary : Colors.black54,
             ),
@@ -176,7 +177,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                           decoration: InputDecoration(
                             hintText: 'Search items...',
                             hintStyle: TextStyle(color: Colors.grey.shade400),
-                            prefixIcon: const Icon(Icons.search,
+                            prefixIcon: const Icon(LucideIcons.search,
                                 color: Colors.black54),
                             suffixIcon: _query.isNotEmpty
                                 ? IconButton(

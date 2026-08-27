@@ -1,3 +1,4 @@
+import 'package:lucide_icons/lucide_icons.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -59,7 +60,7 @@ class _PokedexSearchBarState extends ConsumerState<PokedexSearchBar> {
         hintText: 'Search Pokémon...',
         hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 16),
         prefixIcon: query.isEmpty
-            ? const Icon(Icons.search, color: Colors.black54, size: 22)
+            ? const Icon(LucideIcons.search, color: Colors.black54, size: 22)
             : null,
         suffixIcon: query.isNotEmpty
             ? IconButton(

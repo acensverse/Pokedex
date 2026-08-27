@@ -1,3 +1,4 @@
+import 'package:lucide_icons/lucide_icons.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -193,7 +194,7 @@ class _MovesScreenState extends ConsumerState<MovesScreen> {
         actions: [
           IconButton(
             icon: Icon(
-              Icons.search,
+              LucideIcons.search,
               size: 26,
               color: _isSearching ? AppColors.primary : Colors.black54,
             ),
@@ -254,7 +255,7 @@ class _MovesScreenState extends ConsumerState<MovesScreen> {
                           decoration: InputDecoration(
                             hintText: 'Search moves...',
                             hintStyle: TextStyle(color: Colors.grey.shade400),
-                            prefixIcon: const Icon(Icons.search,
+                            prefixIcon: const Icon(LucideIcons.search,
                                 color: Colors.black54),
                             suffixIcon: _query.isNotEmpty
                                 ? IconButton(

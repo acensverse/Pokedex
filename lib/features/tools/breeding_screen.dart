@@ -1,3 +1,4 @@
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -81,7 +82,7 @@ class BreedingScreen extends ConsumerWidget {
                               errorBuilder: (_, __, ___) =>
                                   const Icon(Icons.pets, color: Colors.pink),
                             )
-                          : const Icon(Icons.search, color: Colors.pink),
+                          : const Icon(LucideIcons.search, color: Colors.pink),
                     ),
                     const SizedBox(width: 16),
                     Expanded(

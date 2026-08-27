@@ -1,3 +1,4 @@
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -42,7 +43,7 @@ class _TeamBuilderScreenState extends ConsumerState<TeamBuilderScreen> {
               onChanged: (v) => setState(() => _query = v),
               decoration: InputDecoration(
                 hintText: 'Search for a team...',
-                prefixIcon: const Icon(Icons.search),
+                prefixIcon: const Icon(LucideIcons.search),
                 filled: true,
                 fillColor: Colors.grey.shade200,
                 border: OutlineInputBorder(

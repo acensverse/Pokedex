@@ -1,3 +1,4 @@
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -115,7 +116,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
           actions: [
             IconButton(
               icon: Icon(
-                Icons.search,
+                LucideIcons.search,
                 color: _isSearching ? AppColors.primary : Colors.black54,
                 size: 28,
               ),
