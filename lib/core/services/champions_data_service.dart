@@ -85,25 +85,7 @@ class ChampionsDataService {
     }
   }
 
-  String _normalizeName(String n) {
-    var name = n.toLowerCase().replaceAll(' ', '-');
-    if (name.startsWith('mega-')) {
-      name = '${name.substring(5)}-mega';
-      if (name.endsWith('-x')) name = name.replaceAll('-x', '') + '-x';
-      if (name.endsWith('-y')) name = name.replaceAll('-y', '') + '-y';
-    } else if (name.startsWith('alolan-')) {
-      name = '${name.substring(7)}-alola';
-    } else if (name.startsWith('galarian-')) {
-      name = '${name.substring(9)}-galar';
-    } else if (name.startsWith('hisuian-')) {
-      name = '${name.substring(8)}-hisui';
-    } else if (name.startsWith('paldean-')) {
-      name = '${name.substring(8)}-paldea';
-    } else if (name.startsWith('primal-')) {
-      name = '${name.substring(7)}-primal';
-    }
-    return name;
-  }
+
 
   Future<List<Pokemon>> getPokemonList() async {
     final rosterFile = await _getFile('roster.json');
@@ -156,7 +138,7 @@ class ChampionsDataService {
       final dexNumber = r['dexNumber'] as int;
       final form = r['form'] as String;
 
-      final lowerName = _normalizeName(name);
+      final lowerName = name.toLowerCase();
       // Resolve ID
       var resolvedId = nameToIdMap[lowerName];
       if (resolvedId == null) {
@@ -288,7 +270,7 @@ class ChampionsDataService {
       final name = r['name'] as String;
       final dexNumber = r['dexNumber'] as int;
       final form = r['form'] as String;
-      var resolvedId = nameToIdMap[_normalizeName(name)];
+      var resolvedId = nameToIdMap[name.toLowerCase()];
       if (resolvedId == null) {
         resolvedId = form == 'Base' ? dexNumber : 10000 + dexNumber + i;
       }
