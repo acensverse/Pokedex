@@ -141,6 +141,21 @@ class ToolsSheet extends StatelessWidget {
                 GoRouter.of(context).go('/');
               },
             ),
+            _SheetButton(
+              label: 'Pok\u00e9mon Champions',
+              icon: Icons.emoji_events,
+              colors: const [Color(0xFFFFCA28), Color(0xFFFF8F00)],
+              height: 56,
+              onTap: () {
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(const SnackBar(
+                    content: Text('Pok\u00e9mon Champions \u2014 coming soon'),
+                    duration: Duration(seconds: 2),
+                  ));
+              },
+            ),
             const SizedBox(height: AppSpacing.md),
             GridView.count(
               crossAxisCount: 2,

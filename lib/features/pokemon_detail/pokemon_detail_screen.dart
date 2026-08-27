@@ -506,8 +506,8 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
           _navigateToPage(index);
         },
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        backgroundColor: _currentPage == 0 ? Colors.transparent : Colors.white,
+        elevation: _currentPage == 0 ? 0 : 8,
         selectedItemColor: themeColor,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
