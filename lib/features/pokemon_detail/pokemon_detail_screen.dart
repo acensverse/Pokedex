@@ -591,6 +591,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
     ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.1),
@@ -599,7 +600,9 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
             ),
           ],
         ),
-        child: BottomNavigationBar(
+        child: ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          child: BottomNavigationBar(
           currentIndex: _currentPage,
           onTap: (index) {
             _navigateToPage(index);
@@ -631,6 +634,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
             ),
           ],
         ),
+      ),
       ),
     );
   }
