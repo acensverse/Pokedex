@@ -85,11 +85,12 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
               child: Row(
                 children: [
                   Text(
-                    isChampions ? 'POK\u00c9MON CHAMPIONS' : 'POKEDEX',
+                    isChampions ? 'Pok\u00e9mon Champions' : 'Pok\u00e9dex',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w900,
                       letterSpacing: 0.5,
-                      fontSize: isChampions ? 18 : null,
+                      fontSize: isChampions ? 20 : null,
+                      color: isChampions ? Colors.deepPurple : Colors.red,
                     ),
                   ),
                   const SizedBox(width: 8),
