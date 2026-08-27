@@ -556,9 +556,21 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 if (moveFilter.type != null)
-                                  _MoveStatItem(label: 'TYPE', value: moveFilter.type!),
+                                  _MoveStatItemPill(
+                                    label: 'TYPE',
+                                    value: moveFilter.type!,
+                                    pillColor: AppColors.getTypeColor(moveFilter.type!),
+                                  ),
                                 if (moveFilter.category != null)
-                                  _MoveStatItem(label: 'CAT', value: moveFilter.category!),
+                                  _MoveStatItemPill(
+                                    label: 'CAT',
+                                    value: moveFilter.category!,
+                                    pillColor: moveFilter.category!.toLowerCase() == 'physical'
+                                        ? Colors.redAccent
+                                        : (moveFilter.category!.toLowerCase() == 'special'
+                                            ? Colors.blueGrey
+                                            : Colors.grey),
+                                  ),
                                 _MoveStatItem(
                                   label: 'PWR',
                                   value: moveFilter.power == null || moveFilter.power == 0 ? '-' : moveFilter.power.toString(),
@@ -612,6 +624,53 @@ class _MoveStatItem extends StatelessWidget {
             fontSize: 12,
             fontWeight: FontWeight.bold,
             color: Colors.black87,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _MoveStatItemPill extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color pillColor;
+
+  const _MoveStatItemPill({
+    required this.label,
+    required this.value,
+    required this.pillColor,
+  });
+
+  String _capitalize(String s) =>
+      s.isNotEmpty ? '${s[0].toUpperCase()}${s.substring(1).toLowerCase()}' : s;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 9,
+            fontWeight: FontWeight.w800,
+            color: Colors.grey.shade500,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: pillColor,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Text(
+            _capitalize(value),
+            style: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
         ),
       ],
