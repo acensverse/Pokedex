@@ -292,7 +292,9 @@ class _SheetButton extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(14),
-          child: Container(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
             height: height,
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -303,7 +305,7 @@ class _SheetButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
               border: isActive
                   ? Border.all(color: Colors.white, width: 2.5)
-                  : null,
+                  : Border.all(color: Colors.transparent, width: 2.5),
             ),
             child: Stack(
               clipBehavior: Clip.none,
@@ -329,32 +331,42 @@ class _SheetButton extends StatelessWidget {
                       child: Image.asset(customIconPath!, fit: BoxFit.contain),
                     ),
                   ),
-                if (isActive)
-                  Positioned(
-                    left: 16,
-                    top: 0,
-                    bottom: 0,
-                    child: Center(
-                      child: Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.white.withValues(alpha: 0.8),
-                              blurRadius: 6,
-                              spreadRadius: 2,
-                            ),
-                          ],
+                Positioned(
+                  left: 16,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
+                    child: AnimatedScale(
+                      scale: isActive ? 1.0 : 0.0,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeOutBack,
+                      child: AnimatedOpacity(
+                        opacity: isActive ? 1.0 : 0.0,
+                        duration: const Duration(milliseconds: 200),
+                        child: Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.white.withValues(alpha: 0.8),
+                                blurRadius: 6,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
+                ),
                 Center(
-                  child: Padding(
+                  child: AnimatedPadding(
                     padding: EdgeInsets.only(left: isActive ? 32.0 : 0.0),
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOutCubic,
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
