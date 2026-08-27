@@ -139,8 +139,14 @@ class ChampionsDataService {
       final form = r['form'] as String;
 
       final lowerName = name.toLowerCase();
+      var mappingName = lowerName;
+      // Alias Paldean Tauros to Combat Breed for standard ID mapping
+      if (mappingName == 'paldean tauros') {
+        mappingName = 'combat breed paldean tauros';
+      }
+
       // Resolve ID
-      var resolvedId = nameToIdMap[lowerName];
+      var resolvedId = nameToIdMap[mappingName];
       if (resolvedId == null) {
         if (form == 'Base') {
           resolvedId = dexNumber;
@@ -270,7 +276,11 @@ class ChampionsDataService {
       final name = r['name'] as String;
       final dexNumber = r['dexNumber'] as int;
       final form = r['form'] as String;
-      var resolvedId = nameToIdMap[name.toLowerCase()];
+      var lowerName = name.toLowerCase();
+      if (lowerName == 'paldean tauros') {
+        lowerName = 'combat breed paldean tauros';
+      }
+      var resolvedId = nameToIdMap[lowerName];
       if (resolvedId == null) {
         resolvedId = form == 'Base' ? dexNumber : 10000 + dexNumber + i;
       }
