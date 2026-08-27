@@ -280,38 +280,17 @@ class _SheetButton extends StatelessWidget {
                       child: Image.asset(customIconPath!, fit: BoxFit.contain),
                     ),
                   ),
-                Positioned(
-                  left: 16,
-                  top: 0,
-                  bottom: 0,
-                  child: Center(
-                    child: AnimatedScale(
-                      scale: isActive ? 1.0 : 0.0,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeOutBack,
-                      child: AnimatedOpacity(
-                        opacity: isActive ? 1.0 : 0.0,
-                        duration: const Duration(milliseconds: 200),
-                        child: const _AmbientDot(),
-                      ),
-                    ),
-                  ),
-                ),
+
                 Center(
-                  child: AnimatedPadding(
-                    padding: EdgeInsets.only(left: isActive ? 32.0 : 0.0),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeOutCubic,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text(
-                        label.toUpperCase(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.1,
-                          fontSize: 15,
-                        ),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      label.toUpperCase(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.1,
+                        fontSize: 15,
                       ),
                     ),
                   ),
@@ -325,57 +304,3 @@ class _SheetButton extends StatelessWidget {
   }
 }
 
-class _AmbientDot extends StatefulWidget {
-  const _AmbientDot();
-
-  @override
-  State<_AmbientDot> createState() => _AmbientDotState();
-}
-
-class _AmbientDotState extends State<_AmbientDot> with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _glowAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    )..repeat(reverse: true);
-    
-    _glowAnimation = Tween<double>(begin: 2.0, end: 8.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _glowAnimation,
-      builder: (context, child) {
-        return Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.white.withValues(alpha: 0.9),
-                blurRadius: _glowAnimation.value + 4.0,
-                spreadRadius: _glowAnimation.value / 2,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
