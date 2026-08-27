@@ -615,6 +615,8 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
           showUnselectedLabels: true,
           selectedFontSize: 12,
           unselectedFontSize: 11,
+          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+          unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
           items: const [
             BottomNavigationBarItem(
               icon: Icon(LucideIcons.info),
