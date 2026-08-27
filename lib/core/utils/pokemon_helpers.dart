@@ -6,13 +6,19 @@ class PokemonHelpers {
   // Formatting helper for Pokemon names to handle edge cases like hyphens, gender, and multi-word names
   static String formatName(String rawName) {
     if (rawName.isEmpty) return rawName;
-    
+
     // Hardcoded edge cases
-    if (rawName.toLowerCase() == 'mr-mime' || rawName.toLowerCase() == 'mr. mime') return 'Mr. Mime';
-    if (rawName.toLowerCase() == 'mime-jr' || rawName.toLowerCase() == 'mime jr.') return 'Mime Jr.';
+    if (rawName.toLowerCase() == 'mr-mime' ||
+        rawName.toLowerCase() == 'mr. mime')
+      return 'Mr. Mime';
+    if (rawName.toLowerCase() == 'mime-jr' ||
+        rawName.toLowerCase() == 'mime jr.')
+      return 'Mime Jr.';
     if (rawName.toLowerCase() == 'nidoran-m') return 'Nidoran M';
     if (rawName.toLowerCase() == 'nidoran-f') return 'Nidoran F';
-    if (rawName.toLowerCase() == 'type-null' || rawName.toLowerCase() == 'type: null') return 'Type: Null';
+    if (rawName.toLowerCase() == 'type-null' ||
+        rawName.toLowerCase() == 'type: null')
+      return 'Type: Null';
     if (rawName.toLowerCase() == 'ho-oh') return 'Ho-Oh';
     if (rawName.toLowerCase() == 'porygon-z') return 'Porygon-Z';
     if (rawName.toLowerCase().startsWith('tapu-')) {
@@ -20,7 +26,7 @@ class PokemonHelpers {
     }
 
     String name = rawName.toLowerCase();
-    
+
     // Handle form suffixes (API slugs are always hyphenated, never spaced)
     final suffixes = {
       '-mega-x': 'Mega ',
@@ -48,8 +54,13 @@ class PokemonHelpers {
     }
 
     // Capitalize every word (split by both hyphens and spaces)
-    final formattedBase = name.split(RegExp(r'[- ]')).map((w) => w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '').join(' ');
-    
+    final formattedBase = name
+        .split(RegExp(r'[- ]'))
+        .map(
+          (w) => w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '',
+        )
+        .join(' ');
+
     return '$prefix$formattedBase$suffixToAppend'.trim();
   }
 
@@ -58,7 +69,8 @@ class PokemonHelpers {
     if (id == 1 || id == 2 || id == 3) {
       return {
         'category': 'Seed Pokémon',
-        'entry': 'A strange seed was planted on its back at birth. The plant sprouts and grows with this Pokémon.',
+        'entry':
+            'A strange seed was planted on its back at birth. The plant sprouts and grows with this Pokémon.',
         'genderMale': 87.5,
         'genderFemale': 12.5,
         'eggGroups': ['Monster', 'Plant'],
@@ -71,7 +83,8 @@ class PokemonHelpers {
     if (id == 4 || id == 5 || id == 6) {
       return {
         'category': 'Lizard Pokémon',
-        'entry': 'Obviously prefers hot places. When it rains, steam is said to spout from the tip of its tail.',
+        'entry':
+            'Obviously prefers hot places. When it rains, steam is said to spout from the tip of its tail.',
         'genderMale': 87.5,
         'genderFemale': 12.5,
         'eggGroups': ['Monster', 'Dragon'],
@@ -152,7 +165,8 @@ class PokemonHelpers {
     for (var i = 0; i < _flavorVersionGroupsNewestFirst.length; i++) {
       if (_flavorVersionGroupsNewestFirst[i].contains(version)) return i;
     }
-    return _flavorVersionGroupsNewestFirst.length; // unknown versions rank oldest
+    return _flavorVersionGroupsNewestFirst
+        .length; // unknown versions rank oldest
   }
 
   /// Picks the English Pok\u00e9dex entry from the newest game available for a

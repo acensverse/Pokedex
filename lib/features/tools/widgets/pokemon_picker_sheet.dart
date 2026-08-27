@@ -75,9 +75,11 @@ class _PokemonPickerSheetState extends ConsumerState<PokemonPickerSheet> {
               data: (all) {
                 final q = _query.toLowerCase().trim();
                 final results = all
-                    .where((p) =>
-                        p.name.toLowerCase().contains(q) ||
-                        p.id.toString() == q)
+                    .where(
+                      (p) =>
+                          p.name.toLowerCase().contains(q) ||
+                          p.id.toString() == q,
+                    )
                     .toList();
                 if (results.isEmpty) {
                   return const Center(child: Text('No matches'));

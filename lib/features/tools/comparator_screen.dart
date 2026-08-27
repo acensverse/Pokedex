@@ -12,17 +12,22 @@ import '../pokedex/widgets/tools_sheet.dart';
 /// Male/female percentages from the species endpoint; null when unknown,
 /// genderless, or offline.
 final _genderRatioProvider =
-    FutureProvider.family<({double male, double female})?, int>((ref, speciesId) async {
-  final dio = ref.watch(dioClientProvider).dio;
-  try {
-    final res = await dio.get('https://pokeapi.co/api/v2/pokemon-species/$speciesId');
-    final rate = res.data['gender_rate'];
-    if (rate is! int || rate < 0) return null;
-    return (male: (8 - rate) / 8 * 100, female: rate / 8 * 100);
-  } catch (_) {
-    return null;
-  }
-});
+    FutureProvider.family<({double male, double female})?, int>((
+      ref,
+      speciesId,
+    ) async {
+      final dio = ref.watch(dioClientProvider).dio;
+      try {
+        final res = await dio.get(
+          'https://pokeapi.co/api/v2/pokemon-species/$speciesId',
+        );
+        final rate = res.data['gender_rate'];
+        if (rate is! int || rate < 0) return null;
+        return (male: (8 - rate) / 8 * 100, female: rate / 8 * 100);
+      } catch (_) {
+        return null;
+      }
+    });
 
 class ComparatorScreen extends ConsumerStatefulWidget {
   const ComparatorScreen({super.key});
@@ -89,9 +94,13 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
                   Center(child: ToolsIllustration()),
                   const SizedBox(height: 20),
                   const Center(
-                    child: Text('Select Pok\u00e9mon to compare',
-                        style:
-                            TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
+                    child: Text(
+                      'Select Pok\u00e9mon to compare',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 8),
                   const Center(
@@ -128,18 +137,35 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
               CircleAvatar(
                 radius: 42,
                 backgroundColor: Colors.grey.shade200,
-                child: Icon(Icons.catching_pokemon, size: 44, color: Colors.grey.shade500),
+                child: Icon(
+                  Icons.catching_pokemon,
+                  size: 44,
+                  color: Colors.grey.shade500,
+                ),
               ),
               const SizedBox(height: 14),
-              Text('Pok\u00e9mon $slotNumber',
-                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+              Text(
+                'Pok\u00e9mon $slotNumber',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                ),
+              ),
               const SizedBox(height: 6),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: Colors.grey.shade200, borderRadius: BorderRadius.circular(4)),
-                child: Text('TAP TO SELECT',
-                    style: TextStyle(
-                        fontSize: 9, letterSpacing: 1, color: Colors.grey.shade600)),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  'TAP TO SELECT',
+                  style: TextStyle(
+                    fontSize: 9,
+                    letterSpacing: 1,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
               ),
             ],
           ),
@@ -179,8 +205,8 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
                   PokemonHelpers.getThumbnailAssetPath(pokemon.id),
                   fit: BoxFit.contain,
                   cacheWidth: PokemonHelpers.cacheWidth(context, 72),
-                  errorBuilder: (context, error, stackTrace) => Icon(
-                      Icons.catching_pokemon, size: 40, color: slotColor),
+                  errorBuilder: (context, error, stackTrace) =>
+                      Icon(Icons.catching_pokemon, size: 40, color: slotColor),
                 ),
               ),
             ),
@@ -206,8 +232,10 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
             ),
             const SizedBox(height: 6),
             // Actual Pokedex number (base species), matching the home grid.
-            Text('#${pokemon.speciesId.toString().padLeft(3, '0')}',
-                style: TextStyle(color: Colors.black54, fontSize: 11)),
+            Text(
+              '#${pokemon.speciesId.toString().padLeft(3, '0')}',
+              style: TextStyle(color: Colors.black54, fontSize: 11),
+            ),
           ],
         ),
       ),
@@ -304,8 +332,11 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
             width: 90,
             height: 90,
             cacheWidth: PokemonHelpers.cacheWidth(context, 90),
-            errorBuilder: (_, _, _) =>
-                Icon(Icons.catching_pokemon, size: 64, color: Colors.grey.shade400),
+            errorBuilder: (_, _, _) => Icon(
+              Icons.catching_pokemon,
+              size: 64,
+              color: Colors.grey.shade400,
+            ),
           ),
         ),
         const SizedBox(height: 10),
@@ -318,24 +349,39 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
               ? const SizedBox(height: 56)
               : Column(
                   children: [
-                    GenderDonut(malePercent: ratio.male, femalePercent: ratio.female),
+                    GenderDonut(
+                      malePercent: ratio.male,
+                      femalePercent: ratio.female,
+                    ),
                     const SizedBox(height: 4),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.male, size: 13, color: Colors.blueAccent),
-                        Text(' ${ratio.male.toStringAsFixed(1)}%',
-                            style: const TextStyle(fontSize: 11, color: Colors.black54)),
+                        Text(
+                          ' ${ratio.male.toStringAsFixed(1)}%',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Colors.black54,
+                          ),
+                        ),
                         const SizedBox(width: 12),
                         Icon(Icons.female, size: 13, color: Colors.pinkAccent),
-                        Text(' ${ratio.female.toStringAsFixed(1)}%',
-                            style: const TextStyle(fontSize: 11, color: Colors.black54)),
+                        Text(
+                          ' ${ratio.female.toStringAsFixed(1)}%',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Colors.black54,
+                          ),
+                        ),
                       ],
                     ),
                   ],
                 ),
           loading: () => const SizedBox(
-              height: 56, child: Center(child: CircularProgressIndicator(strokeWidth: 2))),
+            height: 56,
+            child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          ),
           error: (_, _) => const SizedBox(height: 56),
         ),
       ],
@@ -360,7 +406,10 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
       children: [
         Icon(icon, size: 16, color: Colors.black54),
         const SizedBox(width: 6),
-        Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+        ),
       ],
     );
   }
@@ -368,7 +417,14 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
   // ---- Stats -------------------------------------------------------------
 
   Widget _statsBody(Pokemon a, Pokemon b) {
-    const labels = ['HP', 'Attack', 'Defense', 'Sp. Attack', 'Sp. Defense', 'Speed'];
+    const labels = [
+      'HP',
+      'Attack',
+      'Defense',
+      'Sp. Attack',
+      'Sp. Defense',
+      'Speed',
+    ];
     const colorA = _p1;
     const colorB = _p2;
 
@@ -382,24 +438,45 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
         ),
         const SizedBox(height: 18),
         for (var i = 0; i < labels.length; i++) ...[
-          _compareStatRow(labels[i], _statValue(a.stats, labels[i]),
-              _statValue(b.stats, labels[i]), colorA, colorB),
+          _compareStatRow(
+            labels[i],
+            _statValue(a.stats, labels[i]),
+            _statValue(b.stats, labels[i]),
+            colorA,
+            colorB,
+          ),
           const SizedBox(height: 12),
         ],
         const Divider(height: 24),
         Row(
           children: [
             const SizedBox(
-                width: 78,
-                child: Text('Total:',
-                    style:
-                        TextStyle(fontSize: 13, fontWeight: FontWeight.w800))),
+              width: 78,
+              child: Text(
+                'Total:',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
+              ),
+            ),
             const Expanded(child: SizedBox()),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('${_sumStats(a)}', style: TextStyle(color: colorA, fontWeight: FontWeight.w700, fontSize: 12)),
-                Text('${_sumStats(b)}', style: TextStyle(color: colorB, fontWeight: FontWeight.w700, fontSize: 12)),
+                Text(
+                  '${_sumStats(a)}',
+                  style: TextStyle(
+                    color: colorA,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                  ),
+                ),
+                Text(
+                  '${_sumStats(b)}',
+                  style: TextStyle(
+                    color: colorB,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                  ),
+                ),
               ],
             ),
           ],
@@ -515,13 +592,22 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
     return label == 'HP' ? 714 : 504;
   }
 
-  Widget _compareStatRow(String label, int baseA, int baseB, Color colorA, Color colorB) {
+  Widget _compareStatRow(
+    String label,
+    int baseA,
+    int baseB,
+    Color colorA,
+    Color colorB,
+  ) {
     return Row(
       children: [
         SizedBox(
-            width: 78,
-            child: Text(label,
-                style: const TextStyle(fontSize: 12, color: Colors.black87))),
+          width: 78,
+          child: Text(
+            label,
+            style: const TextStyle(fontSize: 12, color: Colors.black87),
+          ),
+        ),
         Expanded(
           child: Column(
             children: [
@@ -537,10 +623,22 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('${_displayedValue(label, baseA)}',
-                  style: TextStyle(color: colorA, fontWeight: FontWeight.w700, fontSize: 12)),
-              Text('${_displayedValue(label, baseB)}',
-                  style: TextStyle(color: colorB, fontWeight: FontWeight.w700, fontSize: 12)),
+              Text(
+                '${_displayedValue(label, baseA)}',
+                style: TextStyle(
+                  color: colorA,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                ),
+              ),
+              Text(
+                '${_displayedValue(label, baseB)}',
+                style: TextStyle(
+                  color: colorB,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                ),
+              ),
             ],
           ),
         ),
@@ -549,32 +647,34 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
   }
 
   Widget _bar(Color color, int value, int max) {
-    return LayoutBuilder(builder: (context, constraints) {
-      final fraction = max <= 0 ? 0.0 : (value / max).clamp(0.0, 1.0);
-      return Stack(
-        children: [
-          Container(
-            height: 9,
-            decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(5),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final fraction = max <= 0 ? 0.0 : (value / max).clamp(0.0, 1.0);
+        return Stack(
+          children: [
+            Container(
+              height: 9,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(5),
+              ),
             ),
-          ),
-          // AnimatedContainer smoothly slides the fill width when switching
-          // between Base/Min/Max.
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 250),
-            curve: Curves.easeInOut,
-            height: 9,
-            width: constraints.maxWidth * fraction,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(5),
+            // AnimatedContainer smoothly slides the fill width when switching
+            // between Base/Min/Max.
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              height: 9,
+              width: constraints.maxWidth * fraction,
+              decoration: BoxDecoration(
+                color: color,
+                borderRadius: BorderRadius.circular(5),
+              ),
             ),
-          ),
-        ],
-      );
-    });
+          ],
+        );
+      },
+    );
   }
 
   // ---- Type effectiveness -------------------------------------------------
@@ -632,10 +732,17 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
             ('Immune to:', '0x damage', immune),
           ])
             if (group.$3.isNotEmpty) ...[
-              Text(group.$1,
-                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 12)),
-              Text(group.$2,
-                  style: const TextStyle(fontSize: 10, color: Colors.black45)),
+              Text(
+                group.$1,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 12,
+                ),
+              ),
+              Text(
+                group.$2,
+                style: const TextStyle(fontSize: 10, color: Colors.black45),
+              ),
               const SizedBox(height: 6),
               Wrap(
                 spacing: 6,

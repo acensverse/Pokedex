@@ -8,10 +8,12 @@ abstract class Ability with _$Ability {
   const factory Ability({
     required int id,
     required String name,
-    @JsonKey(name: 'effect_entries') required List<AbilityEffectEntry> effectEntries,
+    @JsonKey(name: 'effect_entries')
+    required List<AbilityEffectEntry> effectEntries,
   }) = _Ability;
 
-  factory Ability.fromJson(Map<String, dynamic> json) => _$AbilityFromJson(json);
+  factory Ability.fromJson(Map<String, dynamic> json) =>
+      _$AbilityFromJson(json);
 }
 
 @freezed
@@ -21,5 +23,6 @@ abstract class AbilityEffectEntry with _$AbilityEffectEntry {
     @JsonKey(name: 'short_effect') required String shortEffect,
   }) = _AbilityEffectEntry;
 
-  factory AbilityEffectEntry.fromJson(Map<String, dynamic> json) => _$AbilityEffectEntryFromJson(json);
+  factory AbilityEffectEntry.fromJson(Map<String, dynamic> json) =>
+      _$AbilityEffectEntryFromJson(json);
 }

@@ -37,11 +37,18 @@ class ItemEntry {
         sprite: json['sprite'] as String?,
       );
 
-  String? get description => eff ?? flavor;
+import '../pokedex/pokedex_provider.dart';
+import '../../core/services/champions_data_service.dart';
+
+String? get description => eff ?? flavor;
 }
 
 /// All items baked from assets/items_seed.json (offline-first).
 final itemsSeedProvider = FutureProvider<List<ItemEntry>>((ref) async {
+  final isChampions = ref.watch(isChampionsModeProvider);
+  if (isChampions) {
+    return ref.watch(championsDataServiceProvider).getItems();
+  }
   final raw = await rootBundle.loadString('assets/items_seed.json');
   final list = jsonDecode(raw) as List<dynamic>;
   return list

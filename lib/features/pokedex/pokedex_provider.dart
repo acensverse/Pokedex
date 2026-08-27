@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import '../../core/providers.dart';
 import '../../models/pokemon.dart';
+import '../../core/services/champions_data_service.dart';
 
 // Search Query Provider (immediate, drives the TextField)
 final searchQueryProvider = StateProvider<String>((ref) => '');
@@ -25,7 +26,8 @@ final favoritesOnlyProvider = StateProvider<bool>((ref) => false);
 /// any favorites-filtered grid without manual refreshes.
 final favoriteIdsProvider = StreamProvider<Set<int>>((ref) {
   final db = ref.watch(databaseProvider);
-  final query = db.select(db.pokemonCache)..where((t) => t.isFavorite.equals(true));
+  final query = db.select(db.pokemonCache)
+    ..where((t) => t.isFavorite.equals(true));
   return query.watch().map((rows) => rows.map((r) => r.id).toSet());
 });
 
@@ -42,20 +44,32 @@ final toolLearnerFilterProvider =
 /// Ability filter from Pokemon detail page: shows only Pokemon that have
 /// [name] as an ability. [mode] is 'all' | 'normal' | 'hidden'.
 /// Stores all three ID sets so mode switching is instant.
-final toolAbilityFilterProvider = StateProvider<
-    ({
-      String name,
-      String mode,
-      Set<int> allIds,
-      Set<int> normalIds,
-      Set<int> hiddenIds,
-      String flavor,
-      String eff,
-    })?>((ref) => null);
+final toolAbilityFilterProvider =
+    StateProvider<
+      ({
+        String name,
+        String mode,
+        Set<int> allIds,
+        Set<int> normalIds,
+        Set<int> hiddenIds,
+        String flavor,
+        String eff,
+      })?
+    >((ref) => null);
 
 /// Returns the correct ID set for the given ability filter mode.
 Set<int> _abilityIdsForMode(
-    ({String name, String mode, Set<int> allIds, Set<int> normalIds, Set<int> hiddenIds, String flavor, String eff}) filter) {
+  ({
+    String name,
+    String mode,
+    Set<int> allIds,
+    Set<int> normalIds,
+    Set<int> hiddenIds,
+    String flavor,
+    String eff,
+  })
+  filter,
+) {
   switch (filter.mode) {
     case 'normal':
       return filter.normalIds;
@@ -111,11 +125,7 @@ class PokedexNotifier extends StateNotifier<PokedexState> {
   final Ref _ref;
 
   PokedexNotifier(this._ref)
-      : super(PokedexState(
-          pokemonList: [],
-          isLoading: false,
-          hasError: false,
-        )) {
+    : super(PokedexState(pokemonList: [], isLoading: false, hasError: false)) {
     load();
   }
 
@@ -125,13 +135,18 @@ class PokedexNotifier extends StateNotifier<PokedexState> {
     state = state.copyWith(isLoading: true, hasError: false);
 
     try {
-      final repository = _ref.read(pokemonRepositoryProvider);
-      final allPokemon = await repository.getLocalPokemonList();
+      final isChampions = _ref.read(isChampionsModeProvider);
+      final List<Pokemon> allPokemon;
+      if (isChampions) {
+        allPokemon = await _ref
+            .read(championsDataServiceProvider)
+            .getPokemonList();
+      } else {
+        final repository = _ref.read(pokemonRepositoryProvider);
+        allPokemon = await repository.getLocalPokemonList();
+      }
 
-      state = state.copyWith(
-        pokemonList: allPokemon,
-        isLoading: false,
-      );
+      state = state.copyWith(pokemonList: allPokemon, isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, hasError: true);
     }
@@ -143,7 +158,10 @@ class PokedexNotifier extends StateNotifier<PokedexState> {
   }
 }
 
-final pokedexProvider = StateNotifierProvider<PokedexNotifier, PokedexState>((ref) {
+final pokedexProvider = StateNotifierProvider<PokedexNotifier, PokedexState>((
+  ref,
+) {
+  ref.watch(isChampionsModeProvider);
   return PokedexNotifier(ref);
 });
 
@@ -159,36 +177,47 @@ final filteredPokemonProvider = Provider<List<Pokemon>>((ref) {
   final abilityFilter = ref.watch(toolAbilityFilterProvider);
 
   return pokedexState.pokemonList.where((pokemon) {
-    final matchesSearch = pokemon.name.toLowerCase().contains(searchQuery) ||
-        pokemon.abilities.any((a) => a.ability.name.toLowerCase().replaceAll('-', ' ').contains(searchQuery.replaceAll('-', ' ')));
+    final matchesSearch =
+        pokemon.name.toLowerCase().contains(searchQuery) ||
+        pokemon.abilities.any(
+          (a) => a.ability.name
+              .toLowerCase()
+              .replaceAll('-', ' ')
+              .contains(searchQuery.replaceAll('-', ' ')),
+        );
 
     bool matchesType;
     if (selectedTypes.isEmpty) {
       matchesType = true;
     } else if (selectedTypes.length == 1) {
       final t = selectedTypes.first.toLowerCase();
-      matchesType =
-          pokemon.types.any((slot) => slot.type.name.toLowerCase() == t);
+      matchesType = pokemon.types.any(
+        (slot) => slot.type.name.toLowerCase() == t,
+      );
     } else {
       // Dual mode: the Pokemon must carry both selected types.
-      final pokemonTypes =
-          pokemon.types.map((s) => s.type.name.toLowerCase()).toSet();
-      matchesType =
-          selectedTypes.every((t) => pokemonTypes.contains(t.toLowerCase()));
+      final pokemonTypes = pokemon.types
+          .map((s) => s.type.name.toLowerCase())
+          .toSet();
+      matchesType = selectedTypes.every(
+        (t) => pokemonTypes.contains(t.toLowerCase()),
+      );
     }
 
     bool matchesGen = true;
     if (selectedGen > 0) {
       final range = genRanges[selectedGen];
       if (range != null) {
-        matchesGen = pokemon.speciesId >= range[0] && pokemon.speciesId <= range[1];
+        matchesGen =
+            pokemon.speciesId >= range[0] && pokemon.speciesId <= range[1];
       }
     }
 
     final matchesFavorite = !favoritesOnly || favoriteIds.contains(pokemon.id);
     final matchesLearner =
         learnerFilter == null || learnerFilter.ids.contains(pokemon.id);
-    final matchesAbility = abilityFilter == null ||
+    final matchesAbility =
+        abilityFilter == null ||
         _abilityIdsForMode(abilityFilter).contains(pokemon.id);
 
     return matchesSearch &&

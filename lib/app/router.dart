@@ -15,14 +15,10 @@ import '../features/tools/breeding_screen.dart';
 
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
-  errorBuilder: (context, state) => _RouteErrorScreen(
-    message: 'Page not found:\n${state.uri}',
-  ),
+  errorBuilder: (context, state) =>
+      _RouteErrorScreen(message: 'Page not found:\n${state.uri}'),
   routes: [
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const PokedexScreen(),
-    ),
+    GoRoute(path: '/', builder: (context, state) => const PokedexScreen()),
     GoRoute(
       path: '/pokemon/:id',
       builder: (context, state) {

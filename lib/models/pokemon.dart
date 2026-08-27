@@ -20,7 +20,8 @@ abstract class Pokemon with _$Pokemon {
     String? evolutionInfo,
   }) = _Pokemon;
 
-  factory Pokemon.fromJson(Map<String, dynamic> json) => _$PokemonFromJson(json);
+  factory Pokemon.fromJson(Map<String, dynamic> json) =>
+      _$PokemonFromJson(json);
 }
 
 @freezed
@@ -30,17 +31,17 @@ abstract class PokemonTypeSlot with _$PokemonTypeSlot {
     required PokemonType type,
   }) = _PokemonTypeSlot;
 
-  factory PokemonTypeSlot.fromJson(Map<String, dynamic> json) => _$PokemonTypeSlotFromJson(json);
+  factory PokemonTypeSlot.fromJson(Map<String, dynamic> json) =>
+      _$PokemonTypeSlotFromJson(json);
 }
 
 @freezed
 abstract class PokemonType with _$PokemonType {
-  const factory PokemonType({
-    required String name,
-    required String url,
-  }) = _PokemonType;
+  const factory PokemonType({required String name, required String url}) =
+      _PokemonType;
 
-  factory PokemonType.fromJson(Map<String, dynamic> json) => _$PokemonTypeFromJson(json);
+  factory PokemonType.fromJson(Map<String, dynamic> json) =>
+      _$PokemonTypeFromJson(json);
 }
 
 @freezed
@@ -51,17 +52,17 @@ abstract class PokemonStatSlot with _$PokemonStatSlot {
     required PokemonStat stat,
   }) = _PokemonStatSlot;
 
-  factory PokemonStatSlot.fromJson(Map<String, dynamic> json) => _$PokemonStatSlotFromJson(json);
+  factory PokemonStatSlot.fromJson(Map<String, dynamic> json) =>
+      _$PokemonStatSlotFromJson(json);
 }
 
 @freezed
 abstract class PokemonStat with _$PokemonStat {
-  const factory PokemonStat({
-    required String name,
-    required String url,
-  }) = _PokemonStat;
+  const factory PokemonStat({required String name, required String url}) =
+      _PokemonStat;
 
-  factory PokemonStat.fromJson(Map<String, dynamic> json) => _$PokemonStatFromJson(json);
+  factory PokemonStat.fromJson(Map<String, dynamic> json) =>
+      _$PokemonStatFromJson(json);
 }
 
 @freezed
@@ -72,7 +73,8 @@ abstract class PokemonAbilitySlot with _$PokemonAbilitySlot {
     required PokemonAbilityInfo ability,
   }) = _PokemonAbilitySlot;
 
-  factory PokemonAbilitySlot.fromJson(Map<String, dynamic> json) => _$PokemonAbilitySlotFromJson(json);
+  factory PokemonAbilitySlot.fromJson(Map<String, dynamic> json) =>
+      _$PokemonAbilitySlotFromJson(json);
 }
 
 @freezed
@@ -82,46 +84,50 @@ abstract class PokemonAbilityInfo with _$PokemonAbilityInfo {
     required String url,
   }) = _PokemonAbilityInfo;
 
-  factory PokemonAbilityInfo.fromJson(Map<String, dynamic> json) => _$PokemonAbilityInfoFromJson(json);
+  factory PokemonAbilityInfo.fromJson(Map<String, dynamic> json) =>
+      _$PokemonAbilityInfoFromJson(json);
 }
 
 @freezed
 abstract class PokemonMoveSlot with _$PokemonMoveSlot {
   const factory PokemonMoveSlot({
     required PokemonMoveInfo move,
-    @JsonKey(name: 'version_group_details') @Default([]) List<PokemonMoveVersionDetail> versionGroupDetails,
+    @JsonKey(name: 'version_group_details')
+    @Default([])
+    List<PokemonMoveVersionDetail> versionGroupDetails,
   }) = _PokemonMoveSlot;
 
-  factory PokemonMoveSlot.fromJson(Map<String, dynamic> json) => _$PokemonMoveSlotFromJson(json);
+  factory PokemonMoveSlot.fromJson(Map<String, dynamic> json) =>
+      _$PokemonMoveSlotFromJson(json);
 }
 
 @freezed
 abstract class PokemonMoveVersionDetail with _$PokemonMoveVersionDetail {
   const factory PokemonMoveVersionDetail({
     @JsonKey(name: 'level_learned_at') required int levelLearnedAt,
-    @JsonKey(name: 'move_learn_method') required NamedAPIResource moveLearnMethod,
+    @JsonKey(name: 'move_learn_method')
+    required NamedAPIResource moveLearnMethod,
     @JsonKey(name: 'version_group') NamedAPIResource? versionGroup,
   }) = _PokemonMoveVersionDetail;
 
-  factory PokemonMoveVersionDetail.fromJson(Map<String, dynamic> json) => _$PokemonMoveVersionDetailFromJson(json);
+  factory PokemonMoveVersionDetail.fromJson(Map<String, dynamic> json) =>
+      _$PokemonMoveVersionDetailFromJson(json);
 }
 
 @freezed
 abstract class NamedAPIResource with _$NamedAPIResource {
-  const factory NamedAPIResource({
-    required String name,
-    required String url,
-  }) = _NamedAPIResource;
+  const factory NamedAPIResource({required String name, required String url}) =
+      _NamedAPIResource;
 
-  factory NamedAPIResource.fromJson(Map<String, dynamic> json) => _$NamedAPIResourceFromJson(json);
+  factory NamedAPIResource.fromJson(Map<String, dynamic> json) =>
+      _$NamedAPIResourceFromJson(json);
 }
 
 @freezed
 abstract class PokemonMoveInfo with _$PokemonMoveInfo {
-  const factory PokemonMoveInfo({
-    required String name,
-    required String url,
-  }) = _PokemonMoveInfo;
+  const factory PokemonMoveInfo({required String name, required String url}) =
+      _PokemonMoveInfo;
 
-  factory PokemonMoveInfo.fromJson(Map<String, dynamic> json) => _$PokemonMoveInfoFromJson(json);
+  factory PokemonMoveInfo.fromJson(Map<String, dynamic> json) =>
+      _$PokemonMoveInfoFromJson(json);
 }

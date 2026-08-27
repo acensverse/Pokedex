@@ -8,6 +8,7 @@ import 'widgets/filter_sheet.dart';
 import 'widgets/gen_filter_sheet.dart';
 import 'widgets/tools_sheet.dart';
 import 'pokedex_provider.dart';
+import '../../core/providers.dart';
 
 class PokedexScreen extends ConsumerStatefulWidget {
   const PokedexScreen({super.key});
@@ -54,6 +55,8 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
       }
     });
 
+    final isChampions = ref.watch(isChampionsModeProvider);
+
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, _) {
@@ -64,361 +67,398 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
       child: Scaffold(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Semantics(
-          button: true,
-          label: 'Open Pok\u00e9dex tools menu',
-          child: GestureDetector(
-            onTap: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                builder: (context) => const ToolsSheet(),
-              );
-            },
-            child: Row(
-              children: [
-                Text(
-                  'POKEDEX',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 0.5,
-                      ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  width: 22,
-                  height: 22,
-                  decoration: const BoxDecoration(
-                    color: AppColors.primary,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Center(
-                    child: Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.white,
-                      size: 16,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.search,
-              color: _isSearching ? AppColors.primary : Colors.black54,
-              size: 28,
-            ),
-            onPressed: () {
-              setState(() {
-                _isSearching = !_isSearching;
-                if (!_isSearching) {
-                  ref.read(searchQueryProvider.notifier).state = '';
-                  ref.read(debouncedSearchQueryProvider.notifier).state = '';
-                  if (_scrollController.hasClients) {
-                    _scrollController.jumpTo(0);
-                  }
-                }
-              });
-            },
-          ),
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-            icon: AnimatedRotation(
-              turns: _showFilters ? 0.5 : 0,
-              duration: const Duration(milliseconds: 450),
-              curve: Curves.easeInOutBack,
-              child: const _PokeballIcon(size: 28),
-            ),
-            onPressed: () {
-              setState(() {
-                _showFilters = !_showFilters;
-              });
-            },
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: Column(
-        children: [
-          AnimatedSize(
-            duration: const Duration(milliseconds: 250),
-            curve: Curves.easeInOut,
-            child: _isSearching
-                ? Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 2, 16, 4),
-                    child: PokedexSearchBar(
-                      onExit: () {
-                        setState(() {
-                          _isSearching = false;
-                        });
-                        ref.read(searchQueryProvider.notifier).state = '';
-                        ref.read(debouncedSearchQueryProvider.notifier).state = '';
-                        if (_scrollController.hasClients) {
-                          _scrollController.jumpTo(0);
-                        }
-                      },
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-          AnimatedSize(
-            duration: const Duration(milliseconds: 250),
-            curve: Curves.easeInOut,
-            child: _showFilters
-                ? Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    child: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        _FilterPill(
-                          label: _genLabel(activeGen),
-                          isActive: activeGen > 0,
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              backgroundColor: Colors.transparent,
-                              builder: (context) => const GenFilterSheet(),
-                            );
-                          },
-                        ),
-                        _FilterPill(
-                          label: _typeLabel(activeTypes),
-                          isActive: activeTypes.isNotEmpty,
-                          onTap: () {
-                            showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              backgroundColor: Colors.transparent,
-                              builder: (context) => const FilterSheet(),
-                            );
-                          },
-                        ),
-                        _FilterPill(
-                          label: 'Shiny',
-                          isActive: ref.watch(shinyModeProvider),
-                          activeColor: Colors.amber,
-                          onTap: () {
-                            ref.read(shinyModeProvider.notifier).state =
-                                !ref.read(shinyModeProvider);
-                          },
-                        ),
-                        _FilterPill(
-                          label: 'Favorites',
-                          isActive: ref.watch(favoritesOnlyProvider),
-                          onTap: () {
-                            ref.read(favoritesOnlyProvider.notifier).state =
-                                !ref.read(favoritesOnlyProvider);
-                          },
-                        ),
-                      ],
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-          if (learnerFilter != null)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+          automaticallyImplyLeading: false,
+          title: Semantics(
+            button: true,
+            label: 'Open Pok\u00e9dex tools menu',
+            child: GestureDetector(
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) => const ToolsSheet(),
+                );
+              },
               child: Row(
                 children: [
-                  Chip(
-                    backgroundColor: Colors.white,
-                    side: BorderSide(color: Colors.grey.shade300),
-                    label: Text(
-                      '${learnerFilter.kind.toUpperCase()}: ${learnerFilter.name.toUpperCase()}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 11,
+                  Text(
+                    isChampions ? 'POK\u00c9MON CHAMPIONS' : 'POKEDEX',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(
+                      color: isChampions
+                          ? const Color(0xFF7E57C2)
+                          : AppColors.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.keyboard_arrow_down,
+                        color: Colors.white,
+                        size: 16,
                       ),
                     ),
-                    deleteIcon: const Icon(Icons.close, size: 14),
-                    onDeleted: () {
-                      ref.read(toolLearnerFilterProvider.notifier).state = null;
-                      final router = GoRouter.of(context);
-                      if (router.canPop()) router.pop();
-                    },
                   ),
                 ],
               ),
             ),
-          if (abilityFilter != null)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: Column(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.grey.shade200),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.search,
+                color: _isSearching ? AppColors.primary : Colors.black54,
+                size: 28,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isSearching = !_isSearching;
+                  if (!_isSearching) {
+                    ref.read(searchQueryProvider.notifier).state = '';
+                    ref.read(debouncedSearchQueryProvider.notifier).state = '';
+                    if (_scrollController.hasClients) {
+                      _scrollController.jumpTo(0);
+                    }
+                  }
+                });
+              },
+            ),
+            IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+              icon: AnimatedRotation(
+                turns: _showFilters ? 0.5 : 0,
+                duration: const Duration(milliseconds: 450),
+                curve: Curves.easeInOutBack,
+                child: const _PokeballIcon(size: 28),
+              ),
+              onPressed: () {
+                setState(() {
+                  _showFilters = !_showFilters;
+                });
+              },
+            ),
+            const SizedBox(width: 8),
+          ],
+        ),
+        body: Column(
+          children: [
+            AnimatedSize(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              child: _isSearching
+                  ? Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 2, 16, 4),
+                      child: PokedexSearchBar(
+                        onExit: () {
+                          setState(() {
+                            _isSearching = false;
+                          });
+                          ref.read(searchQueryProvider.notifier).state = '';
+                          ref
+                                  .read(debouncedSearchQueryProvider.notifier)
+                                  .state =
+                              '';
+                          if (_scrollController.hasClients) {
+                            _scrollController.jumpTo(0);
+                          }
+                        },
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              child: _showFilters
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          _FilterPill(
+                            label: _genLabel(activeGen),
+                            isActive: activeGen > 0,
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                                builder: (context) => const GenFilterSheet(),
+                              );
+                            },
+                          ),
+                          _FilterPill(
+                            label: _typeLabel(activeTypes),
+                            isActive: activeTypes.isNotEmpty,
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                                builder: (context) => const FilterSheet(),
+                              );
+                            },
+                          ),
+                          _FilterPill(
+                            label: 'Shiny',
+                            isActive: ref.watch(shinyModeProvider),
+                            activeColor: Colors.amber,
+                            onTap: () {
+                              ref.read(shinyModeProvider.notifier).state = !ref
+                                  .read(shinyModeProvider);
+                            },
+                          ),
+                          _FilterPill(
+                            label: 'Favorites',
+                            isActive: ref.watch(favoritesOnlyProvider),
+                            onTap: () {
+                              ref.read(favoritesOnlyProvider.notifier).state =
+                                  !ref.read(favoritesOnlyProvider);
+                            },
+                          ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            if (learnerFilter != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                child: Row(
+                  children: [
+                    Chip(
+                      backgroundColor: Colors.white,
+                      side: BorderSide(color: Colors.grey.shade300),
+                      label: Text(
+                        '${learnerFilter.kind.toUpperCase()}: ${learnerFilter.name.toUpperCase()}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
                         ),
-                      ],
+                      ),
+                      deleteIcon: const Icon(Icons.close, size: 14),
+                      onDeleted: () {
+                        ref.read(toolLearnerFilterProvider.notifier).state =
+                            null;
+                        final router = GoRouter.of(context);
+                        if (router.canPop()) router.pop();
+                      },
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 14, 12, 0),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 5,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.primary,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  abilityFilter.name.toUpperCase(),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w900,
-                                    fontSize: 13,
-                                    letterSpacing: 0.5,
+                  ],
+                ),
+              ),
+            if (abilityFilter != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                child: Column(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey.shade200),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 14, 12, 0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    abilityFilter.name.toUpperCase(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 13,
+                                      letterSpacing: 0.5,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const Spacer(),
-                              GestureDetector(
-                                onTap: () {
-                                  ref.read(toolAbilityFilterProvider.notifier).state = null;
-                                },
-                                child: const Icon(Icons.close, size: 18, color: Colors.black45),
-                              ),
-                            ],
-                          ),
-                        ),
-                        if (abilityFilter.flavor.isNotEmpty) ...[
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 12, 16, 2),
-                            child: Text(
-                              'Description',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.grey.shade500,
-                                letterSpacing: 0.5,
-                              ),
+                                const Spacer(),
+                                GestureDetector(
+                                  onTap: () {
+                                    ref
+                                            .read(
+                                              toolAbilityFilterProvider
+                                                  .notifier,
+                                            )
+                                            .state =
+                                        null;
+                                  },
+                                  child: const Icon(
+                                    Icons.close,
+                                    size: 18,
+                                    color: Colors.black45,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
-                            child: Text(
-                              abilityFilter.flavor,
-                              style: TextStyle(
-                                fontSize: 12.5,
-                                color: Colors.grey.shade700,
-                                height: 1.4,
+                          if (abilityFilter.flavor.isNotEmpty) ...[
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 12, 16, 2),
+                              child: Text(
+                                'Description',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.grey.shade500,
+                                  letterSpacing: 0.5,
+                                ),
                               ),
                             ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+                              child: Text(
+                                abilityFilter.flavor,
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  color: Colors.grey.shade700,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          ],
+                          if (abilityFilter.eff.isNotEmpty) ...[
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 4, 16, 2),
+                              child: Text(
+                                'Effect',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.grey.shade500,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                              child: Text(
+                                abilityFilter.eff,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade600,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: Colors.grey.shade200),
+                      ),
+                      padding: const EdgeInsets.all(4),
+                      child: Row(
+                        children: [
+                          _AbilityModeButton(
+                            label: 'All',
+                            isActive: abilityFilter.mode == 'all',
+                            onTap: () {
+                              final c = ref.read(toolAbilityFilterProvider);
+                              if (c != null && c.mode != 'all') {
+                                ref
+                                    .read(toolAbilityFilterProvider.notifier)
+                                    .state = (
+                                  name: c.name,
+                                  mode: 'all',
+                                  allIds: c.allIds,
+                                  normalIds: c.normalIds,
+                                  hiddenIds: c.hiddenIds,
+                                  flavor: c.flavor,
+                                  eff: c.eff,
+                                );
+                              }
+                            },
+                          ),
+                          _AbilityModeButton(
+                            label: 'Normal',
+                            isActive: abilityFilter.mode == 'normal',
+                            onTap: () {
+                              final c = ref.read(toolAbilityFilterProvider);
+                              if (c != null && c.mode != 'normal') {
+                                ref
+                                    .read(toolAbilityFilterProvider.notifier)
+                                    .state = (
+                                  name: c.name,
+                                  mode: 'normal',
+                                  allIds: c.allIds,
+                                  normalIds: c.normalIds,
+                                  hiddenIds: c.hiddenIds,
+                                  flavor: c.flavor,
+                                  eff: c.eff,
+                                );
+                              }
+                            },
+                          ),
+                          _AbilityModeButton(
+                            label: 'Hidden',
+                            isActive: abilityFilter.mode == 'hidden',
+                            onTap: () {
+                              final c = ref.read(toolAbilityFilterProvider);
+                              if (c != null && c.mode != 'hidden') {
+                                ref
+                                    .read(toolAbilityFilterProvider.notifier)
+                                    .state = (
+                                  name: c.name,
+                                  mode: 'hidden',
+                                  allIds: c.allIds,
+                                  normalIds: c.normalIds,
+                                  hiddenIds: c.hiddenIds,
+                                  flavor: c.flavor,
+                                  eff: c.eff,
+                                );
+                              }
+                            },
                           ),
                         ],
-                        if (abilityFilter.eff.isNotEmpty) ...[
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 4, 16, 2),
-                            child: Text(
-                              'Effect',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.grey.shade500,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                            child: Text(
-                              abilityFilter.eff,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey.shade600,
-                                height: 1.4,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.grey.shade200),
-                    ),
-                    padding: const EdgeInsets.all(4),
-                    child: Row(
-                      children: [
-                        _AbilityModeButton(
-                          label: 'All',
-                          isActive: abilityFilter.mode == 'all',
-                          onTap: () {
-                            final c = ref.read(toolAbilityFilterProvider);
-                            if (c != null && c.mode != 'all') {
-                              ref.read(toolAbilityFilterProvider.notifier).state = (
-                                name: c.name, mode: 'all', allIds: c.allIds,
-                                normalIds: c.normalIds, hiddenIds: c.hiddenIds,
-                                flavor: c.flavor, eff: c.eff,
-                              );
-                            }
-                          },
-                        ),
-                        _AbilityModeButton(
-                          label: 'Normal',
-                          isActive: abilityFilter.mode == 'normal',
-                          onTap: () {
-                            final c = ref.read(toolAbilityFilterProvider);
-                            if (c != null && c.mode != 'normal') {
-                              ref.read(toolAbilityFilterProvider.notifier).state = (
-                                name: c.name, mode: 'normal', allIds: c.allIds,
-                                normalIds: c.normalIds, hiddenIds: c.hiddenIds,
-                                flavor: c.flavor, eff: c.eff,
-                              );
-                            }
-                          },
-                        ),
-                        _AbilityModeButton(
-                          label: 'Hidden',
-                          isActive: abilityFilter.mode == 'hidden',
-                          onTap: () {
-                            final c = ref.read(toolAbilityFilterProvider);
-                            if (c != null && c.mode != 'hidden') {
-                              ref.read(toolAbilityFilterProvider.notifier).state = (
-                                name: c.name, mode: 'hidden', allIds: c.allIds,
-                                normalIds: c.normalIds, hiddenIds: c.hiddenIds,
-                                flavor: c.flavor, eff: c.eff,
-                              );
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          Expanded(child: PokemonGrid(scrollController: _scrollController)),
-        ],
+            Expanded(child: PokemonGrid(scrollController: _scrollController)),
+          ],
+        ),
       ),
-    ),
     );
   }
 }
@@ -547,15 +587,26 @@ class _PokeballPainter extends CustomPainter {
     );
 
     canvas.drawRect(
-      Rect.fromLTWH(0, size.height / 2 - bandHeight / 2, size.width, bandHeight),
+      Rect.fromLTWH(
+        0,
+        size.height / 2 - bandHeight / 2,
+        size.width,
+        bandHeight,
+      ),
       Paint()..color = _outlineColor,
     );
 
     canvas.drawCircle(center, buttonRadius, Paint()..color = _outlineColor);
     canvas.drawCircle(
-        center, buttonRadius * 0.66, Paint()..color = Colors.white);
+      center,
+      buttonRadius * 0.66,
+      Paint()..color = Colors.white,
+    );
     canvas.drawCircle(
-        center, buttonRadius * 0.28, Paint()..color = _outlineColor);
+      center,
+      buttonRadius * 0.28,
+      Paint()..color = _outlineColor,
+    );
 
     canvas.drawCircle(
       center,

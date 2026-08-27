@@ -20,7 +20,9 @@ class PokemonGrid extends ConsumerWidget {
     }
 
     // Loaded fine but the current search/filter combination matches nothing.
-    if (!pokedexState.isLoading && !pokedexState.hasError && pokemonList.isEmpty) {
+    if (!pokedexState.isLoading &&
+        !pokedexState.hasError &&
+        pokemonList.isEmpty) {
       return const _EmptyResultView();
     }
 
@@ -39,9 +41,7 @@ class PokemonGrid extends ConsumerWidget {
           } else {
             return const SizedBox(
               height: 100,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
+              child: Center(child: CircularProgressIndicator()),
             );
           }
         },
@@ -67,7 +67,9 @@ class _PokedexErrorView extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'Could not load the Pok\u00e9dex',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
@@ -101,7 +103,9 @@ class _EmptyResultView extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             'No Pok\u00e9mon found',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
           Text(

@@ -31,8 +31,7 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
   }
 
   Future<void> _loadExisting() async {
-    final team =
-        await ref.read(databaseProvider).getTeamById(widget.editId!);
+    final team = await ref.read(databaseProvider).getTeamById(widget.editId!);
     if (!mounted || team == null) return;
     setState(() {
       _nameController.text = team.name;
@@ -63,8 +62,10 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
         backgroundColor: Colors.white,
         elevation: 1,
         centerTitle: true,
-        title: Text(isEdit ? 'Edit team' : 'New team',
-            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+        title: Text(
+          isEdit ? 'Edit team' : 'New team',
+          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+        ),
       ),
       body: SafeArea(
         child: Column(
@@ -90,9 +91,7 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
                   ),
                   const SizedBox(height: 20),
                   const _SectionLabel('Pok\u00e9mon party'),
-                  ...[
-                    for (var i = 0; i < 6; i++) _slotTile(i),
-                  ],
+                  ...[for (var i = 0; i < 6; i++) _slotTile(i)],
                 ],
               ),
             ),
@@ -119,12 +118,15 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
                       children: [
                         Icon(Icons.check, color: Colors.white),
                         SizedBox(width: 10),
-                        Text('SAVE',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 1.4,
-                                fontSize: 15)),
+                        Text(
+                          'SAVE',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.4,
+                            fontSize: 15,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -164,28 +166,36 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
               color: Colors.grey.shade200,
               borderRadius: BorderRadius.circular(12),
             ),
-              child: Row(
-                children: [
-                  // Empty slots match the filled square preview box size.
-                  Container(
-                    width: 72,
-                    height: 72,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                        Icons.catching_pokemon, color: Colors.grey.shade500),
+            child: Row(
+              children: [
+                // Empty slots match the filled square preview box size.
+                Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                  child: Icon(
+                    Icons.catching_pokemon,
+                    color: Colors.grey.shade500,
+                  ),
+                ),
                 const SizedBox(width: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Pok\u00e9mon #${index + 1}',
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w800)),
-                    Text('Add your #${index + 1} Pok\u00e9mon',
-                        style: TextStyle(color: Colors.grey.shade600)),
+                    Text(
+                      'Pok\u00e9mon #${index + 1}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    Text(
+                      'Add your #${index + 1} Pok\u00e9mon',
+                      style: TextStyle(color: Colors.grey.shade600),
+                    ),
                   ],
                 ),
               ],
@@ -201,8 +211,9 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
         final row = snapshot.data;
         final tint = row == null
             ? Colors.grey.shade200
-            : AppColors.getTypeColor(row.types.split(',').first.trim())
-                .withValues(alpha: 0.25);
+            : AppColors.getTypeColor(
+                row.types.split(',').first.trim(),
+              ).withValues(alpha: 0.25);
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
           child: InkWell(
@@ -229,15 +240,15 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
                       PokemonHelpers.getHomeAssetPath(id),
                       fit: BoxFit.contain,
                       cacheWidth: PokemonHelpers.cacheWidth(context, 64),
-                      errorBuilder: (context, error, stackTrace) =>
-                          Image.asset(
+                      errorBuilder: (context, error, stackTrace) => Image.asset(
                         PokemonHelpers.getThumbnailAssetPath(id),
                         fit: BoxFit.contain,
                         cacheWidth: PokemonHelpers.cacheWidth(context, 52),
                         errorBuilder: (context, error, stackTrace) => Icon(
-                            Icons.catching_pokemon,
-                            size: 36,
-                            color: Colors.grey.shade400),
+                          Icons.catching_pokemon,
+                          size: 36,
+                          color: Colors.grey.shade400,
+                        ),
                       ),
                     ),
                   ),
@@ -248,13 +259,14 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
                           ? 'Loading...'
                           : PokemonHelpers.formatName(row.name),
                       style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w700),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.close, color: Colors.black45),
-                    onPressed: () =>
-                        setState(() => _slots[index] = null),
+                    onPressed: () => setState(() => _slots[index] = null),
                   ),
                 ],
               ),
@@ -294,9 +306,10 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      child: Text(text,
-          style:
-              const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+      ),
     );
   }
 }

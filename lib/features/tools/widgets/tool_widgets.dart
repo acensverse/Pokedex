@@ -14,8 +14,9 @@ class TypePill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = AppColors.getTypeColor(type);
-    final label =
-        type.isEmpty ? '' : '${type[0].toUpperCase()}${type.substring(1)}';
+    final label = type.isEmpty
+        ? ''
+        : '${type[0].toUpperCase()}${type.substring(1)}';
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: fontSize * 1.2,
@@ -181,7 +182,11 @@ class ToolsIllustration extends StatelessWidget {
         children: [
           const Align(
             alignment: Alignment.bottomCenter,
-            child: Icon(Icons.arrow_upward, size: 170, color: Color(0xFF263238)),
+            child: Icon(
+              Icons.arrow_upward,
+              size: 170,
+              color: Color(0xFF263238),
+            ),
           ),
           for (final entry in accents.entries)
             Positioned(

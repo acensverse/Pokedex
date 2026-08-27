@@ -13,11 +13,14 @@ class PokeApi {
   PokeApi(this._dio);
 
   // Fetch list of Pokemon (returns list of Map containing name and url)
-  Future<List<Map<String, dynamic>>> fetchPokemonList({int limit = 20, int offset = 0}) async {
-    final response = await _dio.get('pokemon', queryParameters: {
-      'limit': limit,
-      'offset': offset,
-    });
+  Future<List<Map<String, dynamic>>> fetchPokemonList({
+    int limit = 20,
+    int offset = 0,
+  }) async {
+    final response = await _dio.get(
+      'pokemon',
+      queryParameters: {'limit': limit, 'offset': offset},
+    );
     final results = response.data['results'] as List;
     return results.map((item) => item as Map<String, dynamic>).toList();
   }
@@ -34,8 +37,10 @@ class PokeApi {
     if (raw == null || raw.isEmpty) {
       throw StateError('Empty response for pokemon/$nameOrId');
     }
-    final Map<String, dynamic> data =
-        await compute((String s) => jsonDecode(s) as Map<String, dynamic>, raw);
+    final Map<String, dynamic> data = await compute(
+      (String s) => jsonDecode(s) as Map<String, dynamic>,
+      raw,
+    );
 
     // Transform PokeAPI response to match our freezed model
     if (data['species'] != null && data['species']['url'] != null) {
@@ -53,7 +58,7 @@ class PokeApi {
     if (data['forms'] != null) {
       data['forms'] = null; // Ignore complex forms parsing for now
     }
-    
+
     return Pokemon.fromJson(data);
   }
 

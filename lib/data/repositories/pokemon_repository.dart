@@ -58,7 +58,8 @@ class PokemonRepository {
   /// Bumped alongside [_seedDoneFlag] whenever baked asset CONTENT changes.
   /// Lets a healthy-looking database (rows pass the sniff test below) still
   /// be recognized as pre-rebake, forcing exactly one re-seed.
-  static const _seedAssetRev = 7; // 7 = filled missing Z-A mega abilities from base species
+  static const _seedAssetRev =
+      7; // 7 = filled missing Z-A mega abilities from base species
 
   // Seed SQLite from local JSON asset once per install/seed-version
   Future<void> checkAndSeedDatabase() async {
@@ -77,10 +78,10 @@ class PokemonRepository {
       // corrupted asset era (flavor text shipped starting with seed v9)
       if (first != null &&
           (first.species == null ||
-               first.species!.isEmpty ||
-               first.species!.contains('\uFFFD') ||
-               first.flavorText == null ||
-               first.flavorText!.isEmpty)) {
+              first.species!.isEmpty ||
+              first.species!.contains('\uFFFD') ||
+              first.flavorText == null ||
+              first.flavorText!.isEmpty)) {
         needsUpdate = true;
       }
     }
@@ -94,7 +95,9 @@ class PokemonRepository {
     }
 
     try {
-      final jsonString = await rootBundle.loadString('assets/pokedex_seed.json');
+      final jsonString = await rootBundle.loadString(
+        'assets/pokedex_seed.json',
+      );
       final parsed = await compute(_parsePokedexSeed, jsonString);
 
       // Batch insert in a single transaction instead of 1291 row-by-row awaits
@@ -137,7 +140,9 @@ class PokemonRepository {
     final typesString = pokemon.types.map((t) => t.type.name).join(',');
     // Cache abilities incl. real hidden flags as JSON: [{"n":name,"h":hidden}, ...]
     final abilitiesCache = jsonEncode(
-      pokemon.abilities.map((a) => {'n': a.ability.name, 'h': a.isHidden}).toList(),
+      pokemon.abilities
+          .map((a) => {'n': a.ability.name, 'h': a.isHidden})
+          .toList(),
     );
     final hpVal = _statValue(pokemon.stats, 'hp');
     final attackVal = _statValue(pokemon.stats, 'attack');
@@ -181,11 +186,15 @@ class PokemonRepository {
   /// Category + any previously cached flavor text read straight from SQLite.
   /// Resolves in milliseconds, letting the header paint instantly while
   /// getSpeciesInfo streams the (network-only) flavor text in the background.
-  Future<({String? category, String? flavorText})> getCachedSpeciesInfo(int id) async {
+  Future<({String? category, String? flavorText})> getCachedSpeciesInfo(
+    int id,
+  ) async {
     final cached = await _db.getPokemonById(id);
     return (
       category: _trustworthyCategory(cached?.species),
-      flavorText: (cached?.flavorText?.isNotEmpty ?? false) ? cached!.flavorText : null,
+      flavorText: (cached?.flavorText?.isNotEmpty ?? false)
+          ? cached!.flavorText
+          : null,
     );
   }
 
@@ -196,7 +205,9 @@ class PokemonRepository {
     final speciesId = cached?.speciesId ?? id;
 
     final cachedCategory = _trustworthyCategory(cached?.species);
-    final cachedFlavor = (cached?.flavorText?.isNotEmpty ?? false) ? cached!.flavorText : null;
+    final cachedFlavor = (cached?.flavorText?.isNotEmpty ?? false)
+        ? cached!.flavorText
+        : null;
 
     if (cachedCategory != null && cachedFlavor != null) {
       return (category: cachedCategory, flavorText: cachedFlavor);
@@ -206,14 +217,16 @@ class PokemonRepository {
     String? flavorText = cachedFlavor;
 
     try {
-      final response = await _dio.get('https://pokeapi.co/api/v2/pokemon-species/$speciesId');
+      final response = await _dio.get(
+        'https://pokeapi.co/api/v2/pokemon-species/$speciesId',
+      );
       final data = response.data;
       if (data is Map) {
         if (category.isEmpty && data['genera'] is List) {
           final enGenus = (data['genera'] as List).whereType<Map>().firstWhere(
-                (g) => g['language']?['name'] == 'en',
-                orElse: () => const {},
-              );
+            (g) => g['language']?['name'] == 'en',
+            orElse: () => const {},
+          );
           if (enGenus.isNotEmpty && enGenus['genus'] is String) {
             category = enGenus['genus'] as String;
           }
@@ -229,10 +242,16 @@ class PokemonRepository {
         }
       }
       if (cached != null && (category.isNotEmpty || flavorText != null)) {
-        await _db.cachePokemon(cached.copyWith(
-          species: category.isNotEmpty ? Value(category) : const Value.absent(),
-          flavorText: flavorText != null ? Value(flavorText) : const Value.absent(),
-        ));
+        await _db.cachePokemon(
+          cached.copyWith(
+            species: category.isNotEmpty
+                ? Value(category)
+                : const Value.absent(),
+            flavorText: flavorText != null
+                ? Value(flavorText)
+                : const Value.absent(),
+          ),
+        );
       }
     } catch (e, st) {
       debugPrint('Failed to load species info for $speciesId: $e\n$st');
@@ -248,23 +267,36 @@ class PokemonRepository {
   /// A cached category is usable unless it is a placeholder or legacy mojibake
   String? _trustworthyCategory(String? species) {
     if (species == null || species.isEmpty) return null;
-    if (species == 'Pok\u00e9mon' || species == 'Unknown Pok\u00e9mon') return null;
+    if (species == 'Pok\u00e9mon' || species == 'Unknown Pok\u00e9mon')
+      return null;
     if (species.contains('Bulbasaur Pok')) return null;
     if (species.contains('\uFFFD')) return null;
     return species;
   }
 
   /// Returns breeding information: egg groups, gender rate, and hatch counter.
-  Future<({List<String> eggGroups, int genderRate, int hatchCounter})> getBreedingInfo(int speciesId) async {
+  Future<({List<String> eggGroups, int genderRate, int hatchCounter})>
+  getBreedingInfo(int speciesId) async {
     try {
-      final response = await _dio.get('https://pokeapi.co/api/v2/pokemon-species/$speciesId');
+      final response = await _dio.get(
+        'https://pokeapi.co/api/v2/pokemon-species/$speciesId',
+      );
       final data = response.data;
       if (data is Map) {
         final eggGroupsList = data['egg_groups'] as List?;
-        final eggGroups = eggGroupsList?.whereType<Map>().map((e) => e['name'] as String).toList() ?? [];
+        final eggGroups =
+            eggGroupsList
+                ?.whereType<Map>()
+                .map((e) => e['name'] as String)
+                .toList() ??
+            [];
         final genderRate = data['gender_rate'] as int? ?? -1;
         final hatchCounter = data['hatch_counter'] as int? ?? 0;
-        return (eggGroups: eggGroups, genderRate: genderRate, hatchCounter: hatchCounter);
+        return (
+          eggGroups: eggGroups,
+          genderRate: genderRate,
+          hatchCounter: hatchCounter,
+        );
       }
     } catch (e, st) {
       debugPrint('Failed to load breeding info for $speciesId: $e\n$st');
@@ -290,21 +322,53 @@ class PokemonRepository {
   // present in old rows) is intentionally ignored so typed columns stay
   // the single source of truth.
   Pokemon _mapDbToModel(PokemonCacheData dbData) {
-    final typesList = dbData.types.split(',').map((typeName) => PokemonTypeSlot(
-      slot: 1,
-      type: PokemonType(name: typeName, url: ''),
-    )).toList();
+    final typesList = dbData.types
+        .split(',')
+        .map(
+          (typeName) => PokemonTypeSlot(
+            slot: 1,
+            type: PokemonType(name: typeName, url: ''),
+          ),
+        )
+        .toList();
 
     final statsList = [
-      PokemonStatSlot(baseStat: dbData.hp ?? 0, effort: 0, stat: const PokemonStat(name: 'hp', url: '')),
-      PokemonStatSlot(baseStat: dbData.attack ?? 0, effort: 0, stat: const PokemonStat(name: 'attack', url: '')),
-      PokemonStatSlot(baseStat: dbData.defense ?? 0, effort: 0, stat: const PokemonStat(name: 'defense', url: '')),
-      PokemonStatSlot(baseStat: dbData.spAttack ?? 0, effort: 0, stat: const PokemonStat(name: 'special-attack', url: '')),
-      PokemonStatSlot(baseStat: dbData.spDefense ?? 0, effort: 0, stat: const PokemonStat(name: 'special-defense', url: '')),
-      PokemonStatSlot(baseStat: dbData.speed ?? 0, effort: 0, stat: const PokemonStat(name: 'speed', url: '')),
+      PokemonStatSlot(
+        baseStat: dbData.hp ?? 0,
+        effort: 0,
+        stat: const PokemonStat(name: 'hp', url: ''),
+      ),
+      PokemonStatSlot(
+        baseStat: dbData.attack ?? 0,
+        effort: 0,
+        stat: const PokemonStat(name: 'attack', url: ''),
+      ),
+      PokemonStatSlot(
+        baseStat: dbData.defense ?? 0,
+        effort: 0,
+        stat: const PokemonStat(name: 'defense', url: ''),
+      ),
+      PokemonStatSlot(
+        baseStat: dbData.spAttack ?? 0,
+        effort: 0,
+        stat: const PokemonStat(name: 'special-attack', url: ''),
+      ),
+      PokemonStatSlot(
+        baseStat: dbData.spDefense ?? 0,
+        effort: 0,
+        stat: const PokemonStat(name: 'special-defense', url: ''),
+      ),
+      PokemonStatSlot(
+        baseStat: dbData.speed ?? 0,
+        effort: 0,
+        stat: const PokemonStat(name: 'speed', url: ''),
+      ),
     ];
 
-    final abilitiesList = _parseAbilities(dbData.abilities, pokemonId: dbData.id);
+    final abilitiesList = _parseAbilities(
+      dbData.abilities,
+      pokemonId: dbData.id,
+    );
 
     return Pokemon(
       id: dbData.id,
@@ -335,11 +399,13 @@ class PokemonRepository {
         for (var i = 0; i < decoded.length; i++) {
           final e = decoded[i];
           if (e is Map && e['n'] is String) {
-            slots.add(PokemonAbilitySlot(
-              slot: i + 1,
-              isHidden: e['h'] == true,
-              ability: PokemonAbilityInfo(name: e['n'] as String, url: ''),
-            ));
+            slots.add(
+              PokemonAbilitySlot(
+                slot: i + 1,
+                isHidden: e['h'] == true,
+                ability: PokemonAbilityInfo(name: e['n'] as String, url: ''),
+              ),
+            );
           }
         }
         if (slots.isNotEmpty) return slots;
@@ -354,11 +420,13 @@ class PokemonRepository {
         .toList()
         .asMap()
         .entries
-        .map((entry) => PokemonAbilitySlot(
-              slot: entry.key + 1,
-              isHidden: _isHiddenAbility(pokemonId, entry.value),
-              ability: PokemonAbilityInfo(name: entry.value, url: ''),
-            ))
+        .map(
+          (entry) => PokemonAbilitySlot(
+            slot: entry.key + 1,
+            isHidden: _isHiddenAbility(pokemonId, entry.value),
+            ability: PokemonAbilityInfo(name: entry.value, url: ''),
+          ),
+        )
         .toList();
   }
 
@@ -396,4 +464,3 @@ class PokemonRepository {
     }
   }
 }
-

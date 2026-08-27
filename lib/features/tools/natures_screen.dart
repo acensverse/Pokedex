@@ -33,13 +33,13 @@ class NatureEntry {
   });
 
   factory NatureEntry.fromJson(Map<String, dynamic> json) => NatureEntry(
-        id: json['id'] as int,
-        name: json['name'] as String,
-        inc: json['inc'] as String?,
-        dec: json['dec'] as String?,
-        likes: json['likes'] as String?,
-        hates: json['hates'] as String?,
-      );
+    id: json['id'] as int,
+    name: json['name'] as String,
+    inc: json['inc'] as String?,
+    dec: json['dec'] as String?,
+    likes: json['likes'] as String?,
+    hates: json['hates'] as String?,
+  );
 
   bool get isNeutral => inc == null && dec == null;
 }
@@ -94,7 +94,11 @@ class NaturesScreen extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.redAccent),
+              const Icon(
+                Icons.error_outline,
+                size: 48,
+                color: Colors.redAccent,
+              ),
               const SizedBox(height: 12),
               const Text('Could not load natures'),
               const SizedBox(height: 12),
@@ -112,8 +116,7 @@ class NaturesScreen extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
             itemCount: sorted.length,
             separatorBuilder: (context, index) => const SizedBox(height: 8),
-            itemBuilder: (context, index) =>
-                _NatureCard(nature: sorted[index]),
+            itemBuilder: (context, index) => _NatureCard(nature: sorted[index]),
           );
         },
       ),
@@ -168,30 +171,38 @@ class _NatureCard extends StatelessWidget {
                     ? Text(
                         'Neutral \u00b7 no stat change',
                         style: TextStyle(
-                            fontSize: 12, color: Colors.grey.shade600),
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
                       )
                     : Text.rich(
-                        TextSpan(children: [
-                          TextSpan(
-                            text: '+${_statLabel(nature.inc!)}',
-                            style: const TextStyle(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: '+${_statLabel(nature.inc!)}',
+                              style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFF43A047)),
-                          ),
-                          TextSpan(
-                            text: '  \u00b7  ',
-                            style: TextStyle(
-                                fontSize: 12, color: Colors.grey.shade600),
-                          ),
-                          TextSpan(
-                            text: '\u2212${_statLabel(nature.dec!)}',
-                            style: const TextStyle(
+                                color: Color(0xFF43A047),
+                              ),
+                            ),
+                            TextSpan(
+                              text: '  \u00b7  ',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                            TextSpan(
+                              text: '\u2212${_statLabel(nature.dec!)}',
+                              style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFFE4613E)),
-                          ),
-                        ]),
+                                color: Color(0xFFE4613E),
+                              ),
+                            ),
+                          ],
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -204,8 +215,7 @@ class _NatureCard extends StatelessWidget {
                       if (nature.hates != null)
                         'Hates ${_flavorLabel(nature.hates!)}',
                     ].join(', '),
-                    style: TextStyle(
-                        fontSize: 12, color: Colors.grey.shade700),
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
                   ),
                 ],
               ],

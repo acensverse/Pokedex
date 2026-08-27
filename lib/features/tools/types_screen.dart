@@ -24,8 +24,10 @@ class _TypesScreenState extends ConsumerState<TypesScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) =>
-          TypePickerSheet(title: 'Type $slot', selectedType: slot == 1 ? _type1 : _type2),
+      builder: (_) => TypePickerSheet(
+        title: 'Type $slot',
+        selectedType: slot == 1 ? _type1 : _type2,
+      ),
     );
     if (picked == null || !mounted) return;
     setState(() {
@@ -69,7 +71,9 @@ class _TypesScreenState extends ConsumerState<TypesScreen> {
               alignment: Alignment.topCenter,
               children: [
                 _resultsCard(
-                    paddingTop: 30, child: _damageTakenBody(_type1, _type2)),
+                  paddingTop: 30,
+                  child: _damageTakenBody(_type1, _type2),
+                ),
                 const SectionHeaderPill('Damage taken'),
               ],
             ),
@@ -150,8 +154,10 @@ class _EmptyTypesView extends StatelessWidget {
         const Center(child: ToolsIllustration()),
         const SizedBox(height: 20),
         const Center(
-          child: Text('Select a type to start',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800)),
+          child: Text(
+            'Select a type to start',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+          ),
         ),
         const SizedBox(height: 8),
         const Center(
@@ -178,10 +184,14 @@ extension _DamageBuckets on _TypesScreenState {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
-          Text(subtitle,
-              style: const TextStyle(fontSize: 11, color: Colors.black45)),
+          Text(
+            title,
+            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+          ),
+          Text(
+            subtitle,
+            style: const TextStyle(fontSize: 11, color: Colors.black45),
+          ),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
@@ -194,10 +204,7 @@ extension _DamageBuckets on _TypesScreenState {
   }
 
   Widget _damageTakenBody(String? type1, String? type2) {
-    final defenders = [
-      ?type1,
-      ?type2,
-    ];
+    final defenders = [?type1, ?type2];
     final eff = TypeChart.getEffectiveness(defenders);
     final weak = <String>[];
     final veryWeak = <String>[];
@@ -257,8 +264,7 @@ extension _DamageBuckets on _TypesScreenState {
       }
     }
 
-    final label =
-        '${attacker[0].toUpperCase()}${attacker.substring(1)}';
+    final label = '${attacker[0].toUpperCase()}${attacker.substring(1)}';
     return Stack(
       alignment: Alignment.topCenter,
       children: [

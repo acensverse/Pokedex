@@ -27,8 +27,10 @@ final _movesSeedProvider = FutureProvider<List<_SeedMove>>((ref) async {
     for (final e in list.cast<Map>())
       _SeedMove(
         e['type'] as String,
-        (e['learn'] as List<dynamic>? ?? const []).map((e) => e as int).toList(),
-      )
+        (e['learn'] as List<dynamic>? ?? const [])
+            .map((e) => e as int)
+            .toList(),
+      ),
   ];
 });
 
@@ -83,7 +85,10 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-                color: Colors.black, fontWeight: FontWeight.w800, fontSize: 18),
+              color: Colors.black,
+              fontWeight: FontWeight.w800,
+              fontSize: 18,
+            ),
           ),
         ),
         actions: [
@@ -102,8 +107,12 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           final slotIds = [
-            team.slot1, team.slot2, team.slot3,
-            team.slot4, team.slot5, team.slot6,
+            team.slot1,
+            team.slot2,
+            team.slot3,
+            team.slot4,
+            team.slot5,
+            team.slot6,
           ].whereType<int>().toList();
 
           return membersAsync.when(
@@ -125,18 +134,22 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
                     const Padding(
                       padding: EdgeInsets.all(32),
                       child: Center(
-                          child: Text('Empty party',
-                              style: TextStyle(color: Colors.grey))),
+                        child: Text(
+                          'Empty party',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
                     )
                   else ...[
                     const SizedBox(height: 16),
                     _sectionCard('Team stats', _teamStatsBody(members)),
                     const SizedBox(height: 26),
-                    _sectionCard(
-                        'Defensive coverage', _defenseBody(members)),
+                    _sectionCard('Defensive coverage', _defenseBody(members)),
                     const SizedBox(height: 26),
                     _sectionCard(
-                        'Move type coverage', _moveCoverageBody(members)),
+                      'Move type coverage',
+                      _moveCoverageBody(members),
+                    ),
                   ],
                 ],
               );
@@ -150,25 +163,22 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
   // ---- Shared section chrome ----------------------------------------------
 
   Widget _sectionCard(String title, Widget child) => Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.topCenter,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 14),
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: child,
-          ),
-          Positioned(
-            top: 0,
-            child: SectionHeaderPill(title),
-          ),
-        ],
-      );
+    clipBehavior: Clip.none,
+    alignment: Alignment.topCenter,
+    children: [
+      Container(
+        margin: const EdgeInsets.only(top: 14),
+        width: double.infinity,
+        padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: child,
+      ),
+      Positioned(top: 0, child: SectionHeaderPill(title)),
+    ],
+  );
 
   Widget _groupHeading(String text, String? subtitle) {
     return Padding(
@@ -176,38 +186,44 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(text,
-              style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary)),
+          Text(
+            text,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+              color: AppColors.textPrimary,
+            ),
+          ),
           if (subtitle != null)
-            Text(subtitle,
-                style: TextStyle(fontSize: 11, color: Colors.grey.shade600)),
+            Text(
+              subtitle,
+              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+            ),
         ],
       ),
     );
   }
 
   Widget _typeEntry(String type, String? badge) => Column(
-        children: [
-          TypePill(type, fontSize: 12),
-          if (badge != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: Text(
-                badge,
-                style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
-              ),
-            ),
-        ],
-      );
+    children: [
+      TypePill(type, fontSize: 12),
+      if (badge != null)
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Text(
+            badge,
+            style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+          ),
+        ),
+    ],
+  );
 
-  Widget _typeGroup(
-      {required String heading,
-      required String? subtitle,
-      required List<String> types,
-      required String? Function(String) badgeFor}) {
+  Widget _typeGroup({
+    required String heading,
+    required String? subtitle,
+    required List<String> types,
+    required String? Function(String) badgeFor,
+  }) {
     if (types.isEmpty) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -218,9 +234,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: [
-              for (final t in types) _typeEntry(t, badgeFor(t)),
-            ],
+            children: [for (final t in types) _typeEntry(t, badgeFor(t))],
           ),
         ],
       ),
@@ -240,17 +254,17 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
     ];
 
     Widget bar(double fraction) => FractionallySizedBox(
-          widthFactor: fraction.clamp(0.0, 1.0),
-          child: Container(
-            height: 10,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF26A69A), Color(0xFF66BB6A)],
-              ),
-              borderRadius: BorderRadius.circular(6),
-            ),
+      widthFactor: fraction.clamp(0.0, 1.0),
+      child: Container(
+        height: 10,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF26A69A), Color(0xFF66BB6A)],
           ),
-        );
+          borderRadius: BorderRadius.circular(6),
+        ),
+      ),
+    );
 
     final rows = <Widget>[];
     var total = 0;
@@ -258,45 +272,52 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
       final avg = members.isEmpty
           ? 0.0
           : members.map((m) => _statValue(m, key)).reduce((a, b) => a + b) /
-              members.length;
+                members.length;
       final shown = avg.round();
       total += shown;
-      rows.add(Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: Row(
-          children: [
-            SizedBox(
+      rows.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Row(
+            children: [
+              SizedBox(
                 width: 78,
-                child: Text(label,
-                    style: const TextStyle(
-                        fontSize: 12, color: Colors.black87))),
-            Expanded(
-              child: Stack(
-                children: [
-                  Container(
-                    height: 10,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  bar(avg / 255),
-                ],
+                child: Text(
+                  label,
+                  style: const TextStyle(fontSize: 12, color: Colors.black87),
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            SizedBox(
-              width: 34,
-              child: Text('$shown',
+              Expanded(
+                child: Stack(
+                  children: [
+                    Container(
+                      height: 10,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                    bar(avg / 255),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              SizedBox(
+                width: 34,
+                child: Text(
+                  '$shown',
                   textAlign: TextAlign.end,
                   style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary)),
-            ),
-          ],
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ));
+      );
     }
 
     return Column(
@@ -307,16 +328,21 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
         Row(
           children: [
             const SizedBox(
-                width: 78,
-                child: Text('Total:',
-                    style: TextStyle(
-                        fontSize: 13, fontWeight: FontWeight.w800))),
+              width: 78,
+              child: Text(
+                'Total:',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
+              ),
+            ),
             const Expanded(child: SizedBox()),
-            Text('$total',
-                style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary)),
+            Text(
+              '$total',
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                color: AppColors.textPrimary,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 8),
@@ -365,16 +391,24 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
           'The Defense Index (DI) indicates how resistant (or weak) your team '
           'is against a specific type. Higher positive value indicates '
           'greater team resistance.',
-          style: TextStyle(fontSize: 12.5, height: 1.4, color: Colors.grey.shade700),
+          style: TextStyle(
+            fontSize: 12.5,
+            height: 1.4,
+            color: Colors.grey.shade700,
+          ),
         ),
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text('Show Defense Index',
-                style: TextStyle(
-                    fontSize: 13, fontWeight: FontWeight.w600)),
-            Switch(value: _showDefenseIndex, onChanged: (v) => setState(() => _showDefenseIndex = v)),
+            const Text(
+              'Show Defense Index',
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+            Switch(
+              value: _showDefenseIndex,
+              onChanged: (v) => setState(() => _showDefenseIndex = v),
+            ),
           ],
         ),
         _typeGroup(
@@ -410,16 +444,17 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
         padding: EdgeInsets.all(24),
         child: Center(child: CircularProgressIndicator()),
       ),
-      error: (e, _) => Text('Failed to load move data',
-          style: TextStyle(color: Colors.grey.shade600)),
+      error: (e, _) => Text(
+        'Failed to load move data',
+        style: TextStyle(color: Colors.grey.shade600),
+      ),
       data: (seedMoves) {
         // SEM per defending type: moves that any party member can learn and
         // that hit the defender super effectively.
         int sem(String defender) {
           var count = 0;
           for (final mv in seedMoves) {
-            final mult =
-                TypeChart.getEffectiveness([defender])[mv.type] ?? 1.0;
+            final mult = TypeChart.getEffectiveness([defender])[mv.type] ?? 1.0;
             if (mult > 1 && mv.learn.any(memberIds.contains)) count++;
           }
           return count;
@@ -445,17 +480,22 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
             Text(
               'This value is based on the number of Super Effective Moves (SEM) '
               'available in your party against a specific type.',
-              style:
-                  TextStyle(fontSize: 12.5, height: 1.4, color: Colors.grey.shade700),
+              style: TextStyle(
+                fontSize: 12.5,
+                height: 1.4,
+                color: Colors.grey.shade700,
+              ),
             ),
             const SizedBox(height: 12),
             Row(
               children: [
                 const SizedBox(
-                    width: 70,
-                    child: Text('Coverage',
-                        style: TextStyle(
-                            fontSize: 12, color: Colors.black87))),
+                  width: 70,
+                  child: Text(
+                    'Coverage',
+                    style: TextStyle(fontSize: 12, color: Colors.black87),
+                  ),
+                ),
                 Expanded(
                   child: Stack(
                     children: [
@@ -484,12 +524,15 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
                 const SizedBox(width: 8),
                 SizedBox(
                   width: 40,
-                  child: Text('${coveragePct.round()}%',
-                      textAlign: TextAlign.end,
-                      style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.textPrimary)),
+                  child: Text(
+                    '${coveragePct.round()}%',
+                    textAlign: TextAlign.end,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -497,21 +540,29 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Show Super Effective Moves',
-                    style:
-                        TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                Switch(value: _showSemCounts, onChanged: (v) => setState(() => _showSemCounts = v)),
+                const Text(
+                  'Show Super Effective Moves',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                ),
+                Switch(
+                  value: _showSemCounts,
+                  onChanged: (v) => setState(() => _showSemCounts = v),
+                ),
               ],
             ),
             _typeGroup(
               heading: 'Coverage against:',
-              subtitle: _showSemCounts ? 'Number of super effective moves > 0' : null,
+              subtitle: _showSemCounts
+                  ? 'Number of super effective moves > 0'
+                  : null,
               types: covered,
               badgeFor: semBadge,
             ),
             _typeGroup(
               heading: 'No Coverage against:',
-              subtitle: _showSemCounts ? 'Number of super effective moves = 0' : null,
+              subtitle: _showSemCounts
+                  ? 'Number of super effective moves = 0'
+                  : null,
               types: uncovered,
               badgeFor: semBadge,
             ),

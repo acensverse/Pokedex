@@ -52,7 +52,7 @@ class GenFilterSheet extends ConsumerWidget {
           const SizedBox(height: 12),
           Expanded(
             child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               itemCount: _gens.length,
               itemBuilder: (context, index) {
                 final info = _gens[index];
@@ -61,8 +61,9 @@ class GenFilterSheet extends ConsumerWidget {
                   padding: const EdgeInsets.only(bottom: 8),
                   child: GestureDetector(
                     onTap: () {
-                      ref.read(genFilterProvider.notifier).state =
-                          isSelected ? 0 : info.gen;
+                      ref.read(genFilterProvider.notifier).state = isSelected
+                          ? 0
+                          : info.gen;
                     },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 250),
@@ -100,7 +101,9 @@ class GenFilterSheet extends ConsumerWidget {
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 12),
+                                horizontal: 14,
+                                vertical: 12,
+                              ),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -143,32 +146,41 @@ class GenFilterSheet extends ConsumerWidget {
                                           Positioned(
                                             right: i * 42.0,
                                             child: Image.asset(
-                                              PokemonHelpers
-                                                  .getHomeAssetPath(
-                                                      info.starters[i]),
+                                              PokemonHelpers.getHomeAssetPath(
+                                                info.starters[i],
+                                              ),
                                               width: 78,
                                               height: 78,
                                               cacheWidth:
                                                   PokemonHelpers.cacheWidth(
-                                                      context, 78),
+                                                    context,
+                                                    78,
+                                                  ),
                                               fit: BoxFit.contain,
-                                              errorBuilder: (context, error, stackTrace) =>
-                                                  Container(
-                                                width: 78,
-                                                height: 78,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.blue
-                                                      .withValues(alpha: 0.1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          39),
-                                                ),
-                                                child: Icon(
-                                                  Icons.catching_pokemon,
-                                                  color:
-                                                      Colors.blue.shade200,
-                                                ),
-                                              ),
+                                              errorBuilder:
+                                                  (
+                                                    context,
+                                                    error,
+                                                    stackTrace,
+                                                  ) => Container(
+                                                    width: 78,
+                                                    height: 78,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.blue
+                                                          .withValues(
+                                                            alpha: 0.1,
+                                                          ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            39,
+                                                          ),
+                                                    ),
+                                                    child: Icon(
+                                                      Icons.catching_pokemon,
+                                                      color:
+                                                          Colors.blue.shade200,
+                                                    ),
+                                                  ),
                                             ),
                                           ),
                                       ],

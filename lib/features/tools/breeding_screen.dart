@@ -10,12 +10,15 @@ import 'widgets/pokemon_picker_sheet.dart';
 
 final selectedBreedingPokemonProvider = StateProvider<Pokemon?>((ref) => null);
 
-final breedingInfoProvider = FutureProvider.autoDispose<({List<String> eggGroups, int genderRate, int hatchCounter})?>((ref) async {
-  final pokemon = ref.watch(selectedBreedingPokemonProvider);
-  if (pokemon == null) return null;
-  final repository = ref.watch(pokemonRepositoryProvider);
-  return repository.getBreedingInfo(pokemon.speciesId);
-});
+final breedingInfoProvider =
+    FutureProvider.autoDispose<
+      ({List<String> eggGroups, int genderRate, int hatchCounter})?
+    >((ref) async {
+      final pokemon = ref.watch(selectedBreedingPokemonProvider);
+      if (pokemon == null) return null;
+      final repository = ref.watch(pokemonRepositoryProvider);
+      return repository.getBreedingInfo(pokemon.speciesId);
+    });
 
 class BreedingScreen extends ConsumerWidget {
   const BreedingScreen({super.key});
@@ -43,7 +46,8 @@ class BreedingScreen extends ConsumerWidget {
               onTap: () async {
                 final result = await PokemonPickerSheet.show(context);
                 if (result != null) {
-                  ref.read(selectedBreedingPokemonProvider.notifier).state = result;
+                  ref.read(selectedBreedingPokemonProvider.notifier).state =
+                      result;
                 }
               },
               child: Container(
@@ -71,8 +75,11 @@ class BreedingScreen extends ConsumerWidget {
                       ),
                       child: selectedPokemon != null
                           ? Image.asset(
-                              PokemonHelpers.getThumbnailAssetPath(selectedPokemon.id),
-                              errorBuilder: (_, __, ___) => const Icon(Icons.pets, color: Colors.pink),
+                              PokemonHelpers.getThumbnailAssetPath(
+                                selectedPokemon.id,
+                              ),
+                              errorBuilder: (_, __, ___) =>
+                                  const Icon(Icons.pets, color: Colors.pink),
                             )
                           : const Icon(Icons.search, color: Colors.pink),
                     ),
@@ -82,7 +89,11 @@ class BreedingScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            selectedPokemon != null ? PokemonHelpers.formatName(selectedPokemon.name) : 'Choose Pok\u00e9mon',
+                            selectedPokemon != null
+                                ? PokemonHelpers.formatName(
+                                    selectedPokemon.name,
+                                  )
+                                : 'Choose Pok\u00e9mon',
                             style: const TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w800,
@@ -91,7 +102,9 @@ class BreedingScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            selectedPokemon != null ? 'Tap to change Pok\u00e9mon' : 'Select a Pok\u00e9mon to view breeding info',
+                            selectedPokemon != null
+                                ? 'Tap to change Pok\u00e9mon'
+                                : 'Select a Pok\u00e9mon to view breeding info',
                             style: TextStyle(
                               fontSize: 13,
                               color: Colors.grey.shade600,
@@ -105,9 +118,9 @@ class BreedingScreen extends ConsumerWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Breeding Info Card
             if (selectedPokemon != null)
               breedingInfoAsync.when(
@@ -125,7 +138,7 @@ class BreedingScreen extends ConsumerWidget {
                 ),
                 data: (info) {
                   if (info == null) return const SizedBox.shrink();
-                  
+
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -138,11 +151,16 @@ class BreedingScreen extends ConsumerWidget {
                             ? [const Text('Undiscovered')]
                             : info.eggGroups.map((group) {
                                 return Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.purple.shade50,
                                     borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(color: Colors.purple.shade200),
+                                    border: Border.all(
+                                      color: Colors.purple.shade200,
+                                    ),
                                   ),
                                   child: Text(
                                     PokemonHelpers.formatName(group),
@@ -155,12 +173,12 @@ class BreedingScreen extends ConsumerWidget {
                                 );
                               }).toList(),
                       ),
-                      
+
                       const SizedBox(height: 24),
                       _SectionTitle('Gender Ratio'),
                       const SizedBox(height: 12),
                       _GenderBar(genderRate: info.genderRate),
-                      
+
                       const SizedBox(height: 24),
                       _SectionTitle('Egg Cycles & Hatch Time'),
                       const SizedBox(height: 12),
@@ -217,10 +235,10 @@ class _GenderBar extends StatelessWidget {
         ),
       );
     }
-    
+
     final femalePercent = (genderRate / 8) * 100;
     final malePercent = 100 - femalePercent;
-    
+
     return Column(
       children: [
         Row(
@@ -230,12 +248,24 @@ class _GenderBar extends StatelessWidget {
               children: [
                 const Icon(Icons.male, color: Colors.blue, size: 20),
                 const SizedBox(width: 4),
-                Text('${malePercent.toStringAsFixed(1)}%', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+                Text(
+                  '${malePercent.toStringAsFixed(1)}%',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue,
+                  ),
+                ),
               ],
             ),
             Row(
               children: [
-                Text('${femalePercent.toStringAsFixed(1)}%', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.pink)),
+                Text(
+                  '${femalePercent.toStringAsFixed(1)}%',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.pink,
+                  ),
+                ),
                 const SizedBox(width: 4),
                 const Icon(Icons.female, color: Colors.pink, size: 20),
               ],
@@ -285,7 +315,11 @@ class _HatchTimeCard extends StatelessWidget {
               color: Colors.orange.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.directions_walk, color: Colors.orange, size: 28),
+            child: const Icon(
+              Icons.directions_walk,
+              color: Colors.orange,
+              size: 28,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -302,10 +336,7 @@ class _HatchTimeCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   'Approx. $baseSteps steps to hatch',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                 ),
               ],
             ),

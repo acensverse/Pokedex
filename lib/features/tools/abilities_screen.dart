@@ -47,11 +47,18 @@ class AbilityEntry {
             .toList(),
       );
 
-  String? get description => eff ?? flavor;
+import '../pokedex/pokedex_provider.dart';
+import '../../core/services/champions_data_service.dart';
+
+String? get description => eff ?? flavor;
 }
 
 /// All abilities baked from assets/abilities_seed.json (offline-first).
 final abilitiesSeedProvider = FutureProvider<List<AbilityEntry>>((ref) async {
+  final isChampions = ref.watch(isChampionsModeProvider);
+  if (isChampions) {
+    return ref.watch(championsDataServiceProvider).getAbilities();
+  }
   final raw = await rootBundle.loadString('assets/abilities_seed.json');
   final list = jsonDecode(raw) as List<dynamic>;
   return list

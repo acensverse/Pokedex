@@ -17,23 +17,35 @@ import 'widgets/stats_tab.dart';
 import 'widgets/moves_tab.dart';
 import 'widgets/defense_tab.dart';
 
-final pokemonDetailProvider = FutureProvider.family<Pokemon, int>((ref, id) async {
+final pokemonDetailProvider = FutureProvider.family<Pokemon, int>((
+  ref,
+  id,
+) async {
   final repository = ref.read(pokemonRepositoryProvider);
   return repository.getPokemonDetails(id);
 });
 
-final speciesInfoProvider = FutureProvider.family<({String category, String? flavorText}), int>((ref, id) async {
-  final repository = ref.read(pokemonRepositoryProvider);
-  return repository.getSpeciesInfo(id);
-});
+final speciesInfoProvider =
+    FutureProvider.family<({String category, String? flavorText}), int>((
+      ref,
+      id,
+    ) async {
+      final repository = ref.read(pokemonRepositoryProvider);
+      return repository.getSpeciesInfo(id);
+    });
 
 final cachedSpeciesProvider =
-    FutureProvider.family<({String? category, String? flavorText}), int>((ref, id) async {
-  final repository = ref.read(pokemonRepositoryProvider);
-  return repository.getCachedSpeciesInfo(id);
-});
+    FutureProvider.family<({String? category, String? flavorText}), int>((
+      ref,
+      id,
+    ) async {
+      final repository = ref.read(pokemonRepositoryProvider);
+      return repository.getCachedSpeciesInfo(id);
+    });
 
-final abilitiesSeedProvider = FutureProvider<List<Map<String, dynamic>>>((ref) async {
+final abilitiesSeedProvider = FutureProvider<List<Map<String, dynamic>>>((
+  ref,
+) async {
   final raw = await rootBundle.loadString('assets/abilities_seed.json');
   final list = jsonDecode(raw) as List<dynamic>;
   return list.cast<Map<String, dynamic>>();
@@ -41,7 +53,9 @@ final abilitiesSeedProvider = FutureProvider<List<Map<String, dynamic>>>((ref) a
 
 int? extractIdFromUrl(String url) {
   try {
-    final segments = Uri.parse(url).pathSegments.where((s) => s.isNotEmpty).toList();
+    final segments = Uri.parse(
+      url,
+    ).pathSegments.where((s) => s.isNotEmpty).toList();
     if (segments.isEmpty) return null;
     return int.tryParse(segments.last);
   } on FormatException {
@@ -60,9 +74,8 @@ class PokemonDetailScreen extends ConsumerWidget {
 
     return detailAsync.when(
       data: (pokemon) => _ProfileContent(pokemon: pokemon),
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      ),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
       error: (err, stack) => Scaffold(
         appBar: AppBar(),
         body: Center(child: Text('Error loading Pok\u00e9mon: $err')),
@@ -101,17 +114,36 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
 
   String _sanitizeCryName(String raw) {
     const accents = {
-      'à': 'a', 'á': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a', 'å': 'a',
-      'è': 'e', 'é': 'e', 'ê': 'e', 'ë': 'e',
-      'ì': 'i', 'í': 'i', 'î': 'i', 'ï': 'i',
-      'ò': 'o', 'ó': 'o', 'ô': 'o', 'õ': 'o', 'ö': 'o',
-      'ù': 'u', 'ú': 'u', 'û': 'u', 'ü': 'u',
-      'ñ': 'n', 'ç': 'c',
+      'à': 'a',
+      'á': 'a',
+      'â': 'a',
+      'ã': 'a',
+      'ä': 'a',
+      'å': 'a',
+      'è': 'e',
+      'é': 'e',
+      'ê': 'e',
+      'ë': 'e',
+      'ì': 'i',
+      'í': 'i',
+      'î': 'i',
+      'ï': 'i',
+      'ò': 'o',
+      'ó': 'o',
+      'ô': 'o',
+      'õ': 'o',
+      'ö': 'o',
+      'ù': 'u',
+      'ú': 'u',
+      'û': 'u',
+      'ü': 'u',
+      'ñ': 'n',
+      'ç': 'c',
     };
     var name = raw.toLowerCase().replaceAllMapped(
-          RegExp('[àáâãäåèéêëìíîïòóôõöùúûüñç]'),
-          (m) => accents[m[0]] ?? m[0]!,
-        );
+      RegExp('[àáâãäåèéêëìíîïòóôõöùúûüñç]'),
+      (m) => accents[m[0]] ?? m[0]!,
+    );
     return name.replaceAll(RegExp(r'[^a-z0-9]'), '');
   }
 
@@ -174,10 +206,23 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
       name = name.substring(name.indexOf(' Breed Paldean ') + 15);
     }
     for (final prefix in [
-      'Galarian Zen Mode ', 'Totem Disguised ', 'Totem Busted ',
-      'Totem ', 'Mega ', 'Alolan ', 'Galarian ', 'Hisuian ', 'Paldean ',
-      'Gigantamax ', 'Primal ', 'Therian ', 'Zen Mode ', 'Standard ',
-      'Disguised ', 'Busted ', 'Complete ',
+      'Galarian Zen Mode ',
+      'Totem Disguised ',
+      'Totem Busted ',
+      'Totem ',
+      'Mega ',
+      'Alolan ',
+      'Galarian ',
+      'Hisuian ',
+      'Paldean ',
+      'Gigantamax ',
+      'Primal ',
+      'Therian ',
+      'Zen Mode ',
+      'Standard ',
+      'Disguised ',
+      'Busted ',
+      'Complete ',
     ]) {
       if (name.startsWith(prefix)) {
         name = name.substring(prefix.length);
@@ -209,9 +254,11 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
       if (fallbackId != cryId) {
         try {
           await _audioPlayer.stop();
-          await _audioPlayer.play(UrlSource(
-            'https://play.pokemonshowdown.com/audio/cries/$fallbackId.mp3',
-          ));
+          await _audioPlayer.play(
+            UrlSource(
+              'https://play.pokemonshowdown.com/audio/cries/$fallbackId.mp3',
+            ),
+          );
         } catch (_) {
           debugPrint('Fallback cry also failed for $fallbackId');
         }
@@ -266,240 +313,274 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
   Widget build(BuildContext context) {
     final isShiny = ref.watch(shinyModeProvider);
     final pokemon = widget.pokemon;
-    final primaryType = pokemon.types.isNotEmpty ? pokemon.types.first.type.name : 'normal';
+    final primaryType = pokemon.types.isNotEmpty
+        ? pokemon.types.first.type.name
+        : 'normal';
     final themeColor = AppColors.getTypeColor(primaryType);
     final speciesData = PokemonHelpers.getPokemonSpeciesData(pokemon.speciesId);
-    
-    final cachedInfo = ref.watch(cachedSpeciesProvider(pokemon.id)).asData?.value;
-    final categoryText = cachedInfo?.category ??
-        ref.watch(speciesInfoProvider(pokemon.id)).when(
-          data: (info) => info.category,
-          loading: () => '...',
-          error: (_, _) => 'Unknown Pok\u00e9mon',
-        ) ??
+
+    final cachedInfo = ref
+        .watch(cachedSpeciesProvider(pokemon.id))
+        .asData
+        ?.value;
+    final categoryText =
+        cachedInfo?.category ??
+        ref
+            .watch(speciesInfoProvider(pokemon.id))
+            .when(
+              data: (info) => info.category,
+              loading: () => '...',
+              error: (_, _) => 'Unknown Pok\u00e9mon',
+            ) ??
         'Unknown Pok\u00e9mon';
 
     return Scaffold(
       extendBody: true,
       backgroundColor: const Color(0xFFBCAAA4),
-      body: LayoutBuilder(builder: (context, constraints) {
-        final fullHeader = Stack(
-          key: const ValueKey('full-header'),
-          alignment: Alignment.topCenter,
-          children: [
-            Column(
-              children: [
-                // 3D Image Artwork
-                Hero(
-                  tag: 'pokemon-image-${pokemon.id}',
-                  child: Image.asset(
-                    isShiny
-                        ? PokemonHelpers.getHomeShinyAssetPath(pokemon.id)
-                        : PokemonHelpers.getHomeAssetPath(pokemon.id),
-                    height: 300,
-                    fit: BoxFit.contain,
-                    cacheWidth: PokemonHelpers.cacheWidth(context, 300),
-                    filterQuality: FilterQuality.medium,
-                    errorBuilder: (context, error, stackTrace) => Image.asset(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final fullHeader = Stack(
+            key: const ValueKey('full-header'),
+            alignment: Alignment.topCenter,
+            children: [
+              Column(
+                children: [
+                  // 3D Image Artwork
+                  Hero(
+                    tag: 'pokemon-image-${pokemon.id}',
+                    child: Image.asset(
                       isShiny
-                          ? PokemonHelpers.getHomeAssetPath(pokemon.id)
-                          : PokemonHelpers.getThumbnailAssetPath(pokemon.id),
+                          ? PokemonHelpers.getHomeShinyAssetPath(pokemon.id)
+                          : PokemonHelpers.getHomeAssetPath(pokemon.id),
                       height: 300,
                       fit: BoxFit.contain,
                       cacheWidth: PokemonHelpers.cacheWidth(context, 300),
                       filterQuality: FilterQuality.medium,
                       errorBuilder: (context, error, stackTrace) => Image.asset(
-                        PokemonHelpers.getThumbnailAssetPath(pokemon.id),
+                        isShiny
+                            ? PokemonHelpers.getHomeAssetPath(pokemon.id)
+                            : PokemonHelpers.getThumbnailAssetPath(pokemon.id),
                         height: 300,
                         fit: BoxFit.contain,
                         cacheWidth: PokemonHelpers.cacheWidth(context, 300),
                         filterQuality: FilterQuality.medium,
-                        errorBuilder: (context, error, stackTrace) => const Icon(
-                          Icons.catching_pokemon,
-                          size: 100,
-                          color: Colors.white54,
-                        ),
+                        errorBuilder: (context, error, stackTrace) =>
+                            Image.asset(
+                              PokemonHelpers.getThumbnailAssetPath(pokemon.id),
+                              height: 300,
+                              fit: BoxFit.contain,
+                              cacheWidth: PokemonHelpers.cacheWidth(
+                                context,
+                                300,
+                              ),
+                              filterQuality: FilterQuality.medium,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(
+                                    Icons.catching_pokemon,
+                                    size: 100,
+                                    color: Colors.white54,
+                                  ),
+                            ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  PokemonHelpers.formatName(pokemon.name),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 42,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  categoryText,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                // Types Pills Row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: pokemon.types.map((t) {
-                    final tColor = AppColors.getTypeColor(t.type.name);
-                    return Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: tColor.withValues(alpha: 0.75),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 16, height: 16,
-                            margin: const EdgeInsets.only(right: 6),
-                            child: SvgPicture.asset('assets/types/${t.type.name}.svg'),
-                          ),
-                          Text(
-                            t.type.name.substring(0,1).toUpperCase() + t.type.name.substring(1),
-                            style: const TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 32),
-              ],
-            ),
-            // Floating Top Bar
-            Positioned(
-              top: 0,
-              left: 24,
-              right: 24,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+                  const SizedBox(height: 16),
                   Text(
-                    '#${pokemon.speciesId.toString().padLeft(3, '0')}',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.6),
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
+                    PokemonHelpers.formatName(pokemon.name),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 42,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.5,
                     ),
                   ),
-                  Row(
-                    children: [
-                      _GlassButton(
-                        icon: Icons.volume_up,
-                        color: Colors.white,
-                        onTap: _playCry,
-                      ),
-                      const SizedBox(width: 12),
-                      _GlassButton(
-                        icon: isShiny ? Icons.auto_awesome : Icons.auto_awesome_outlined,
-                        color: isShiny ? Colors.amber : Colors.white,
-                        onTap: () {
-                          ref.read(shinyModeProvider.notifier).state = !isShiny;
-                        },
-                      ),
-                    ],
+                  const SizedBox(height: 4),
+                  Text(
+                    categoryText,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.9),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
+                  const SizedBox(height: 20),
+                  // Types Pills Row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: pokemon.types.map((t) {
+                      final tColor = AppColors.getTypeColor(t.type.name);
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: tColor.withValues(alpha: 0.75),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 16,
+                              height: 16,
+                              margin: const EdgeInsets.only(right: 6),
+                              child: SvgPicture.asset(
+                                'assets/types/${t.type.name}.svg',
+                              ),
+                            ),
+                            Text(
+                              t.type.name.substring(0, 1).toUpperCase() +
+                                  t.type.name.substring(1),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 32),
                 ],
               ),
-            ),
-          ],
-        );
-
-        final compactHeader = Padding(
-          key: const ValueKey('card-header'),
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: PokemonCard(
-            pokemon: pokemon,
-            showHero: false,
-            onTap: () {}, // No-op to disable navigation
-          ),
-        );
-
-        return Stack(
-          children: [
-            Positioned.fill(
-              child: PageView(
-                controller: _outerController,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentOuterPage = index;
-                  });
-                },
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          themeColor.withValues(alpha: 0.4),
-                          const Color(0xFFD6C8B8),
-                          const Color(0xFFC7B19D),
-                        ],
-                        stops: const [0.0, 0.5, 1.0],
+              // Floating Top Bar
+              Positioned(
+                top: 0,
+                left: 24,
+                right: 24,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      '#${pokemon.speciesId.toString().padLeft(3, '0')}',
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.6),
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
                       ),
                     ),
-                    padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top + 8),
-                    child: AboutTab(
-                      pokemon: pokemon,
-                      themeColor: themeColor,
-                      speciesData: speciesData,
-                      header: fullHeader,
-                    ),
-                  ),
-                  Container(
-                    color: Colors.white,
-                    padding: EdgeInsets.only(top: MediaQuery.paddingOf(context).top + 8),
-                    child: Column(
+                    Row(
                       children: [
-                        compactHeader,
-                        Expanded(
-                          child: PageView(
-                            controller: _innerController,
-                            onPageChanged: (index) {
-                              setState(() {
-                                _currentInnerPage = index;
-                              });
-                            },
-                            children: [
-                              StatsTab(
-                                pokemon: pokemon,
-                                themeColor: themeColor,
-                              ),
-                              MovesTab(
-                                pokemon: pokemon,
-                                themeColor: themeColor,
-                              ),
-                              DefenseTab(
-                                types: pokemon.types,
-                                themeColor: themeColor,
-                              ),
-                              EvolutionTab(
-                                evolutionInfoJson: pokemon.evolutionInfo ?? '[]',
-                              ),
-                            ],
-                          ),
+                        _GlassButton(
+                          icon: Icons.volume_up,
+                          color: Colors.white,
+                          onTap: _playCry,
+                        ),
+                        const SizedBox(width: 12),
+                        _GlassButton(
+                          icon: isShiny
+                              ? Icons.auto_awesome
+                              : Icons.auto_awesome_outlined,
+                          color: isShiny ? Colors.amber : Colors.white,
+                          onTap: () {
+                            ref.read(shinyModeProvider.notifier).state =
+                                !isShiny;
+                          },
                         ),
                       ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
+            ],
+          );
+
+          final compactHeader = Padding(
+            key: const ValueKey('card-header'),
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: PokemonCard(
+              pokemon: pokemon,
+              showHero: false,
+              onTap: () {}, // No-op to disable navigation
             ),
-          ],
-        );
-      }),
+          );
+
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: PageView(
+                  controller: _outerController,
+                  onPageChanged: (index) {
+                    setState(() {
+                      _currentOuterPage = index;
+                    });
+                  },
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            themeColor.withValues(alpha: 0.4),
+                            const Color(0xFFD6C8B8),
+                            const Color(0xFFC7B19D),
+                          ],
+                          stops: const [0.0, 0.5, 1.0],
+                        ),
+                      ),
+                      padding: EdgeInsets.only(
+                        top: MediaQuery.paddingOf(context).top + 8,
+                      ),
+                      child: AboutTab(
+                        pokemon: pokemon,
+                        themeColor: themeColor,
+                        speciesData: speciesData,
+                        header: fullHeader,
+                      ),
+                    ),
+                    Container(
+                      color: Colors.white,
+                      padding: EdgeInsets.only(
+                        top: MediaQuery.paddingOf(context).top + 8,
+                      ),
+                      child: Column(
+                        children: [
+                          compactHeader,
+                          Expanded(
+                            child: PageView(
+                              controller: _innerController,
+                              onPageChanged: (index) {
+                                setState(() {
+                                  _currentInnerPage = index;
+                                });
+                              },
+                              children: [
+                                StatsTab(
+                                  pokemon: pokemon,
+                                  themeColor: themeColor,
+                                ),
+                                MovesTab(
+                                  pokemon: pokemon,
+                                  themeColor: themeColor,
+                                ),
+                                DefenseTab(
+                                  types: pokemon.types,
+                                  themeColor: themeColor,
+                                ),
+                                EvolutionTab(
+                                  evolutionInfoJson:
+                                      pokemon.evolutionInfo ?? '[]',
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentPage,
         onTap: (index) {
@@ -514,11 +595,20 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
         selectedFontSize: 12,
         unselectedFontSize: 11,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.info_outline), label: 'About'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.info_outline),
+            label: 'About',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: 'Stats'),
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Movesets'),
-          BottomNavigationBarItem(icon: Icon(Icons.shield_outlined), label: 'Defense'),
-          BottomNavigationBarItem(icon: Icon(Icons.timeline), label: 'Evolution'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shield_outlined),
+            label: 'Defense',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.timeline),
+            label: 'Evolution',
+          ),
         ],
       ),
     );
@@ -530,7 +620,11 @@ class _GlassButton extends StatelessWidget {
   final VoidCallback? onTap;
   final Color color;
 
-  const _GlassButton({required this.icon, this.onTap, this.color = Colors.black87});
+  const _GlassButton({
+    required this.icon,
+    this.onTap,
+    this.color = Colors.black87,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -545,20 +639,13 @@ class _GlassButton extends StatelessWidget {
             color: Colors.white.withValues(alpha: 0.3),
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            icon,
-            color: color,
-            size: 20,
-          ),
+          child: Icon(icon, color: color, size: 20),
         ),
       ),
     );
 
     if (onTap == null) return inner;
 
-    return GestureDetector(
-      onTap: onTap,
-      child: inner,
-    );
+    return GestureDetector(onTap: onTap, child: inner);
   }
 }

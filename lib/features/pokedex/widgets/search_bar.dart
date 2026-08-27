@@ -81,7 +81,10 @@ class _PokedexSearchBarState extends ConsumerState<PokedexSearchBar> {
         ),
         filled: true,
         fillColor: Colors.grey.shade50,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
         isDense: true,
       ),
     );

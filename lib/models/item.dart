@@ -9,7 +9,8 @@ abstract class Item with _$Item {
     required int id,
     required String name,
     required int cost,
-    @JsonKey(name: 'effect_entries') required List<ItemEffectEntry> effectEntries,
+    @JsonKey(name: 'effect_entries')
+    required List<ItemEffectEntry> effectEntries,
     required ItemSprites sprites,
   }) = _Item;
 
@@ -23,14 +24,14 @@ abstract class ItemEffectEntry with _$ItemEffectEntry {
     @JsonKey(name: 'short_effect') required String shortEffect,
   }) = _ItemEffectEntry;
 
-  factory ItemEffectEntry.fromJson(Map<String, dynamic> json) => _$ItemEffectEntryFromJson(json);
+  factory ItemEffectEntry.fromJson(Map<String, dynamic> json) =>
+      _$ItemEffectEntryFromJson(json);
 }
 
 @freezed
 abstract class ItemSprites with _$ItemSprites {
-  const factory ItemSprites({
-    required String defaultSprite,
-  }) = _ItemSprites;
+  const factory ItemSprites({required String defaultSprite}) = _ItemSprites;
 
-  factory ItemSprites.fromJson(Map<String, dynamic> json) => _$ItemSpritesFromJson(json);
+  factory ItemSprites.fromJson(Map<String, dynamic> json) =>
+      _$ItemSpritesFromJson(json);
 }

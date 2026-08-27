@@ -25,16 +25,20 @@ class EvoNode {
 /// Builds the evolution tree from the baked seed data
 /// (evolutionInfo: [{id, name, evolves_from, condition}]) — fully offline.
 /// Node models resolve from the seeded SQLite cache (cache-first).
-final evolutionChainProvider = FutureProvider.family<EvoNode?, String>(
-    (ref, evolutionInfoJson) async {
+final evolutionChainProvider = FutureProvider.family<EvoNode?, String>((
+  ref,
+  evolutionInfoJson,
+) async {
   final entries = (jsonDecode(evolutionInfoJson) as List? ?? const [])
       .cast<Map>()
-      .map((e) => {
-            'id': e['id'] as int,
-            'name': (e['name'] ?? '') as String,
-            'evolves_from': e['evolves_from'] as int?,
-            'condition': (e['condition'] ?? '') as String,
-          })
+      .map(
+        (e) => {
+          'id': e['id'] as int,
+          'name': (e['name'] ?? '') as String,
+          'evolves_from': e['evolves_from'] as int?,
+          'condition': (e['condition'] ?? '') as String,
+        },
+      )
       .toList();
   if (entries.isEmpty) return null;
 
@@ -95,11 +99,7 @@ class EvolutionTab extends ConsumerWidget {
   final String evolutionInfoJson;
   final Widget? header;
 
-  const EvolutionTab({
-    super.key,
-    required this.evolutionInfoJson,
-    this.header,
-  });
+  const EvolutionTab({super.key, required this.evolutionInfoJson, this.header});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -112,17 +112,27 @@ class EvolutionTab extends ConsumerWidget {
           child: asyncChain.when(
             data: (root) => root == null
                 ? const Center(
-                    child: Text('No evolution chain available.',
-                        style: TextStyle(color: Colors.white70)),
+                    child: Text(
+                      'No evolution chain available.',
+                      style: TextStyle(color: Colors.white70),
+                    ),
                   )
                 : _buildChainContent(context, root),
-            loading: () => const Center(child: CircularProgressIndicator(color: Colors.white)),
-            error: (e, st) => Center(child: Text('Error: $e', style: const TextStyle(color: Colors.white))),
+            loading: () => const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
+            error: (e, st) => Center(
+              child: Text(
+                'Error: $e',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
           ),
         ),
       ],
     );
   }
+
   Widget _buildChainContent(BuildContext context, EvoNode root) {
     // If it's Eevee (id 133) and has 8 evolutions, we use a radial/grid layout
     if (root.pokemonId == 133 && root.evolvesTo.length == 8) {
@@ -132,7 +142,12 @@ class EvolutionTab extends ConsumerWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       physics: const ClampingScrollPhysics(),
-      padding: EdgeInsets.only(top: 32, bottom: 32 + MediaQuery.paddingOf(context).bottom, left: 24, right: 24),
+      padding: EdgeInsets.only(
+        top: 32,
+        bottom: 32 + MediaQuery.paddingOf(context).bottom,
+        left: 24,
+        right: 24,
+      ),
       child: _buildTree(context, root),
     );
   }
@@ -150,18 +165,22 @@ class EvolutionTab extends ConsumerWidget {
         Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: node.evolvesTo.map((child) => Padding(
-            padding: const EdgeInsets.only(bottom: 24.0),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildArrow(child.condition),
-                const SizedBox(width: 24),
-                _buildTree(context, child),
-              ],
-            ),
-          )).toList(),
-        )
+          children: node.evolvesTo
+              .map(
+                (child) => Padding(
+                  padding: const EdgeInsets.only(bottom: 24.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _buildArrow(child.condition),
+                      const SizedBox(width: 24),
+                      _buildTree(context, child),
+                    ],
+                  ),
+                ),
+              )
+              .toList(),
+        ),
       ],
     );
   }
@@ -182,7 +201,7 @@ class EvolutionTab extends ConsumerWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-        ]
+        ],
       ],
     );
   }
@@ -200,11 +219,18 @@ class EvolutionTab extends ConsumerWidget {
 
     Widget cell(int id) {
       final node = findEvo(id);
-      return node != null ? _buildTree(context, node) : const SizedBox(width: 130, height: 200);
+      return node != null
+          ? _buildTree(context, node)
+          : const SizedBox(width: 130, height: 200);
     }
 
     return SingleChildScrollView(
-      padding: EdgeInsets.only(top: 16, bottom: 16 + MediaQuery.paddingOf(context).bottom, left: 16, right: 16),
+      padding: EdgeInsets.only(
+        top: 16,
+        bottom: 16 + MediaQuery.paddingOf(context).bottom,
+        left: 16,
+        right: 16,
+      ),
       child: Column(
         children: [
           Row(
@@ -244,11 +270,14 @@ class EvolutionTab extends ConsumerWidget {
     if (node.pokemon == null) {
       return const SizedBox(width: 120, height: 200, child: Placeholder());
     }
-    
+
     final pokemon = node.pokemon!;
-    final primaryType = pokemon.types.isNotEmpty ? pokemon.types.first.type.name : 'normal';
+    final primaryType = pokemon.types.isNotEmpty
+        ? pokemon.types.first.type.name
+        : 'normal';
     final bgColor = AppColors.getTypeColor(primaryType);
-    final semanticLabel = '${PokemonHelpers.formatName(pokemon.name)}, '
+    final semanticLabel =
+        '${PokemonHelpers.formatName(pokemon.name)}, '
         '${pokemon.types.map((t) => t.type.name).join(' and ')} type';
 
     // Expose each evolution stage as one tappable button to screen readers.
@@ -261,88 +290,92 @@ class EvolutionTab extends ConsumerWidget {
             context.push('/pokemon/${pokemon.id}');
           },
           child: Container(
-        width: 130,
-        decoration: BoxDecoration(
-          color: bgColor.withValues(alpha: 0.8),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            )
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Curved top with image
-            ClipPath(
-              clipper: _TopCurveClipper(),
-              child: Container(
-                width: double.infinity,
-                height: 110,
-                color: Colors.white.withValues(alpha: 0.9),
-                child: Center(
-                  child: Image.asset(
-                    PokemonHelpers.getHomeAssetPath(pokemon.id),
-                    height: 80,
-                    cacheWidth: PokemonHelpers.cacheWidth(context, 80),
-                    errorBuilder: (_, _, _) => Image.asset(
-                      PokemonHelpers.getThumbnailAssetPath(pokemon.id),
-                      height: 80,
-                      cacheWidth: PokemonHelpers.cacheWidth(context, 80),
+            width: 130,
+            decoration: BoxDecoration(
+              color: bgColor.withValues(alpha: 0.8),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.15),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Curved top with image
+                ClipPath(
+                  clipper: _TopCurveClipper(),
+                  child: Container(
+                    width: double.infinity,
+                    height: 110,
+                    color: Colors.white.withValues(alpha: 0.9),
+                    child: Center(
+                      child: Image.asset(
+                        PokemonHelpers.getHomeAssetPath(pokemon.id),
+                        height: 80,
+                        cacheWidth: PokemonHelpers.cacheWidth(context, 80),
+                        errorBuilder: (_, _, _) => Image.asset(
+                          PokemonHelpers.getThumbnailAssetPath(pokemon.id),
+                          height: 80,
+                          cacheWidth: PokemonHelpers.cacheWidth(context, 80),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            
-            const SizedBox(height: 8),
-            
-            // ID
-            Text(
-              '#${pokemon.speciesId.toString().padLeft(3, '0')}',
-              style: TextStyle(
-                color: Colors.black.withValues(alpha: 0.5),
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            ),
-            
-            // Name
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4.0),
-              child: Text(
-                PokemonHelpers.formatName(pokemon.name),
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+
+                const SizedBox(height: 8),
+
+                // ID
+                Text(
+                  '#${pokemon.speciesId.toString().padLeft(3, '0')}',
+                  style: TextStyle(
+                    color: Colors.black.withValues(alpha: 0.5),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                 ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
+
+                // Name
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                  child: Text(
+                    PokemonHelpers.formatName(pokemon.name),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                // Type Pills
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: Column(
+                    children: pokemon.types
+                        .map(
+                          (t) => Padding(
+                            padding: const EdgeInsets.only(bottom: 6.0),
+                            child: _buildTypePill(t.type.name),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+              ],
             ),
-            
-            const SizedBox(height: 8),
-            
-            // Type Pills
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: Column(
-                children: pokemon.types.map((t) => Padding(
-                  padding: const EdgeInsets.only(bottom: 6.0),
-                  child: _buildTypePill(t.type.name),
-                )).toList(),
-              ),
-            ),
-            
-            const SizedBox(height: 8),
-          ],
-        ),
-      ),
+          ),
         ),
       ),
     );
@@ -364,7 +397,10 @@ class EvolutionTab extends ConsumerWidget {
             'assets/types/$type.svg',
             width: 14,
             height: 14,
-            colorFilter: const ColorFilter.mode(Colors.black54, BlendMode.srcIn),
+            colorFilter: const ColorFilter.mode(
+              Colors.black54,
+              BlendMode.srcIn,
+            ),
           ),
           const SizedBox(width: 4),
           Text(
@@ -389,10 +425,10 @@ class _TopCurveClipper extends CustomClipper<Path> {
     path.lineTo(0, size.height - 30);
     // Control point is at bottom center
     path.quadraticBezierTo(
-      size.width / 2, 
-      size.height + 10, 
-      size.width, 
-      size.height - 30
+      size.width / 2,
+      size.height + 10,
+      size.width,
+      size.height - 30,
     );
     path.lineTo(size.width, 0);
     path.close();

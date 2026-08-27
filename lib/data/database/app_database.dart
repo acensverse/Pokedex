@@ -9,7 +9,8 @@ class PokemonCache extends Table {
   TextColumn get name => text()();
   TextColumn get species => text().nullable()();
   IntColumn get generation => integer().nullable()();
-  TextColumn get types => text()(); // Comma-separated types, e.g., "grass,poison"
+  TextColumn get types =>
+      text()(); // Comma-separated types, e.g., "grass,poison"
   IntColumn get hp => integer().nullable()();
   IntColumn get attack => integer().nullable()();
   IntColumn get defense => integer().nullable()();
@@ -18,10 +19,14 @@ class PokemonCache extends Table {
   IntColumn get speed => integer().nullable()();
   RealColumn get height => real().nullable()(); // Metres
   RealColumn get weight => real().nullable()(); // Kilograms
-  TextColumn get abilities => text().nullable()(); // JSON [{"n":name,"h":hidden}, ...]
-  TextColumn get forms => text().nullable()(); // Alternate forms metadata (JSON or text)
-  TextColumn get evolutionInfo => text().nullable()(); // Evolution tree metadata (JSON or text)
-  TextColumn get flavorText => text().nullable()(); // Official Pokédex flavor text fetched from API
+  TextColumn get abilities =>
+      text().nullable()(); // JSON [{"n":name,"h":hidden}, ...]
+  TextColumn get forms =>
+      text().nullable()(); // Alternate forms metadata (JSON or text)
+  TextColumn get evolutionInfo =>
+      text().nullable()(); // Evolution tree metadata (JSON or text)
+  TextColumn get flavorText =>
+      text().nullable()(); // Official Pokédex flavor text fetched from API
   BoolColumn get isFavorite => boolean().withDefault(const Constant(false))();
   // Legacy full-API-payload blob; no longer written or read (see repository).
   // Kept only so old databases do not need a destructive column drop.
@@ -54,36 +59,36 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onUpgrade: (m, from, to) async {
-          var recreated = false;
-          if (from < 6) {
-            // Old dev-era schema was too different to migrate additively.
-            // Salvage user favorites before rebuilding so upgrades never
-            // destroy the data users actually care about.
-            final salvagedFavorites = await _salvageFavorites();
-            await m.deleteTable('pokemon_cache');
-            await m.createTable(pokemonCache);
-            for (final fav in salvagedFavorites) {
-              await into(pokemonCache).insert(fav, mode: InsertMode.insertOrIgnore);
-            }
-            recreated = true;
-          }
-          // A freshly created table already has every column, so only add
-          // columns when we upgraded an existing table in place.
-          if (from < 7 && !recreated) {
-            await m.addColumn(pokemonCache, pokemonCache.flavorText);
-          }
-          if (from < 8) {
-            // Purge legacy per-row API blobs (up to hundreds of KB each);
-            // typed columns are the single source of truth now.
-            await customStatement('UPDATE pokemon_cache SET json_data = NULL');
-          }
-          if (from < 9) {
-            // v9 adds the user-built teams table for the Team Builder tool.
-            await m.createTable(teams);
-          }
-        },
-      );
+    onUpgrade: (m, from, to) async {
+      var recreated = false;
+      if (from < 6) {
+        // Old dev-era schema was too different to migrate additively.
+        // Salvage user favorites before rebuilding so upgrades never
+        // destroy the data users actually care about.
+        final salvagedFavorites = await _salvageFavorites();
+        await m.deleteTable('pokemon_cache');
+        await m.createTable(pokemonCache);
+        for (final fav in salvagedFavorites) {
+          await into(pokemonCache).insert(fav, mode: InsertMode.insertOrIgnore);
+        }
+        recreated = true;
+      }
+      // A freshly created table already has every column, so only add
+      // columns when we upgraded an existing table in place.
+      if (from < 7 && !recreated) {
+        await m.addColumn(pokemonCache, pokemonCache.flavorText);
+      }
+      if (from < 8) {
+        // Purge legacy per-row API blobs (up to hundreds of KB each);
+        // typed columns are the single source of truth now.
+        await customStatement('UPDATE pokemon_cache SET json_data = NULL');
+      }
+      if (from < 9) {
+        // v9 adds the user-built teams table for the Team Builder tool.
+        await m.createTable(teams);
+      }
+    },
+  );
 
   /// Reads favorite rows from a possibly-outdated table shape. Returns stub
   /// rows carrying at least id/name/types so the next seed can fill in details
@@ -118,9 +123,12 @@ class AppDatabase extends _$AppDatabase {
   /// Overwrites cached data columns but always preserves the user's
   /// favorites, which must survive re-seeding and refreshes.
   Future<void> cacheAllPokemon(List<PokemonCacheData> pokemons) async {
-    final favoriteIds = (await (select(pokemonCache)..where((t) => t.isFavorite.equals(true))).get())
-        .map((row) => row.id)
-        .toSet();
+    final favoriteIds =
+        (await (select(
+              pokemonCache,
+            )..where((t) => t.isFavorite.equals(true))).get())
+            .map((row) => row.id)
+            .toSet();
 
     await batch((b) {
       b.insertAllOnConflictUpdate(pokemonCache, pokemons);
@@ -129,23 +137,24 @@ class AppDatabase extends _$AppDatabase {
     if (favoriteIds.isNotEmpty) {
       // Plain UPDATEs only touch the flag; a REPLACE here would wipe the rows.
       for (final id in favoriteIds) {
-        await (update(pokemonCache)..where((t) => t.id.equals(id)))
-            .write(const PokemonCacheCompanion(isFavorite: Value(true)));
+        await (update(pokemonCache)..where((t) => t.id.equals(id))).write(
+          const PokemonCacheCompanion(isFavorite: Value(true)),
+        );
       }
     }
   }
 
   // Get cached pokemon by ID
   Future<PokemonCacheData?> getPokemonById(int id) {
-    return (select(pokemonCache)..where((t) => t.id.equals(id))).getSingleOrNull();
+    return (select(
+      pokemonCache,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   // Toggle favorite status
   Future<void> toggleFavorite(int id, bool isFavoriteValue) async {
     await (update(pokemonCache)..where((t) => t.id.equals(id))).write(
-      PokemonCacheCompanion(
-        isFavorite: Value(isFavoriteValue),
-      ),
+      PokemonCacheCompanion(isFavorite: Value(isFavoriteValue)),
     );
   }
 
@@ -154,19 +163,30 @@ class AppDatabase extends _$AppDatabase {
   // so filters match whole list items instead of substrings.
   // Ordering uses COALESCE(speciesId, id) so form rows with NULL speciesId
   // sort by their own id instead of inconsistently floating to the top.
-  Future<List<PokemonCacheData>> searchPokemon(String query, String typeFilter) {
+  Future<List<PokemonCacheData>> searchPokemon(
+    String query,
+    String typeFilter,
+  ) {
     var querySelect = select(pokemonCache);
     if (query.isNotEmpty) {
-      querySelect = querySelect..where((t) => t.name.like('%${query.toLowerCase()}%'));
+      querySelect = querySelect
+        ..where((t) => t.name.like('%${query.toLowerCase()}%'));
     }
     if (typeFilter.isNotEmpty) {
       final needle = '%,${typeFilter.toLowerCase()},%';
-      querySelect = querySelect..where((t) => (Constant(',') + t.types + const Constant(',')).like(needle));
+      querySelect = querySelect
+        ..where(
+          (t) => (Constant(',') + t.types + const Constant(',')).like(needle),
+        );
     }
-    querySelect = querySelect..orderBy([
-      (t) => OrderingTerm(expression: coalesce([t.speciesId, t.id]), mode: OrderingMode.asc),
-      (t) => OrderingTerm(expression: t.id, mode: OrderingMode.asc),
-    ]);
+    querySelect = querySelect
+      ..orderBy([
+        (t) => OrderingTerm(
+          expression: coalesce([t.speciesId, t.id]),
+          mode: OrderingMode.asc,
+        ),
+        (t) => OrderingTerm(expression: t.id, mode: OrderingMode.asc),
+      ]);
     return querySelect.get();
   }
 
@@ -176,10 +196,12 @@ class AppDatabase extends _$AppDatabase {
   Stream<List<Team>> watchTeams({String query = ''}) {
     var teamsQuery = select(teams);
     if (query.isNotEmpty) {
-      teamsQuery = teamsQuery..where((t) => t.name.like('%${query.toLowerCase()}%'));
+      teamsQuery = teamsQuery
+        ..where((t) => t.name.like('%${query.toLowerCase()}%'));
     }
-    return (teamsQuery
-          ..orderBy([(t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc)]))
+    return (teamsQuery..orderBy([
+          (t) => OrderingTerm(expression: t.id, mode: OrderingMode.desc),
+        ]))
         .watch();
   }
 

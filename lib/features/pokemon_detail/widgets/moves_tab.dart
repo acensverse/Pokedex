@@ -51,10 +51,14 @@ class _MovesTabState extends ConsumerState<MovesTab> {
           final methodIdx = ld[2];
           final localMove = _LocalMove(entry: entry, level: level);
 
-          if (methodIdx == 0) levelUpMoves.add(localMove);
-          else if (methodIdx == 1) tmMoves.add(localMove);
-          else if (methodIdx == 2) eggMoves.add(localMove);
-          else if (methodIdx == 3) tutorMoves.add(localMove);
+          if (methodIdx == 0)
+            levelUpMoves.add(localMove);
+          else if (methodIdx == 1)
+            tmMoves.add(localMove);
+          else if (methodIdx == 2)
+            eggMoves.add(localMove);
+          else if (methodIdx == 3)
+            tutorMoves.add(localMove);
         }
       }
     }
@@ -93,73 +97,88 @@ class _MovesTabState extends ConsumerState<MovesTab> {
         if (widget.header != null) widget.header!,
         Expanded(
           child: Container(
-            padding: const EdgeInsets.only(top: 0, bottom: 16, left: 16, right: 16),
+            padding: const EdgeInsets.only(
+              top: 0,
+              bottom: 16,
+              left: 16,
+              right: 16,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SectionHeader(title: 'Movesets', themeColor: widget.themeColor),
-          const SizedBox(height: 16),
-          Container(
-            height: 40,
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(20)),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final modes = ['Level up', 'TM/HM', 'Eggs', 'Tutor'];
-                final currentIndex = modes.indexOf(_activeMoveTab);
-                final tabWidth = constraints.maxWidth / modes.length;
+                const SizedBox(height: 16),
+                Container(
+                  height: 40,
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final modes = ['Level up', 'TM/HM', 'Eggs', 'Tutor'];
+                      final currentIndex = modes.indexOf(_activeMoveTab);
+                      final tabWidth = constraints.maxWidth / modes.length;
 
-                return Stack(
-                  children: [
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOutCubic,
-                      left: currentIndex * tabWidth,
-                      top: 0,
-                      bottom: 0,
-                      width: tabWidth,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: widget.themeColor,
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: modes.map((mode) {
-                        final isActive = _activeMoveTab == mode;
-                        return Expanded(
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () => setState(() => _activeMoveTab = mode),
-                            child: Center(
-                              child: AnimatedDefaultTextStyle(
-                                duration: const Duration(milliseconds: 300),
-                                style: TextStyle(
-                                  color: isActive ? Colors.white : Colors.black45,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 11,
-                                ),
-                                child: Text(mode),
+                      return Stack(
+                        children: [
+                          AnimatedPositioned(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOutCubic,
+                            left: currentIndex * tabWidth,
+                            top: 0,
+                            bottom: 0,
+                            width: tabWidth,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: widget.themeColor,
+                                borderRadius: BorderRadius.circular(16),
                               ),
                             ),
                           ),
-                        );
-                      }).toList(),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: modes.map((mode) {
+                              final isActive = _activeMoveTab == mode;
+                              return Expanded(
+                                child: GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  onTap: () =>
+                                      setState(() => _activeMoveTab = mode),
+                                  child: Center(
+                                    child: AnimatedDefaultTextStyle(
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
+                                      style: TextStyle(
+                                        color: isActive
+                                            ? Colors.white
+                                            : Colors.black45,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 11,
+                                      ),
+                                      child: Text(mode),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.only(
+                      bottom: 16 + MediaQuery.paddingOf(context).bottom,
                     ),
-                  ],
-                );
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.only(bottom: 16 + MediaQuery.paddingOf(context).bottom),
-              child: _buildMoveTable(currentMoves, isLevelUp: isLevelUp),
-            ),
-          ),
+                    child: _buildMoveTable(currentMoves, isLevelUp: isLevelUp),
+                  ),
+                ),
               ],
             ),
           ),
@@ -172,7 +191,12 @@ class _MovesTabState extends ConsumerState<MovesTab> {
     if (moves.isEmpty) {
       return const Padding(
         padding: EdgeInsets.all(32.0),
-        child: Center(child: Text('No moves found for this category.', style: TextStyle(color: Colors.black54))),
+        child: Center(
+          child: Text(
+            'No moves found for this category.',
+            style: TextStyle(color: Colors.black54),
+          ),
+        ),
       );
     }
     return Column(
@@ -181,25 +205,97 @@ class _MovesTabState extends ConsumerState<MovesTab> {
           padding: const EdgeInsets.only(bottom: 8.0, left: 4, right: 4),
           child: Row(
             children: [
-              SizedBox(width: 32, child: Text(isLevelUp ? 'Lvl' : '-', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black45), textAlign: TextAlign.right)),
+              SizedBox(
+                width: 32,
+                child: Text(
+                  isLevelUp ? 'Lvl' : '-',
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black45,
+                  ),
+                  textAlign: TextAlign.right,
+                ),
+              ),
               const SizedBox(width: 12),
-              const Expanded(flex: 3, child: Text('Move', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black45))),
+              const Expanded(
+                flex: 3,
+                child: Text(
+                  'Move',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black45,
+                  ),
+                ),
+              ),
               Expanded(
                 flex: 5,
                 child: Row(
                   children: const [
-                    Expanded(flex: 2, child: Center(child: Text('Type', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black45)))),
+                    Expanded(
+                      flex: 2,
+                      child: Center(
+                        child: Text(
+                          'Type',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black45,
+                          ),
+                        ),
+                      ),
+                    ),
                     SizedBox(width: 4),
-                    Expanded(flex: 2, child: Center(child: Text('Cat', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black45)))),
-                    SizedBox(width: 36, child: Text('Pwr', textAlign: TextAlign.right, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black45))),
-                    SizedBox(width: 36, child: Text('Acc', textAlign: TextAlign.right, style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black45))),
+                    Expanded(
+                      flex: 2,
+                      child: Center(
+                        child: Text(
+                          'Cat',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black45,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 36,
+                      child: Text(
+                        'Pwr',
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black45,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 36,
+                      child: Text(
+                        'Acc',
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black45,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
             ],
           ),
         ),
-        ...moves.map((m) => _LocalMoveRow(move: m, methodText: isLevelUp ? m.level.toString() : '-')),
+        ...moves.map(
+          (m) => _LocalMoveRow(
+            move: m,
+            methodText: isLevelUp ? m.level.toString() : '-',
+          ),
+        ),
       ],
     );
   }
@@ -228,17 +324,30 @@ class _LocalMoveRow extends StatelessWidget {
     final m = move.entry;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Colors.black12))),
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: Colors.black12)),
+      ),
       child: Row(
         children: [
           SizedBox(
             width: 32,
-            child: Text(methodText, style: const TextStyle(fontSize: 12, color: Colors.black54), textAlign: TextAlign.right),
+            child: Text(
+              methodText,
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
+              textAlign: TextAlign.right,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
             flex: 3,
-            child: Text(_formatName(m.name), style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
+            child: Text(
+              _formatName(m.name),
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueAccent,
+              ),
+            ),
           ),
           Expanded(
             flex: 5,
@@ -247,8 +356,22 @@ class _LocalMoveRow extends StatelessWidget {
                 Expanded(flex: 2, child: _TypePill(type: m.type)),
                 const SizedBox(width: 4),
                 Expanded(flex: 2, child: _CatPill(cls: m.cls)),
-                SizedBox(width: 36, child: Text(m.power?.toString() ?? '—', textAlign: TextAlign.right, style: const TextStyle(fontSize: 12, color: Colors.black87))),
-                SizedBox(width: 36, child: Text(m.acc?.toString() ?? '∞', textAlign: TextAlign.right, style: const TextStyle(fontSize: 12, color: Colors.black87))),
+                SizedBox(
+                  width: 36,
+                  child: Text(
+                    m.power?.toString() ?? '—',
+                    textAlign: TextAlign.right,
+                    style: const TextStyle(fontSize: 12, color: Colors.black87),
+                  ),
+                ),
+                SizedBox(
+                  width: 36,
+                  child: Text(
+                    m.acc?.toString() ?? '∞',
+                    textAlign: TextAlign.right,
+                    style: const TextStyle(fontSize: 12, color: Colors.black87),
+                  ),
+                ),
               ],
             ),
           ),
@@ -266,11 +389,18 @@ class _TypePill extends StatelessWidget {
     final c = AppColors.getTypeColor(type);
     return Container(
       height: 20,
-      decoration: BoxDecoration(color: c, borderRadius: BorderRadius.circular(4)),
+      decoration: BoxDecoration(
+        color: c,
+        borderRadius: BorderRadius.circular(4),
+      ),
       child: Center(
         child: Text(
           type.toUpperCase(),
-          style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 8,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
@@ -287,11 +417,18 @@ class _CatPill extends StatelessWidget {
     if (cls == 'special') c = Colors.blueGrey;
     return Container(
       height: 20,
-      decoration: BoxDecoration(color: c, borderRadius: BorderRadius.circular(4)),
+      decoration: BoxDecoration(
+        color: c,
+        borderRadius: BorderRadius.circular(4),
+      ),
       child: Center(
         child: Text(
           cls.toUpperCase(),
-          style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 8,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

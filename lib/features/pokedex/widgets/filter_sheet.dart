@@ -103,8 +103,10 @@ class FilterSheet extends ConsumerWidget {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.grey.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(16),
@@ -130,7 +132,7 @@ class FilterSheet extends ConsumerWidget {
                           final types = ref.read(selectedTypesProvider);
                           if (!val && types.length > 1) {
                             ref.read(selectedTypesProvider.notifier).state = [
-                              types.first
+                              types.first,
                             ];
                           }
                           ref.read(dualTypeModeProvider.notifier).state = val;

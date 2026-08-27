@@ -13,7 +13,8 @@ abstract class Move with _$Move {
     required int pp,
     required MoveType type,
     @JsonKey(name: 'damage_class') MoveDamageClass? damageClass,
-    @JsonKey(name: 'effect_entries') required List<MoveEffectEntry> effectEntries,
+    @JsonKey(name: 'effect_entries')
+    required List<MoveEffectEntry> effectEntries,
   }) = _Move;
 
   factory Move.fromJson(Map<String, dynamic> json) => _$MoveFromJson(json);
@@ -21,22 +22,20 @@ abstract class Move with _$Move {
 
 @freezed
 abstract class MoveDamageClass with _$MoveDamageClass {
-  const factory MoveDamageClass({
-    required String name,
-    required String url,
-  }) = _MoveDamageClass;
+  const factory MoveDamageClass({required String name, required String url}) =
+      _MoveDamageClass;
 
-  factory MoveDamageClass.fromJson(Map<String, dynamic> json) => _$MoveDamageClassFromJson(json);
+  factory MoveDamageClass.fromJson(Map<String, dynamic> json) =>
+      _$MoveDamageClassFromJson(json);
 }
 
 @freezed
 abstract class MoveType with _$MoveType {
-  const factory MoveType({
-    required String name,
-    required String url,
-  }) = _MoveType;
+  const factory MoveType({required String name, required String url}) =
+      _MoveType;
 
-  factory MoveType.fromJson(Map<String, dynamic> json) => _$MoveTypeFromJson(json);
+  factory MoveType.fromJson(Map<String, dynamic> json) =>
+      _$MoveTypeFromJson(json);
 }
 
 @freezed
@@ -46,5 +45,6 @@ abstract class MoveEffectEntry with _$MoveEffectEntry {
     @JsonKey(name: 'short_effect') required String shortEffect,
   }) = _MoveEffectEntry;
 
-  factory MoveEffectEntry.fromJson(Map<String, dynamic> json) => _$MoveEffectEntryFromJson(json);
+  factory MoveEffectEntry.fromJson(Map<String, dynamic> json) =>
+      _$MoveEffectEntryFromJson(json);
 }

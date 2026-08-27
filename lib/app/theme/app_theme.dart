@@ -35,12 +35,16 @@ class AppTheme {
         centerTitle: false,
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: WidgetStateProperty.resolveWith((states) =>
-            states.contains(WidgetState.selected) ? Colors.amber : Colors.grey.shade400),
-        trackColor: WidgetStateProperty.resolveWith((states) =>
-            states.contains(WidgetState.selected)
-                ? Colors.amber.withValues(alpha: 0.3)
-                : Colors.grey.shade200),
+        thumbColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? Colors.amber
+              : Colors.grey.shade400,
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? Colors.amber.withValues(alpha: 0.3)
+              : Colors.grey.shade200,
+        ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(backgroundColor: AppColors.primary),

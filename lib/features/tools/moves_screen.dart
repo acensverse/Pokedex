@@ -80,8 +80,15 @@ class MoveEntry {
       );
 }
 
+import '../pokedex/pokedex_provider.dart';
+import '../../core/services/champions_data_service.dart';
+
 /// All moves baked from assets/moves_seed.json (offline-first).
 final movesSeedProvider = FutureProvider<List<MoveEntry>>((ref) async {
+  final isChampions = ref.watch(isChampionsModeProvider);
+  if (isChampions) {
+    return ref.watch(championsDataServiceProvider).getMoves();
+  }
   final raw = await rootBundle.loadString('assets/moves_seed.json');
   final list = jsonDecode(raw) as List<dynamic>;
   return list

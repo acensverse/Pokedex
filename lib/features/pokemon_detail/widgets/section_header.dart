@@ -14,12 +14,7 @@ class SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Expanded(
-          child: Divider(
-            color: Colors.black26,
-            thickness: 1,
-          ),
-        ),
+        const Expanded(child: Divider(color: Colors.black26, thickness: 1)),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 12),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -45,12 +40,7 @@ class SectionHeader extends StatelessWidget {
             ),
           ),
         ),
-        const Expanded(
-          child: Divider(
-            color: Colors.black26,
-            thickness: 1,
-          ),
-        ),
+        const Expanded(child: Divider(color: Colors.black26, thickness: 1)),
       ],
     );
   }
