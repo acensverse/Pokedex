@@ -9,6 +9,8 @@ import '../../app/theme/app_spacing.dart';
 import '../../core/utils/pokemon_helpers.dart';
 import '../pokedex/pokedex_provider.dart';
 import '../pokedex/widgets/tools_sheet.dart';
+import '../../core/providers.dart';
+import '../../core/services/champions_data_service.dart';
 
 class AbilityEntry {
   final int id;
@@ -46,11 +48,7 @@ class AbilityEntry {
             .map((e) => e as int)
             .toList(),
       );
-
-import '../pokedex/pokedex_provider.dart';
-import '../../core/services/champions_data_service.dart';
-
-String? get description => eff ?? flavor;
+  String? get description => eff ?? flavor;
 }
 
 /// All abilities baked from assets/abilities_seed.json (offline-first).

@@ -11,6 +11,8 @@ import '../../core/utils/pokemon_helpers.dart';
 import '../../core/utils/type_chart.dart';
 import '../pokedex/pokedex_provider.dart';
 import '../pokedex/widgets/tools_sheet.dart';
+import '../../core/providers.dart';
+import '../../core/services/champions_data_service.dart';
 
 class MoveEntry {
   final int id;
@@ -80,8 +82,6 @@ class MoveEntry {
       );
 }
 
-import '../pokedex/pokedex_provider.dart';
-import '../../core/services/champions_data_service.dart';
 
 /// All moves baked from assets/moves_seed.json (offline-first).
 final movesSeedProvider = FutureProvider<List<MoveEntry>>((ref) async {

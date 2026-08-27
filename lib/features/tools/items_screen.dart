@@ -7,6 +7,8 @@ import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_spacing.dart';
 import '../../core/utils/pokemon_helpers.dart';
 import '../pokedex/widgets/tools_sheet.dart';
+import '../../core/providers.dart';
+import '../../core/services/champions_data_service.dart';
 
 class ItemEntry {
   final int id;
@@ -36,11 +38,7 @@ class ItemEntry {
         flavor: json['flavor'] as String?,
         sprite: json['sprite'] as String?,
       );
-
-import '../pokedex/pokedex_provider.dart';
-import '../../core/services/champions_data_service.dart';
-
-String? get description => eff ?? flavor;
+  String? get description => eff ?? flavor;
 }
 
 /// All items baked from assets/items_seed.json (offline-first).
