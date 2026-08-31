@@ -14,20 +14,13 @@ class EvoNode {
   final String condition;
   final List<EvoNode> evolvesTo;
   Pokemon? pokemon;
-  Pokemon? altPokemon;
+  List<Pokemon> altForms = [];
 
   EvoNode({
     required this.pokemonId,
     required this.condition,
     required this.evolvesTo,
   });
-
-  Pokemon? displayPokemon(bool showAlternate) {
-    if (showAlternate && altPokemon != null) {
-      return altPokemon;
-    }
-    return pokemon;
-  }
 }
 
 /// Known regional evolution overrides: map regional evolution child ID to regional parent form ID
@@ -111,28 +104,22 @@ final evolutionChainProvider = FutureProvider.family<EvoNode?, String>((
       );
     }
 
-    // 2. Resolve alternate/regional form model if available
-    int? altId;
-    for (final child in node.evolvesTo) {
-      if (_regionalParentOverrides.containsKey(child.pokemonId)) {
-        altId = _regionalParentOverrides[child.pokemonId];
-        break;
-      }
-    }
-
-    if (altId == null && node.pokemon?.forms != null) {
+    // 2. Resolve all alternate forms for node.pokemon
+    if (node.pokemon?.forms != null) {
       try {
         final parsedForms = (jsonDecode(node.pokemon!.forms!) as List?)
             ?.cast<Map>();
         if (parsedForms != null && parsedForms.isNotEmpty) {
-          altId = parsedForms.first['id'] as int?;
+          for (final f in parsedForms) {
+            final fId = f['id'] as int?;
+            if (fId != null && fId != node.pokemonId) {
+              try {
+                final altP = await repo.getPokemonDetails(fId);
+                node.altForms.add(altP);
+              } catch (_) {}
+            }
+          }
         }
-      } catch (_) {}
-    }
-
-    if (altId != null && altId != node.pokemonId) {
-      try {
-        node.altPokemon = await repo.getPokemonDetails(altId);
       } catch (_) {}
     }
 
@@ -157,8 +144,6 @@ class EvolutionTab extends ConsumerStatefulWidget {
 
 class _EvolutionTabState extends ConsumerState<EvolutionTab> {
   bool _showAlternateForm = false;
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -266,6 +251,10 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
     EvoNode root,
     bool showAlternate,
   ) {
+    if (showAlternate) {
+      return _buildAlternateFormsView(context, root);
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return Align(
@@ -275,7 +264,7 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
             child: FittedBox(
               fit: BoxFit.contain,
               alignment: Alignment.topCenter,
-              child: _buildChainContent(context, root, showAlternate),
+              child: _buildChainContent(context, root),
             ),
           ),
         );
@@ -283,45 +272,140 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
     );
   }
 
-  Widget _buildChainContent(
-    BuildContext context,
-    EvoNode root,
-    bool showAlternate,
-  ) {
+  /// Dedicated Alternate Forms View displaying forms in white rounded square boxes with drop shadow
+  Widget _buildAlternateFormsView(BuildContext context, EvoNode root) {
+    final cards = _buildAltFormCards(context, root);
+    if (cards.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(24.0),
+          child: Text(
+            'No alternate forms available for this evolution family.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
+          ),
+        ),
+      );
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 16, bottom: 100, left: 16, right: 16),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: cards,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  List<Widget> _buildAltFormCards(BuildContext context, EvoNode root) {
+    final List<Widget> list = [];
+    final Set<int> addedIds = {};
+
+    void collect(EvoNode node) {
+      // 1. Regional parent override check (e.g. Galarian Meowth -> Perrserker, Galarian Zigzagoon -> Obstagoon)
+      for (final child in node.evolvesTo) {
+        if (_regionalParentOverrides.containsKey(child.pokemonId)) {
+          final parentAltId = _regionalParentOverrides[child.pokemonId]!;
+          final parentAlt = node.altForms.firstWhere(
+            (p) => p.id == parentAltId,
+            orElse: () => node.pokemon!,
+          );
+
+          if (!addedIds.contains(parentAlt.id)) {
+            addedIds.add(parentAlt.id);
+            list.add(_AltFormSquareCard(
+              pokemon: parentAlt,
+              formLabel: 'Regional Form',
+            ));
+          }
+
+          if (child.pokemon != null && !addedIds.contains(child.pokemon!.id)) {
+            addedIds.add(child.pokemon!.id);
+            list.add(_buildVerticalArrow(child.condition));
+            list.add(_AltFormSquareCard(
+              pokemon: child.pokemon!,
+              formLabel: 'Regional Evolution',
+            ));
+          }
+        }
+      }
+
+      // 2. Standalone alternate forms (Megas, Gigantamax, Alolan, Hisuian, etc.)
+      for (final altP in node.altForms) {
+        if (!addedIds.contains(altP.id)) {
+          addedIds.add(altP.id);
+          String label = 'Alternate Form';
+          final nameLower = altP.name.toLowerCase();
+          if (nameLower.contains('mega')) {
+            label = 'Mega Evolution';
+          } else if (nameLower.contains('gigantamax')) {
+            label = 'Gigantamax Form';
+          } else if (nameLower.contains('alolan')) {
+            label = 'Alolan Form';
+          } else if (nameLower.contains('galarian')) {
+            label = 'Galarian Form';
+          } else if (nameLower.contains('hisuian')) {
+            label = 'Hisuian Form';
+          } else if (nameLower.contains('paldean')) {
+            label = 'Paldean Form';
+          }
+
+          list.add(_AltFormSquareCard(
+            pokemon: altP,
+            formLabel: label,
+          ));
+        }
+      }
+
+      for (final child in node.evolvesTo) {
+        collect(child);
+      }
+    }
+
+    collect(root);
+    return list;
+  }
+
+  Widget _buildChainContent(BuildContext context, EvoNode root) {
     // Eevee special 8-evolution grid layout
     if (root.pokemonId == 133 && root.evolvesTo.length >= 8) {
-      return _buildEeveeCompactGrid(context, root, showAlternate);
+      return _buildEeveeCompactGrid(context, root);
     }
 
     // Single non-evolving Pokemon
     if (root.evolvesTo.isEmpty) {
-      return _CleanEvoNode(node: root, showAlternate: showAlternate);
+      return _CleanEvoNode(node: root);
     }
 
     // Multi-branch evolutions (e.g. Tyrogue, Wurmple, Ralts, Slowpoke, Oddish)
     if (root.evolvesTo.length > 1) {
-      return _buildBranchLayout(context, root, showAlternate);
+      return _buildBranchLayout(context, root);
     }
 
     // Standard linear chain (1 -> 2 -> 3 stage vertical flow)
-    return _buildVerticalLinearChain(context, root, showAlternate);
+    return _buildVerticalLinearChain(context, root);
   }
 
   /// Top-to-bottom vertical linear chain (fits portrait space cleanly)
-  Widget _buildVerticalLinearChain(
-    BuildContext context,
-    EvoNode node,
-    bool showAlternate,
-  ) {
-    final list = <Widget>[
-      _CleanEvoNode(node: node, showAlternate: showAlternate),
-    ];
+  Widget _buildVerticalLinearChain(BuildContext context, EvoNode node) {
+    final list = <Widget>[_CleanEvoNode(node: node)];
 
     var current = node;
     while (current.evolvesTo.isNotEmpty) {
       final child = current.evolvesTo.first;
       list.add(_buildVerticalArrow(child.condition));
-      list.add(_CleanEvoNode(node: child, showAlternate: showAlternate));
+      list.add(_CleanEvoNode(node: child));
       current = child;
     }
 
@@ -333,16 +417,12 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
   }
 
   /// Branching evolution tree (e.g. Ralts, Tyrogue, Slowpoke, Meowth)
-  Widget _buildBranchLayout(
-    BuildContext context,
-    EvoNode parent,
-    bool showAlternate,
-  ) {
+  Widget _buildBranchLayout(BuildContext context, EvoNode parent) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _CleanEvoNode(node: parent, showAlternate: showAlternate),
+        _CleanEvoNode(node: parent),
         const SizedBox(height: 12),
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -356,9 +436,9 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
                   _buildVerticalArrow(child.condition),
                   const SizedBox(height: 6),
                   if (child.evolvesTo.isEmpty)
-                    _CleanEvoNode(node: child, showAlternate: showAlternate)
+                    _CleanEvoNode(node: child)
                   else
-                    _buildBranchLayout(context, child, showAlternate),
+                    _buildBranchLayout(context, child),
                 ],
               ),
             );
@@ -369,11 +449,7 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
   }
 
   /// Eevee (8 evolutions) compact portrait grid layout
-  Widget _buildEeveeCompactGrid(
-    BuildContext context,
-    EvoNode eevee,
-    bool showAlternate,
-  ) {
+  Widget _buildEeveeCompactGrid(BuildContext context, EvoNode eevee) {
     EvoNode? findEvo(int id) {
       for (final e in eevee.evolvesTo) {
         if (e.pokemonId == id || e.pokemon?.id == id) return e;
@@ -387,7 +463,7 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _CleanEvoNode(node: node, compact: true, showAlternate: showAlternate),
+          _CleanEvoNode(node: node, compact: true),
         ],
       );
     }
@@ -413,7 +489,7 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
           children: [
             cell(700), // Sylveon
             const SizedBox(width: 20),
-            _CleanEvoNode(node: eevee, compact: true, showAlternate: showAlternate),
+            _CleanEvoNode(node: eevee, compact: true),
             const SizedBox(width: 20),
             cell(196), // Espeon
           ],
@@ -484,21 +560,172 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
   }
 }
 
-/// Clean, cardless Pokemon evolution node
-class _CleanEvoNode extends StatelessWidget {
-  final EvoNode node;
-  final bool compact;
-  final bool showAlternate;
+/// Square rounded white card with drop shadow for Alternate Form display
+class _AltFormSquareCard extends StatelessWidget {
+  final Pokemon pokemon;
+  final String? formLabel;
 
-  const _CleanEvoNode({
-    required this.node,
-    this.compact = false,
-    this.showAlternate = false,
+  const _AltFormSquareCard({
+    required this.pokemon,
+    this.formLabel,
   });
 
   @override
   Widget build(BuildContext context) {
-    final pokemon = node.displayPokemon(showAlternate);
+    final name = PokemonHelpers.formatName(pokemon.name);
+    final speciesIdStr = '#${pokemon.speciesId.toString().padLeft(3, '0')}';
+
+    return GestureDetector(
+      onTap: () => context.push('/pokemon/${pokemon.id}'),
+      child: Container(
+        width: 320,
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: Colors.grey.shade200,
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Artwork Image in square container
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: Image.asset(
+                  PokemonHelpers.getHomeAssetPath(pokemon.id),
+                  height: 52,
+                  width: 52,
+                  cacheWidth: PokemonHelpers.cacheWidth(context, 52),
+                  errorBuilder: (_, _, _) => Image.asset(
+                    PokemonHelpers.getThumbnailAssetPath(pokemon.id),
+                    height: 52,
+                    width: 52,
+                    cacheWidth: PokemonHelpers.cacheWidth(context, 52),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (formLabel != null && formLabel!.isNotEmpty)
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        formLabel!,
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    speciesIdStr,
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: pokemon.types.map((t) {
+                      final typeName = t.type.name;
+                      final typeColor = AppColors.getTypeColor(typeName);
+                      return Container(
+                        margin: const EdgeInsets.only(right: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: typeColor.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: typeColor.withValues(alpha: 0.4),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/types/$typeName.svg',
+                              width: 10,
+                              height: 10,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              typeName[0].toUpperCase() + typeName.substring(1),
+                              style: TextStyle(
+                                color: typeColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 9,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: Colors.grey,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Clean, cardless Pokemon evolution node for standard base chain
+class _CleanEvoNode extends StatelessWidget {
+  final EvoNode node;
+  final bool compact;
+
+  const _CleanEvoNode({
+    required this.node,
+    this.compact = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final pokemon = node.pokemon;
     if (pokemon == null) {
       return const SizedBox(width: 70, height: 70, child: CircularProgressIndicator());
     }
@@ -517,7 +744,7 @@ class _CleanEvoNode extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Circular Artwork Avatar (No cards/boxes)
+            // Circular Artwork Avatar (No cards/boxes for base chain)
             Container(
               width: imageSize + 12,
               height: imageSize + 12,
