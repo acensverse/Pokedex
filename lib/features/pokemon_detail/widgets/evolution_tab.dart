@@ -158,14 +158,7 @@ class EvolutionTab extends ConsumerStatefulWidget {
 class _EvolutionTabState extends ConsumerState<EvolutionTab> {
   bool _showAlternateForm = false;
 
-  bool _hasAlternateForms(EvoNode? root) {
-    if (root == null) return false;
-    if (root.altPokemon != null) return true;
-    for (final child in root.evolvesTo) {
-      if (_hasAlternateForms(child)) return true;
-    }
-    return false;
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -184,6 +177,7 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
                     ),
                   )
                 : Stack(
+                    clipBehavior: Clip.none,
                     children: [
                       Positioned.fill(
                         child: _buildFitViewportContainer(
@@ -192,12 +186,11 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
                           _showAlternateForm,
                         ),
                       ),
-                      if (_hasAlternateForms(root))
-                        Positioned(
-                          bottom: 16,
-                          right: 16,
-                          child: _buildFloatingAltFormButton(),
-                        ),
+                      Positioned(
+                        bottom: 16,
+                        right: 16,
+                        child: _buildFloatingAltFormButton(),
+                      ),
                     ],
                   ),
             loading: () => const Center(
