@@ -177,17 +177,16 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
                     ),
                   )
                 : Stack(
+                    fit: StackFit.expand,
                     clipBehavior: Clip.none,
                     children: [
-                      Positioned.fill(
-                        child: _buildFitViewportContainer(
-                          context,
-                          root,
-                          _showAlternateForm,
-                        ),
+                      _buildFitViewportContainer(
+                        context,
+                        root,
+                        _showAlternateForm,
                       ),
                       Positioned(
-                        bottom: 16,
+                        bottom: 48,
                         right: 16,
                         child: _buildFloatingAltFormButton(),
                       ),
@@ -239,8 +238,8 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
                 duration: const Duration(milliseconds: 300),
                 child: Icon(
                   _showAlternateForm
-                      ? Icons.restore_rounded
-                      : Icons.auto_awesome_rounded,
+                      ? Icons.restore
+                      : Icons.auto_awesome,
                   color: _showAlternateForm ? Colors.white : AppColors.primary,
                   size: 20,
                 ),
