@@ -14,12 +14,20 @@ class EvoNode {
   final String condition;
   final List<EvoNode> evolvesTo;
   Pokemon? pokemon;
+  Pokemon? altPokemon;
 
   EvoNode({
     required this.pokemonId,
     required this.condition,
     required this.evolvesTo,
   });
+
+  Pokemon? displayPokemon(bool showAlternate) {
+    if (showAlternate && altPokemon != null) {
+      return altPokemon;
+    }
+    return pokemon;
+  }
 }
 
 /// Known regional evolution overrides: map regional evolution child ID to regional parent form ID
@@ -85,21 +93,13 @@ final evolutionChainProvider = FutureProvider.family<EvoNode?, String>((
   final entryById = {for (final e in entries) e['id'] as int: e};
 
   Future<void> resolveModels(EvoNode node) async {
-    // Check regional form override if children require specific regional parent
-    int targetId = node.pokemonId;
-    for (final child in node.evolvesTo) {
-      if (_regionalParentOverrides.containsKey(child.pokemonId)) {
-        targetId = _regionalParentOverrides[child.pokemonId]!;
-        break;
-      }
-    }
-
+    // 1. Fetch primary base Pokemon model
     try {
-      node.pokemon = await repo.getPokemonDetails(targetId);
+      node.pokemon = await repo.getPokemonDetails(node.pokemonId);
     } catch (_) {
       final entry = entryById[node.pokemonId];
       node.pokemon = Pokemon(
-        id: targetId,
+        id: node.pokemonId,
         speciesId: node.pokemonId,
         name: (entry?['name'] as String?) ?? '',
         height: 0,
@@ -110,6 +110,32 @@ final evolutionChainProvider = FutureProvider.family<EvoNode?, String>((
         moves: const [],
       );
     }
+
+    // 2. Resolve alternate/regional form model if available
+    int? altId;
+    for (final child in node.evolvesTo) {
+      if (_regionalParentOverrides.containsKey(child.pokemonId)) {
+        altId = _regionalParentOverrides[child.pokemonId];
+        break;
+      }
+    }
+
+    if (altId == null && node.pokemon?.forms != null) {
+      try {
+        final parsedForms = (jsonDecode(node.pokemon!.forms!) as List?)
+            ?.cast<Map>();
+        if (parsedForms != null && parsedForms.isNotEmpty) {
+          altId = parsedForms.first['id'] as int?;
+        }
+      } catch (_) {}
+    }
+
+    if (altId != null && altId != node.pokemonId) {
+      try {
+        node.altPokemon = await repo.getPokemonDetails(altId);
+      } catch (_) {}
+    }
+
     for (final child in node.evolvesTo) {
       await resolveModels(child);
     }
@@ -119,19 +145,35 @@ final evolutionChainProvider = FutureProvider.family<EvoNode?, String>((
   return root;
 });
 
-class EvolutionTab extends ConsumerWidget {
+class EvolutionTab extends ConsumerStatefulWidget {
   final String evolutionInfoJson;
   final Widget? header;
 
   const EvolutionTab({super.key, required this.evolutionInfoJson, this.header});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final asyncChain = ref.watch(evolutionChainProvider(evolutionInfoJson));
+  ConsumerState<EvolutionTab> createState() => _EvolutionTabState();
+}
+
+class _EvolutionTabState extends ConsumerState<EvolutionTab> {
+  bool _showAlternateForm = false;
+
+  bool _hasAlternateForms(EvoNode? root) {
+    if (root == null) return false;
+    if (root.altPokemon != null) return true;
+    for (final child in root.evolvesTo) {
+      if (_hasAlternateForms(child)) return true;
+    }
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final asyncChain = ref.watch(evolutionChainProvider(widget.evolutionInfoJson));
 
     return Column(
       children: [
-        if (header != null) header!,
+        if (widget.header != null) widget.header!,
         Expanded(
           child: asyncChain.when(
             data: (root) => root == null
@@ -141,7 +183,23 @@ class EvolutionTab extends ConsumerWidget {
                       style: TextStyle(color: Colors.grey),
                     ),
                   )
-                : _buildFitViewportContainer(context, root),
+                : Stack(
+                    children: [
+                      Positioned.fill(
+                        child: _buildFitViewportContainer(
+                          context,
+                          root,
+                          _showAlternateForm,
+                        ),
+                      ),
+                      if (_hasAlternateForms(root))
+                        Positioned(
+                          bottom: 16,
+                          right: 16,
+                          child: _buildFloatingAltFormButton(),
+                        ),
+                    ],
+                  ),
             loading: () => const Center(
               child: CircularProgressIndicator(color: AppColors.primary),
             ),
@@ -157,8 +215,65 @@ class EvolutionTab extends ConsumerWidget {
     );
   }
 
+  Widget _buildFloatingAltFormButton() {
+    return Material(
+      color: Colors.transparent,
+      elevation: 6,
+      borderRadius: BorderRadius.circular(30),
+      shadowColor: Colors.black.withValues(alpha: 0.25),
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _showAlternateForm = !_showAlternateForm;
+          });
+        },
+        borderRadius: BorderRadius.circular(30),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: _showAlternateForm ? AppColors.primary : Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: AppColors.primary,
+              width: 1.5,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedRotation(
+                turns: _showAlternateForm ? 0.5 : 0.0,
+                duration: const Duration(milliseconds: 300),
+                child: Icon(
+                  _showAlternateForm
+                      ? Icons.restore_rounded
+                      : Icons.auto_awesome_rounded,
+                  color: _showAlternateForm ? Colors.white : AppColors.primary,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                _showAlternateForm ? 'Original Form' : 'Alt Form',
+                style: TextStyle(
+                  color: _showAlternateForm ? Colors.white : AppColors.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   /// Ensures the evolution chart fits 100% within available portrait viewport with NO scrolling.
-  Widget _buildFitViewportContainer(BuildContext context, EvoNode root) {
+  Widget _buildFitViewportContainer(
+    BuildContext context,
+    EvoNode root,
+    bool showAlternate,
+  ) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Align(
@@ -168,7 +283,7 @@ class EvolutionTab extends ConsumerWidget {
             child: FittedBox(
               fit: BoxFit.contain,
               alignment: Alignment.topCenter,
-              child: _buildChainContent(context, root),
+              child: _buildChainContent(context, root, showAlternate),
             ),
           ),
         );
@@ -176,35 +291,45 @@ class EvolutionTab extends ConsumerWidget {
     );
   }
 
-  Widget _buildChainContent(BuildContext context, EvoNode root) {
+  Widget _buildChainContent(
+    BuildContext context,
+    EvoNode root,
+    bool showAlternate,
+  ) {
     // Eevee special 8-evolution grid layout
     if (root.pokemonId == 133 && root.evolvesTo.length >= 8) {
-      return _buildEeveeCompactGrid(context, root);
+      return _buildEeveeCompactGrid(context, root, showAlternate);
     }
 
     // Single non-evolving Pokemon
     if (root.evolvesTo.isEmpty) {
-      return _CleanEvoNode(node: root);
+      return _CleanEvoNode(node: root, showAlternate: showAlternate);
     }
 
     // Multi-branch evolutions (e.g. Tyrogue, Wurmple, Ralts, Slowpoke, Oddish)
     if (root.evolvesTo.length > 1) {
-      return _buildBranchLayout(context, root);
+      return _buildBranchLayout(context, root, showAlternate);
     }
 
     // Standard linear chain (1 -> 2 -> 3 stage vertical flow)
-    return _buildVerticalLinearChain(context, root);
+    return _buildVerticalLinearChain(context, root, showAlternate);
   }
 
   /// Top-to-bottom vertical linear chain (fits portrait space cleanly)
-  Widget _buildVerticalLinearChain(BuildContext context, EvoNode node) {
-    final list = <Widget>[_CleanEvoNode(node: node)];
+  Widget _buildVerticalLinearChain(
+    BuildContext context,
+    EvoNode node,
+    bool showAlternate,
+  ) {
+    final list = <Widget>[
+      _CleanEvoNode(node: node, showAlternate: showAlternate),
+    ];
 
     var current = node;
     while (current.evolvesTo.isNotEmpty) {
       final child = current.evolvesTo.first;
       list.add(_buildVerticalArrow(child.condition));
-      list.add(_CleanEvoNode(node: child));
+      list.add(_CleanEvoNode(node: child, showAlternate: showAlternate));
       current = child;
     }
 
@@ -216,12 +341,16 @@ class EvolutionTab extends ConsumerWidget {
   }
 
   /// Branching evolution tree (e.g. Ralts, Tyrogue, Slowpoke, Meowth)
-  Widget _buildBranchLayout(BuildContext context, EvoNode parent) {
+  Widget _buildBranchLayout(
+    BuildContext context,
+    EvoNode parent,
+    bool showAlternate,
+  ) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _CleanEvoNode(node: parent),
+        _CleanEvoNode(node: parent, showAlternate: showAlternate),
         const SizedBox(height: 12),
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -235,9 +364,9 @@ class EvolutionTab extends ConsumerWidget {
                   _buildVerticalArrow(child.condition),
                   const SizedBox(height: 6),
                   if (child.evolvesTo.isEmpty)
-                    _CleanEvoNode(node: child)
+                    _CleanEvoNode(node: child, showAlternate: showAlternate)
                   else
-                    _buildBranchLayout(context, child),
+                    _buildBranchLayout(context, child, showAlternate),
                 ],
               ),
             );
@@ -248,7 +377,11 @@ class EvolutionTab extends ConsumerWidget {
   }
 
   /// Eevee (8 evolutions) compact portrait grid layout
-  Widget _buildEeveeCompactGrid(BuildContext context, EvoNode eevee) {
+  Widget _buildEeveeCompactGrid(
+    BuildContext context,
+    EvoNode eevee,
+    bool showAlternate,
+  ) {
     EvoNode? findEvo(int id) {
       for (final e in eevee.evolvesTo) {
         if (e.pokemonId == id || e.pokemon?.id == id) return e;
@@ -262,7 +395,7 @@ class EvolutionTab extends ConsumerWidget {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _CleanEvoNode(node: node, compact: true),
+          _CleanEvoNode(node: node, compact: true, showAlternate: showAlternate),
         ],
       );
     }
@@ -288,7 +421,7 @@ class EvolutionTab extends ConsumerWidget {
           children: [
             cell(700), // Sylveon
             const SizedBox(width: 20),
-            _CleanEvoNode(node: eevee, compact: true),
+            _CleanEvoNode(node: eevee, compact: true, showAlternate: showAlternate),
             const SizedBox(width: 20),
             cell(196), // Espeon
           ],
@@ -363,16 +496,21 @@ class EvolutionTab extends ConsumerWidget {
 class _CleanEvoNode extends StatelessWidget {
   final EvoNode node;
   final bool compact;
+  final bool showAlternate;
 
-  const _CleanEvoNode({required this.node, this.compact = false});
+  const _CleanEvoNode({
+    required this.node,
+    this.compact = false,
+    this.showAlternate = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    if (node.pokemon == null) {
+    final pokemon = node.displayPokemon(showAlternate);
+    if (pokemon == null) {
       return const SizedBox(width: 70, height: 70, child: CircularProgressIndicator());
     }
 
-    final pokemon = node.pokemon!;
     final name = PokemonHelpers.formatName(pokemon.name);
     final speciesIdStr = '#${pokemon.speciesId.toString().padLeft(3, '0')}';
     final imageSize = compact ? 56.0 : 76.0;
