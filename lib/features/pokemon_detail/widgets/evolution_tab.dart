@@ -309,15 +309,13 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
       builder: (context, constraints) {
         return Align(
           alignment: Alignment.topCenter,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 16, bottom: 100, left: 16, right: 16),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: cards,
-              ),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.only(top: 16, bottom: 120, left: 16, right: 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: cards,
             ),
           ),
         );
@@ -343,13 +341,12 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
             addedIds.add(parentAlt.id);
             list.add(_AltFormSquareCard(
               pokemon: parentAlt,
-              formLabel: 'Regional Form',
+              formLabel: 'Regional Base Form',
             ));
           }
 
           if (child.pokemon != null && !addedIds.contains(child.pokemon!.id)) {
             addedIds.add(child.pokemon!.id);
-            list.add(_buildVerticalArrow(child.condition));
             list.add(_AltFormSquareCard(
               pokemon: child.pokemon!,
               formLabel: 'Regional Evolution',
@@ -595,9 +592,9 @@ class _AltFormSquareCard extends StatelessWidget {
     return GestureDetector(
       onTap: () => context.push('/pokemon/${pokemon.id}'),
       child: Container(
-        width: 320,
+        width: double.infinity,
         margin: const EdgeInsets.symmetric(vertical: 6),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
@@ -607,7 +604,7 @@ class _AltFormSquareCard extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -617,8 +614,8 @@ class _AltFormSquareCard extends StatelessWidget {
           children: [
             // Artwork Image in square container
             Container(
-              width: 60,
-              height: 60,
+              width: 68,
+              height: 68,
               decoration: BoxDecoration(
                 color: Colors.grey.shade50,
                 borderRadius: BorderRadius.circular(12),
@@ -626,14 +623,14 @@ class _AltFormSquareCard extends StatelessWidget {
               child: Center(
                 child: Image.asset(
                   PokemonHelpers.getHomeAssetPath(pokemon.id),
-                  height: 52,
-                  width: 52,
-                  cacheWidth: PokemonHelpers.cacheWidth(context, 52),
+                  height: 60,
+                  width: 60,
+                  cacheWidth: PokemonHelpers.cacheWidth(context, 60),
                   errorBuilder: (_, _, _) => Image.asset(
                     PokemonHelpers.getThumbnailAssetPath(pokemon.id),
-                    height: 52,
-                    width: 52,
-                    cacheWidth: PokemonHelpers.cacheWidth(context, 52),
+                    height: 60,
+                    width: 60,
+                    cacheWidth: PokemonHelpers.cacheWidth(context, 60),
                   ),
                 ),
               ),
@@ -646,7 +643,7 @@ class _AltFormSquareCard extends StatelessWidget {
                 children: [
                   if (formLabel != null && formLabel!.isNotEmpty)
                     Container(
-                      margin: const EdgeInsets.only(bottom: 3),
+                      margin: const EdgeInsets.only(bottom: 4),
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
                         color: AppColors.primary.withValues(alpha: 0.12),
@@ -666,26 +663,26 @@ class _AltFormSquareCard extends StatelessWidget {
                     style: const TextStyle(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.bold,
-                      fontSize: 14,
+                      fontSize: 15,
                     ),
                   ),
                   Text(
                     speciesIdStr,
                     style: TextStyle(
                       color: Colors.grey.shade600,
-                      fontSize: 11,
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: pokemon.types.map((t) {
                       final typeName = t.type.name;
                       final typeColor = AppColors.getTypeColor(typeName);
                       return Container(
-                        margin: const EdgeInsets.only(right: 4),
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        margin: const EdgeInsets.only(right: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
                           color: typeColor.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(8),
@@ -699,8 +696,8 @@ class _AltFormSquareCard extends StatelessWidget {
                           children: [
                             SvgPicture.asset(
                               'assets/types/$typeName.svg',
-                              width: 10,
-                              height: 10,
+                              width: 12,
+                              height: 12,
                             ),
                             const SizedBox(width: 4),
                             Text(
@@ -708,7 +705,7 @@ class _AltFormSquareCard extends StatelessWidget {
                               style: TextStyle(
                                 color: typeColor,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 9,
+                                fontSize: 10,
                               ),
                             ),
                           ],
@@ -718,10 +715,6 @@ class _AltFormSquareCard extends StatelessWidget {
                   ),
                 ],
               ),
-            ),
-            const Icon(
-              Icons.chevron_right_rounded,
-              color: Colors.grey,
             ),
           ],
         ),
