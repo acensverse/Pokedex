@@ -23,23 +23,287 @@ class EvoNode {
   });
 }
 
-/// Known regional evolution overrides: map regional evolution child ID to regional parent form ID
-const _regionalParentOverrides = <int, int>{
-  863: 10161, // Perrserker <- Galarian Meowth
-  865: 10166, // Sirfetch'd <- Galarian Farfetch'd
-  864: 10173, // Cursola <- Galarian Corsola
-  867: 10179, // Runerigus <- Galarian Yamask
-  862: 10175, // Obstagoon <- Galarian Linoone
-  866: 10168, // Mr. Rime <- Galarian Mr. Mime
-  980: 10253, // Clodsire <- Paldean Wooper
-  904: 10234, // Overqwil <- Hisuian Qwilfish
-  903: 10235, // Sneasler <- Hisuian Sneasel
-  10232: 10231, // Hisuian Electrode <- Hisuian Voltorb
-  10239: 10238, // Hisuian Zoroark <- Hisuian Zorua
-  10230: 10229, // Hisuian Arcanine <- Hisuian Growlithe
-  10165: 10164, // Galarian Slowbro <- Galarian Slowpoke
-  10172: 10164, // Galarian Slowking <- Galarian Slowpoke
-  10163: 10162, // Galarian Rapidash <- Galarian Ponyta
+/// Data structure for regional evolution chains & split evolutions
+class RegionalEvoSpec {
+  final int parentId;
+  final String parentLabel;
+  final List<RegionalChildSpec> children;
+
+  const RegionalEvoSpec({
+    required this.parentId,
+    this.parentLabel = 'Regional Form',
+    required this.children,
+  });
+}
+
+class RegionalChildSpec {
+  final int childId;
+  final String condition;
+  final String label;
+
+  const RegionalChildSpec({
+    required this.childId,
+    required this.condition,
+    this.label = 'Regional Evolution',
+  });
+}
+
+const _knownRegionalChains = <int, RegionalEvoSpec>{
+  // Slowpoke split evolution
+  79: RegionalEvoSpec(
+    parentId: 10164,
+    parentLabel: 'Galarian Form',
+    children: [
+      RegionalChildSpec(
+        childId: 10165,
+        condition: 'Use Galarica Cuff',
+        label: 'Galarian Evolution',
+      ),
+      RegionalChildSpec(
+        childId: 10172,
+        condition: 'Use Galarica Wreath',
+        label: 'Galarian Evolution',
+      ),
+    ],
+  ),
+  // Meowth
+  52: RegionalEvoSpec(
+    parentId: 10161,
+    parentLabel: 'Galarian Form',
+    children: [
+      RegionalChildSpec(
+        childId: 863,
+        condition: 'Level 28',
+        label: 'Regional Evolution',
+      ),
+    ],
+  ),
+  // Zigzagoon
+  263: RegionalEvoSpec(
+    parentId: 10174,
+    parentLabel: 'Galarian Form',
+    children: [
+      RegionalChildSpec(
+        childId: 10175,
+        condition: 'Level 20',
+        label: 'Galarian Form',
+      ),
+      RegionalChildSpec(
+        childId: 862,
+        condition: 'Level 35 at Night',
+        label: 'Regional Evolution',
+      ),
+    ],
+  ),
+  // Farfetch'd
+  83: RegionalEvoSpec(
+    parentId: 10166,
+    parentLabel: 'Galarian Form',
+    children: [
+      RegionalChildSpec(
+        childId: 865,
+        condition: 'Land 3 Critical Hits in 1 Battle',
+        label: 'Regional Evolution',
+      ),
+    ],
+  ),
+  // Corsola
+  222: RegionalEvoSpec(
+    parentId: 10173,
+    parentLabel: 'Galarian Form',
+    children: [
+      RegionalChildSpec(
+        childId: 864,
+        condition: 'Level 38',
+        label: 'Regional Evolution',
+      ),
+    ],
+  ),
+  // Yamask
+  562: RegionalEvoSpec(
+    parentId: 10179,
+    parentLabel: 'Galarian Form',
+    children: [
+      RegionalChildSpec(
+        childId: 867,
+        condition: 'Take 49+ Damage & Walk Under Stone Arch',
+        label: 'Regional Evolution',
+      ),
+    ],
+  ),
+  // Mr. Mime / Mime Jr.
+  122: RegionalEvoSpec(
+    parentId: 10168,
+    parentLabel: 'Galarian Form',
+    children: [
+      RegionalChildSpec(
+        childId: 866,
+        condition: 'Level 42',
+        label: 'Regional Evolution',
+      ),
+    ],
+  ),
+  // Wooper
+  194: RegionalEvoSpec(
+    parentId: 10253,
+    parentLabel: 'Paldean Form',
+    children: [
+      RegionalChildSpec(
+        childId: 980,
+        condition: 'Level 20',
+        label: 'Regional Evolution',
+      ),
+    ],
+  ),
+  // Qwilfish
+  211: RegionalEvoSpec(
+    parentId: 10234,
+    parentLabel: 'Hisuian Form',
+    children: [
+      RegionalChildSpec(
+        childId: 904,
+        condition: 'Use Barb Barrage 20x in Strong Style',
+        label: 'Regional Evolution',
+      ),
+    ],
+  ),
+  // Sneasel
+  215: RegionalEvoSpec(
+    parentId: 10235,
+    parentLabel: 'Hisuian Form',
+    children: [
+      RegionalChildSpec(
+        childId: 903,
+        condition: 'Use Razor Claw during Day',
+        label: 'Regional Evolution',
+      ),
+    ],
+  ),
+  // Voltorb
+  100: RegionalEvoSpec(
+    parentId: 10231,
+    parentLabel: 'Hisuian Form',
+    children: [
+      RegionalChildSpec(
+        childId: 10232,
+        condition: 'Use Leaf Stone',
+        label: 'Hisuian Form',
+      ),
+    ],
+  ),
+  // Zorua
+  570: RegionalEvoSpec(
+    parentId: 10238,
+    parentLabel: 'Hisuian Form',
+    children: [
+      RegionalChildSpec(
+        childId: 10239,
+        condition: 'Level 30',
+        label: 'Hisuian Form',
+      ),
+    ],
+  ),
+  // Growlithe
+  58: RegionalEvoSpec(
+    parentId: 10229,
+    parentLabel: 'Hisuian Form',
+    children: [
+      RegionalChildSpec(
+        childId: 10230,
+        condition: 'Use Fire Stone',
+        label: 'Hisuian Form',
+      ),
+    ],
+  ),
+  // Ponyta
+  77: RegionalEvoSpec(
+    parentId: 10162,
+    parentLabel: 'Galarian Form',
+    children: [
+      RegionalChildSpec(
+        childId: 10163,
+        condition: 'Level 40',
+        label: 'Galarian Form',
+      ),
+    ],
+  ),
+  // Darumaka
+  554: RegionalEvoSpec(
+    parentId: 10176,
+    parentLabel: 'Galarian Form',
+    children: [
+      RegionalChildSpec(
+        childId: 10177,
+        condition: 'Use Ice Stone',
+        label: 'Galarian Form',
+      ),
+    ],
+  ),
+  // Sandshrew
+  27: RegionalEvoSpec(
+    parentId: 10101,
+    parentLabel: 'Alolan Form',
+    children: [
+      RegionalChildSpec(
+        childId: 10102,
+        condition: 'Use Ice Stone',
+        label: 'Alolan Form',
+      ),
+    ],
+  ),
+  // Vulpix
+  37: RegionalEvoSpec(
+    parentId: 10103,
+    parentLabel: 'Alolan Form',
+    children: [
+      RegionalChildSpec(
+        childId: 10104,
+        condition: 'Use Ice Stone',
+        label: 'Alolan Form',
+      ),
+    ],
+  ),
+  // Diglett
+  50: RegionalEvoSpec(
+    parentId: 10105,
+    parentLabel: 'Alolan Form',
+    children: [
+      RegionalChildSpec(
+        childId: 10106,
+        condition: 'Level 26',
+        label: 'Alolan Form',
+      ),
+    ],
+  ),
+  // Geodude
+  74: RegionalEvoSpec(
+    parentId: 10109,
+    parentLabel: 'Alolan Form',
+    children: [
+      RegionalChildSpec(
+        childId: 10110,
+        condition: 'Level 25',
+        label: 'Alolan Form',
+      ),
+      RegionalChildSpec(
+        childId: 10111,
+        condition: 'Trade',
+        label: 'Alolan Form',
+      ),
+    ],
+  ),
+  // Grimer
+  88: RegionalEvoSpec(
+    parentId: 10112,
+    parentLabel: 'Alolan Form',
+    children: [
+      RegionalChildSpec(
+        childId: 10113,
+        condition: 'Level 38',
+        label: 'Alolan Form',
+      ),
+    ],
+  ),
 };
 
 /// Builds the evolution tree from baked seed data, resolving accurate Pokemon models offline.
@@ -104,14 +368,21 @@ final evolutionChainProvider = FutureProvider.family<EvoNode?, String>((
       );
     }
 
-    // 2. Resolve regional parent override form if any child requires it
-    for (final child in node.evolvesTo) {
-      if (_regionalParentOverrides.containsKey(child.pokemonId)) {
-        final regParentId = _regionalParentOverrides[child.pokemonId]!;
+    // 2. Resolve regional parent and child forms for defined regional chains
+    if (_knownRegionalChains.containsKey(node.pokemonId)) {
+      final spec = _knownRegionalChains[node.pokemonId]!;
+      try {
+        final parentP = await repo.getPokemonDetails(spec.parentId);
+        if (!node.altForms.any((p) => p.id == spec.parentId)) {
+          node.altForms.add(parentP);
+        }
+      } catch (_) {}
+
+      for (final childSpec in spec.children) {
         try {
-          final regParentP = await repo.getPokemonDetails(regParentId);
-          if (!node.altForms.any((p) => p.id == regParentId)) {
-            node.altForms.add(regParentP);
+          final childP = await repo.getPokemonDetails(childSpec.childId);
+          if (!node.altForms.any((p) => p.id == childSpec.childId)) {
+            node.altForms.add(childP);
           }
         } catch (_) {}
       }
@@ -328,28 +599,43 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
     final Set<int> addedIds = {};
 
     void collect(EvoNode node) {
-      // 1. Regional parent override check (e.g. Galarian Meowth -> Perrserker, Galarian Zigzagoon -> Obstagoon)
-      for (final child in node.evolvesTo) {
-        if (_regionalParentOverrides.containsKey(child.pokemonId)) {
-          final parentAltId = _regionalParentOverrides[child.pokemonId]!;
-          final parentAlt = node.altForms.firstWhere(
-            (p) => p.id == parentAltId,
+      final speciesId = node.pokemonId;
+
+      // 1. Regional evolution chain & split evolution support
+      if (_knownRegionalChains.containsKey(speciesId)) {
+        final spec = _knownRegionalChains[speciesId]!;
+        final parentAlt = node.altForms.firstWhere(
+          (p) => p.id == spec.parentId,
+          orElse: () => node.pokemon!,
+        );
+
+        if (!addedIds.contains(parentAlt.id)) {
+          addedIds.add(parentAlt.id);
+          list.add(_AltFormSquareCard(
+            pokemon: parentAlt,
+            formLabel: spec.parentLabel,
+          ));
+        }
+
+        for (final childSpec in spec.children) {
+          Pokemon? childP;
+          for (final c in node.evolvesTo) {
+            if (c.pokemonId == childSpec.childId && c.pokemon != null) {
+              childP = c.pokemon;
+              break;
+            }
+          }
+          childP ??= node.altForms.firstWhere(
+            (p) => p.id == childSpec.childId,
             orElse: () => node.pokemon!,
           );
 
-          if (!addedIds.contains(parentAlt.id)) {
-            addedIds.add(parentAlt.id);
+          if (childP.id != parentAlt.id && !addedIds.contains(childP.id)) {
+            addedIds.add(childP.id);
+            list.add(_buildVerticalArrow(childSpec.condition));
             list.add(_AltFormSquareCard(
-              pokemon: parentAlt,
-              formLabel: 'Regional Base Form',
-            ));
-          }
-
-          if (child.pokemon != null && !addedIds.contains(child.pokemon!.id)) {
-            addedIds.add(child.pokemon!.id);
-            list.add(_AltFormSquareCard(
-              pokemon: child.pokemon!,
-              formLabel: 'Regional Evolution',
+              pokemon: childP,
+              formLabel: childSpec.label,
             ));
           }
         }
