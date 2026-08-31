@@ -44,7 +44,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
     final activeTypes = ref.watch(selectedTypesProvider);
     final activeGen = ref.watch(genFilterProvider);
 
-    ref.listen(searchClearTriggerProvider, (_, __) {
+    ref.listen(searchClearTriggerProvider, (_, _) {
       if (_isSearching) {
         setState(() {
           _isSearching = false;

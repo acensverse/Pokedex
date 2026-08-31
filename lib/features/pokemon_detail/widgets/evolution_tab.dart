@@ -107,7 +107,7 @@ class EvolutionTab extends ConsumerWidget {
 
     return Column(
       children: [
-        if (header != null) header!,
+        ?header,
         Expanded(
           child: asyncChain.when(
             data: (root) => root == null

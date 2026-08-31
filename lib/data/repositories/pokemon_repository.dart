@@ -267,8 +267,9 @@ class PokemonRepository {
   /// A cached category is usable unless it is a placeholder or legacy mojibake
   String? _trustworthyCategory(String? species) {
     if (species == null || species.isEmpty) return null;
-    if (species == 'Pok\u00e9mon' || species == 'Unknown Pok\u00e9mon')
+    if (species == 'Pok\u00e9mon' || species == 'Unknown Pok\u00e9mon') {
       return null;
+    }
     if (species.contains('Bulbasaur Pok')) return null;
     if (species.contains('\uFFFD')) return null;
     return species;

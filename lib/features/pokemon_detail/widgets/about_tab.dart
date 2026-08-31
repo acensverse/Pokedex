@@ -128,7 +128,7 @@ class AboutTab extends ConsumerWidget {
     return Column(
       key: const ValueKey('About'),
       children: [
-        if (header != null) header!,
+        ?header,
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.only(

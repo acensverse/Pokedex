@@ -53,9 +53,9 @@ class _MovesTabState extends ConsumerState<MovesTab> {
           final methodIdx = ld[2];
           final localMove = _LocalMove(entry: entry, level: level);
 
-          if (methodIdx == 0)
+          if (methodIdx == 0) {
             levelUpMoves.add(localMove);
-          else if (methodIdx == 1)
+          } else if (methodIdx == 1)
             tmMoves.add(localMove);
           else if (methodIdx == 2)
             eggMoves.add(localMove);

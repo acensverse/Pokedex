@@ -64,7 +64,7 @@ class DefenseTab extends StatelessWidget {
                       width: 18,
                       height: 18,
                       margin: const EdgeInsets.only(right: 6),
-                      child: SvgPicture.asset('assets/types/${type}.svg'),
+                      child: SvgPicture.asset('assets/types/$type.svg'),
                     ),
                     Text(
                       type[0].toUpperCase() + type.substring(1),
@@ -115,7 +115,7 @@ class DefenseTab extends StatelessWidget {
     return Column(
       key: const ValueKey('Defense'),
       children: [
-        if (header != null) header!,
+        ?header,
         Expanded(
           child: Container(
             padding: const EdgeInsets.only(

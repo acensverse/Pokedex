@@ -366,13 +366,20 @@ class AbilityDetailSheet extends ConsumerWidget {
     ref.read(selectedTypesProvider.notifier).state = [];
     ref.read(genFilterProvider.notifier).state = 0;
     ref.read(favoritesOnlyProvider.notifier).state = false;
-    ref.read(toolAbilityFilterProvider.notifier).state = null;
-    ref.read(toolMoveFilterProvider.notifier).state = null;
+    ref.read(toolLearnerFilterProvider.notifier).state = null;
 
-    ref.read(toolLearnerFilterProvider.notifier).state = (
-      kind: 'Ability',
+    final allSet = ability.pokemon.toSet();
+    final hiddenSet = ability.hidden.toSet();
+    final normalSet = allSet.difference(hiddenSet);
+
+    ref.read(toolAbilityFilterProvider.notifier).state = (
       name: PokemonHelpers.formatName(ability.name),
-      ids: ability.pokemon.toSet(),
+      mode: 'all',
+      allIds: allSet,
+      normalIds: normalSet,
+      hiddenIds: hiddenSet,
+      flavor: ability.flavor ?? '',
+      eff: ability.eff ?? '',
     );
     Navigator.of(context).pop(); // close the sheet
     // push (not go) so system-back from the filtered home returns here.

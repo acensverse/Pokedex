@@ -20,7 +20,7 @@ void main() {
     final files =
         Directory(dir).listSync().whereType<File>().where((f) => f.path.endsWith('.png')).toList()
           ..sort((a, b) => a.path.compareTo(b.path));
-    print('${dir}: ${files.length} png files -> webp (max ${maxW}px)');
+    print('$dir: ${files.length} png files -> webp (max ${maxW}px)');
     for (var i = 0; i < files.length; i++) {
       final f = files[i];
       final srcBytes = f.readAsBytesSync();

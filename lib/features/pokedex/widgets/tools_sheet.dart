@@ -224,12 +224,11 @@ class _SheetButton extends StatelessWidget {
   const _SheetButton({
     required this.label,
     this.icon,
-    this.customIconPath,
     this.colors,
     required this.onTap,
     this.height = 48,
     this.isActive = false,
-  });
+  }) : customIconPath = null;
 
   @override
   Widget build(BuildContext context) {

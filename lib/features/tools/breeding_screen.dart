@@ -131,7 +131,7 @@ class BreedingScreen extends ConsumerWidget {
                               PokemonHelpers.getThumbnailAssetPath(
                                 selectedPokemon.id,
                               ),
-                              errorBuilder: (_, __, ___) =>
+                              errorBuilder: (_, _, _) =>
                                   const Icon(Icons.pets, color: Colors.pink),
                             ),
                           ),

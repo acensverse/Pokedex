@@ -9,16 +9,19 @@ class PokemonHelpers {
 
     // Hardcoded edge cases
     if (rawName.toLowerCase() == 'mr-mime' ||
-        rawName.toLowerCase() == 'mr. mime')
+        rawName.toLowerCase() == 'mr. mime') {
       return 'Mr. Mime';
+    }
     if (rawName.toLowerCase() == 'mime-jr' ||
-        rawName.toLowerCase() == 'mime jr.')
+        rawName.toLowerCase() == 'mime jr.') {
       return 'Mime Jr.';
+    }
     if (rawName.toLowerCase() == 'nidoran-m') return 'Nidoran M';
     if (rawName.toLowerCase() == 'nidoran-f') return 'Nidoran F';
     if (rawName.toLowerCase() == 'type-null' ||
-        rawName.toLowerCase() == 'type: null')
+        rawName.toLowerCase() == 'type: null') {
       return 'Type: Null';
+    }
     if (rawName.toLowerCase() == 'ho-oh') return 'Ho-Oh';
     if (rawName.toLowerCase() == 'porygon-z') return 'Porygon-Z';
     if (rawName.toLowerCase().startsWith('tapu-')) {
