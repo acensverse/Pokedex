@@ -186,7 +186,7 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
                         _showAlternateForm,
                       ),
                       Positioned(
-                        bottom: 48,
+                        bottom: 96,
                         right: 16,
                         child: _buildFloatingAltFormButton(),
                       ),
