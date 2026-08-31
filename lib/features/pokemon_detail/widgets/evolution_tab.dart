@@ -104,19 +104,36 @@ final evolutionChainProvider = FutureProvider.family<EvoNode?, String>((
       );
     }
 
-    // 2. Resolve all alternate forms for node.pokemon
-    if (node.pokemon?.forms != null) {
+    // 2. Resolve regional parent override form if any child requires it
+    for (final child in node.evolvesTo) {
+      if (_regionalParentOverrides.containsKey(child.pokemonId)) {
+        final regParentId = _regionalParentOverrides[child.pokemonId]!;
+        try {
+          final regParentP = await repo.getPokemonDetails(regParentId);
+          if (!node.altForms.any((p) => p.id == regParentId)) {
+            node.altForms.add(regParentP);
+          }
+        } catch (_) {}
+      }
+    }
+
+    // 3. Resolve all alternate forms from forms JSON
+    if (node.pokemon?.forms != null && node.pokemon!.forms!.isNotEmpty) {
       try {
-        final parsedForms = (jsonDecode(node.pokemon!.forms!) as List?)
-            ?.cast<Map>();
-        if (parsedForms != null && parsedForms.isNotEmpty) {
+        final parsedForms = jsonDecode(node.pokemon!.forms!);
+        if (parsedForms is List) {
           for (final f in parsedForms) {
-            final fId = f['id'] as int?;
-            if (fId != null && fId != node.pokemonId) {
-              try {
-                final altP = await repo.getPokemonDetails(fId);
-                node.altForms.add(altP);
-              } catch (_) {}
+            if (f is Map) {
+              final rawId = f['id'];
+              final fId = rawId is num ? rawId.toInt() : int.tryParse(rawId.toString());
+              if (fId != null && fId != node.pokemonId) {
+                if (!node.altForms.any((p) => p.id == fId)) {
+                  try {
+                    final altP = await repo.getPokemonDetails(fId);
+                    node.altForms.add(altP);
+                  } catch (_) {}
+                }
+              }
             }
           }
         }
