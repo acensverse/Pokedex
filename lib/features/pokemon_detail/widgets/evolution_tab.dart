@@ -161,12 +161,13 @@ class EvolutionTab extends ConsumerWidget {
   Widget _buildFitViewportContainer(BuildContext context, EvoNode root) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        return Center(
+        return Align(
+          alignment: Alignment.topCenter,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.only(top: 32, bottom: 16, left: 16, right: 16),
             child: FittedBox(
               fit: BoxFit.contain,
-              alignment: Alignment.center,
+              alignment: Alignment.topCenter,
               child: _buildChainContent(context, root),
             ),
           ),
