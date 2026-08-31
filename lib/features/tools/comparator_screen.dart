@@ -699,13 +699,16 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
     final resist = <String>[];
     final veryResist = <String>[];
     final immune = <String>[];
-    eff.forEach((type, multiplier) {
-      // 4x must be split out before the generic >1 check, otherwise dual
-      // types show 4x matchups mislabeled as 2x.
+    final normal = <String>[];
+    
+    for (final type in AppColors.typeColors.keys) {
+      final multiplier = eff[type] ?? 1.0;
       if (multiplier == 4.0) {
         veryWeak.add(type);
-      } else if (multiplier > 1) {
+      } else if (multiplier == 2.0) {
         weak.add(type);
+      } else if (multiplier == 1.0) {
+        normal.add(type);
       } else if (multiplier == 0.5) {
         resist.add(type);
       } else if (multiplier == 0.25) {
@@ -713,7 +716,7 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
       } else if (multiplier == 0.0) {
         immune.add(type);
       }
-    });
+    }
 
     return Container(
       padding: const EdgeInsets.all(10),
@@ -727,6 +730,7 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
           for (final group in [
             ('Very weak against:', '4x damage', veryWeak),
             ('Weak against:', '2x damage', weak),
+            ('Normal damage:', '1x damage', normal),
             ('Resistant against:', '1/2x damage', resist),
             ('Very resistant against:', '1/4x damage', veryResist),
             ('Immune to:', '0x damage', immune),
