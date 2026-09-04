@@ -145,6 +145,15 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                 });
               },
             ),
+            IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+              icon: const Icon(Icons.settings_outlined, size: 24),
+              tooltip: 'Settings',
+              onPressed: () {
+                context.push('/settings');
+              },
+            ),
             const SizedBox(width: 8),
           ],
         ),

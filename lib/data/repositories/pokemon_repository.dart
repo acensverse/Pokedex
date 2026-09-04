@@ -112,6 +112,13 @@ class PokemonRepository {
     }
   }
 
+  /// Force re-seeding the SQLite database from local JSON assets.
+  Future<void> forceReseedDatabase() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_seedDoneFlag, false);
+    await checkAndSeedDatabase();
+  }
+
   // Get Pokemon list from local database (offline-first, no network dependency).
   // Search/type filtering happens client-side in filteredPokemonProvider.
   Future<List<Pokemon>> getLocalPokemonList() async {

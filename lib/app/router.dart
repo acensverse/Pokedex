@@ -13,12 +13,18 @@ import '../features/tools/team_detail_screen.dart';
 import '../features/tools/new_team_screen.dart';
 import '../features/tools/breeding_screen.dart';
 
+import '../features/settings/settings_screen.dart';
+
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   errorBuilder: (context, state) =>
       _RouteErrorScreen(message: 'Page not found:\n${state.uri}'),
   routes: [
     GoRoute(path: '/', builder: (context, state) => const PokedexScreen()),
+    GoRoute(
+      path: '/settings',
+      builder: (context, state) => const SettingsScreen(),
+    ),
     GoRoute(
       path: '/pokemon/:id',
       builder: (context, state) {

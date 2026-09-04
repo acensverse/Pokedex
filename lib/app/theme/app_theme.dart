@@ -55,4 +55,61 @@ class AppTheme {
       ),
     );
   }
+
+  static ThemeData get darkTheme {
+    const scheme = ColorScheme.dark(
+      primary: AppColors.primary,
+      secondary: AppColors.primary,
+      surface: Color(0xFF1E1E1E),
+    );
+
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: scheme,
+      primaryColor: AppColors.primary,
+      scaffoldBackgroundColor: const Color(0xFF121212),
+      splashFactory: NoSplash.splashFactory,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      hoverColor: Colors.transparent,
+      textTheme: const TextTheme(
+        titleLarge: AppTypography.titleLarge,
+        titleMedium: AppTypography.titleMedium,
+        bodyLarge: AppTypography.bodyLarge,
+        bodyMedium: AppTypography.bodyMedium,
+        labelLarge: AppTypography.labelLarge,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFF121212),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+      ),
+      cardTheme: CardThemeData(
+        color: const Color(0xFF1E1E1E),
+        elevation: 1,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? Colors.amber
+              : Colors.grey.shade600,
+        ),
+        trackColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected)
+              ? Colors.amber.withValues(alpha: 0.3)
+              : Colors.grey.shade800,
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
+      ),
+      chipTheme: const ChipThemeData(
+        backgroundColor: Color(0xFF2A2A2A),
+        side: BorderSide(color: Color(0xFF3E3E3E)),
+      ),
+    );
+  }
 }
