@@ -81,30 +81,30 @@ class NaturesScreen extends ConsumerWidget {
     final naturesAsync = ref.watch(naturesSeedProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const ToolsSheetTitle(label: 'Natures'),
       ),
       body: naturesAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
+              Icon(
                 Icons.error_outline,
                 size: 48,
                 color: Colors.redAccent,
               ),
-              const SizedBox(height: 12),
-              const Text('Could not load natures'),
-              const SizedBox(height: 12),
+              SizedBox(height: 12),
+              Text('Could not load natures'),
+              SizedBox(height: 12),
               FilledButton(
                 onPressed: () => ref.invalidate(naturesSeedProvider),
-                child: const Text('Retry'),
+                child: Text('Retry'),
               ),
             ],
           ),
@@ -115,7 +115,7 @@ class NaturesScreen extends ConsumerWidget {
           return ListView.separated(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
             itemCount: sorted.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 8),
+            separatorBuilder: (context, index) => SizedBox(height: 8),
             itemBuilder: (context, index) => _NatureCard(nature: sorted[index]),
           );
         },
@@ -131,12 +131,22 @@ class _NatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.35)
+                : Colors.black.withValues(alpha: 0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,9 +158,9 @@ class _NatureCard extends StatelessWidget {
               color: Colors.green.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.eco, size: 24, color: Color(0xFF43A047)),
+            child: Icon(Icons.eco, size: 24, color: Color(0xFF43A047)),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,20 +169,20 @@ class _NatureCard extends StatelessWidget {
                   PokemonHelpers.formatName(nature.name),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: 15,
-                    color: AppColors.textPrimary,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 // Stat effects: raised stat in green, lowered in red.
                 nature.isNeutral
                     ? Text(
                         'Neutral \u00b7 no stat change',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey.shade600,
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
                         ),
                       )
                     : Text.rich(
@@ -180,7 +190,7 @@ class _NatureCard extends StatelessWidget {
                           children: [
                             TextSpan(
                               text: '+${_statLabel(nature.inc!)}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFF43A047),
@@ -190,12 +200,12 @@ class _NatureCard extends StatelessWidget {
                               text: '  \u00b7  ',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.grey.shade600,
+                                color: Theme.of(context).textTheme.bodyMedium?.color,
                               ),
                             ),
                             TextSpan(
                               text: '\u2212${_statLabel(nature.dec!)}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFFE4613E),
@@ -207,7 +217,7 @@ class _NatureCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                 if (nature.likes != null || nature.hates != null) ...[
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     [
                       if (nature.likes != null)
@@ -215,7 +225,10 @@ class _NatureCard extends StatelessWidget {
                       if (nature.hates != null)
                         'Hates ${_flavorLabel(nature.hates!)}',
                     ].join(', '),
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                    ),
                   ),
                 ],
               ],

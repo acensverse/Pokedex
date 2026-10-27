@@ -23,16 +23,16 @@ class _TeamBuilderScreenState extends ConsumerState<TeamBuilderScreen> {
   Widget build(BuildContext context) {
     final teamsAsync = ref.watch(teamsStreamProvider(_query));
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const ToolsSheetTitle(label: 'Team builder'),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.primary,
-        child: const Icon(Icons.add, size: 32),
+        child: Icon(Icons.add, size: 32),
         onPressed: () => context.push('/tools/teams/new'),
       ),
       body: Column(
@@ -43,9 +43,9 @@ class _TeamBuilderScreenState extends ConsumerState<TeamBuilderScreen> {
               onChanged: (v) => setState(() => _query = v),
               decoration: InputDecoration(
                 hintText: 'Search for a team...',
-                prefixIcon: const Icon(LucideIcons.search),
+                prefixIcon: Icon(LucideIcons.search),
                 filled: true,
-                fillColor: Colors.grey.shade200,
+                fillColor: Theme.of(context).colorScheme.surface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide.none,
@@ -55,7 +55,7 @@ class _TeamBuilderScreenState extends ConsumerState<TeamBuilderScreen> {
           ),
           Expanded(
             child: teamsAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('Failed to load teams:\n$e')),
               data: (teams) {
                 if (teams.isEmpty) {
@@ -66,16 +66,16 @@ class _TeamBuilderScreenState extends ConsumerState<TeamBuilderScreen> {
                         Icon(
                           Icons.groups,
                           size: 64,
-                          color: Colors.grey.shade400,
+                          color: Theme.of(context).dividerColor,
                         ),
-                        const SizedBox(height: 12),
+                        SizedBox(height: 12),
                         Text(
                           _query.isEmpty
                               ? 'No teams yet.\nTap + to build your dream team!'
                               : 'No teams match "$_query"',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
                           ),
                         ),
                       ],
@@ -85,7 +85,7 @@ class _TeamBuilderScreenState extends ConsumerState<TeamBuilderScreen> {
                 return ListView.separated(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
                   itemCount: teams.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 12),
+                  separatorBuilder: (_, _) => SizedBox(height: 12),
                   itemBuilder: (context, i) => _teamCard(context, teams[i]),
                 );
               },
@@ -115,7 +115,7 @@ class _TeamBuilderScreenState extends ConsumerState<TeamBuilderScreen> {
           color: Colors.redAccent,
           borderRadius: BorderRadius.circular(16),
         ),
-        child: const Icon(Icons.delete, color: Colors.white),
+        child: Icon(Icons.delete, color: Colors.white),
       ),
       onDismissed: (_) async {
         final messenger = ScaffoldMessenger.of(context);
@@ -149,10 +149,10 @@ class _TeamBuilderScreenState extends ConsumerState<TeamBuilderScreen> {
                 team.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
               Container(
@@ -164,7 +164,7 @@ class _TeamBuilderScreenState extends ConsumerState<TeamBuilderScreen> {
               if (members.isEmpty)
                 Text(
                   'Empty party - tap to add Pok\u00e9mon',
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                  style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyMedium?.color),
                 )
               else
                 // Equal-width squares shrink to fit: all members always on
@@ -213,7 +213,7 @@ class _MemberBox extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: tint,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade300, width: 1),
+                border: Border.all(color: Theme.of(context).dividerColor, width: 1),
               ),
               child: Stack(
                 children: [
@@ -240,7 +240,7 @@ class _MemberBox extends ConsumerWidget {
                         errorBuilder: (context, error, stackTrace) => Icon(
                           Icons.catching_pokemon,
                           size: 22,
-                          color: Colors.grey.shade400,
+                          color: Theme.of(context).dividerColor,
                         ),
                       ),
                     ),

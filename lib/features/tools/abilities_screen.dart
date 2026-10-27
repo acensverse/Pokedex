@@ -127,10 +127,12 @@ class _AbilitiesScreenState extends ConsumerState<AbilitiesScreen> {
   Widget build(BuildContext context) {
     final abilitiesAsync = ref.watch(abilitiesSeedProvider);
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const ToolsSheetTitle(label: 'Abilities'),
@@ -139,7 +141,9 @@ class _AbilitiesScreenState extends ConsumerState<AbilitiesScreen> {
             icon: Icon(
               LucideIcons.search,
               size: 26,
-              color: _isSearching ? AppColors.primary : Colors.black54,
+              color: _isSearching
+                  ? AppColors.primary
+                  : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
             ),
             onPressed: _toggleSearch,
           ),
@@ -148,7 +152,9 @@ class _AbilitiesScreenState extends ConsumerState<AbilitiesScreen> {
             icon: Icon(
               Icons.tune,
               size: 26,
-              color: _genFilter != null ? AppColors.primary : Colors.black54,
+              color: _genFilter != null
+                  ? AppColors.primary
+                  : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
             ),
             onPressed: () {
               final abilities =
@@ -162,18 +168,18 @@ class _AbilitiesScreenState extends ConsumerState<AbilitiesScreen> {
         ],
       ),
       body: abilitiesAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.redAccent),
-              const SizedBox(height: 12),
-              const Text('Could not load abilities'),
-              const SizedBox(height: 12),
+              Icon(Icons.error_outline, size: 48, color: Colors.redAccent),
+              SizedBox(height: 12),
+              Text('Could not load abilities'),
+              SizedBox(height: 12),
               FilledButton(
                 onPressed: () => ref.invalidate(abilitiesSeedProvider),
-                child: const Text('Retry'),
+                child: Text('Retry'),
               ),
             ],
           ),
@@ -197,60 +203,78 @@ class _AbilitiesScreenState extends ConsumerState<AbilitiesScreen> {
                         child: TextField(
                           controller: _searchController,
                           autofocus: true,
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                          ),
                           onChanged: (v) => setState(() => _query = v),
                           decoration: InputDecoration(
                             hintText: 'Search abilities...',
-                            hintStyle: TextStyle(color: Colors.grey.shade400),
-                            prefixIcon: const Icon(LucideIcons.search,
-                                color: Colors.black54),
+                            hintStyle: TextStyle(
+                              color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
+                            ),
+                            prefixIcon: Icon(
+                              LucideIcons.search,
+                              color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.6),
+                            ),
                             suffixIcon: _query.isNotEmpty
                                 ? IconButton(
                                     padding: EdgeInsets.zero,
                                     constraints: const BoxConstraints(
                                         minWidth: 36, minHeight: 36),
-                                    icon: const Icon(Icons.close,
-                                        color: Colors.black54, size: 20),
+                                    icon: Icon(
+                                      Icons.close,
+                                      color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.6),
+                                      size: 20,
+                                    ),
                                     onPressed: _clearSearch,
                                   )
                                 : null,
                             isDense: true,
                             filled: true,
-                            fillColor: Colors.white,
+                            fillColor: Theme.of(context).cardColor,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
-                              borderSide:
-                                  BorderSide(color: Colors.grey.shade300),
+                              borderSide: BorderSide(color: Theme.of(context).dividerColor),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
-                              borderSide:
-                                  BorderSide(color: Colors.grey.shade300),
+                              borderSide: BorderSide(color: Theme.of(context).dividerColor),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
-                              borderSide: const BorderSide(
+                              borderSide: BorderSide(
                                   color: AppColors.primary, width: 1.5),
                             ),
                           ),
                         ),
                       )
-                    : const SizedBox.shrink(),
+                    : SizedBox.shrink(),
               ),
               Expanded(
                 child: filtered.isEmpty
                     ? Center(
                         child: Text(
-                            'No abilities match your search or filters',
-                            style: TextStyle(color: Colors.grey.shade500)))
+                          'No abilities found',
+                          style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
+                        ),
+                      )
                     : ListView.separated(
-                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                        padding: EdgeInsets.fromLTRB(
+                          16,
+                          8,
+                          16,
+                          16 + MediaQuery.paddingOf(context).bottom,
+                        ),
                         itemCount: filtered.length,
                         separatorBuilder: (context, index) =>
-                            const SizedBox(height: 8),
-                        itemBuilder: (context, index) => _AbilityCard(
-                          ability: filtered[index],
-                          onTap: () => _openDetail(filtered[index]),
-                        ),
+                            SizedBox(height: 10),
+                        itemBuilder: (context, index) {
+                          final ability = filtered[index];
+                          return _AbilityCard(
+                            ability: ability,
+                            onTap: () => _openDetail(ability),
+                          );
+                        },
                       ),
               ),
             ],
@@ -269,6 +293,8 @@ class _AbilityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Semantics(
       button: true,
       label: 'Open details for ${PokemonHelpers.formatName(ability.name)}',
@@ -277,14 +303,15 @@ class _AbilityCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.grey.shade200),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+                color: isDark
+                    ? Colors.black.withValues(alpha: 0.35)
+                    : Colors.black.withValues(alpha: 0.06),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
@@ -298,10 +325,10 @@ class _AbilityCard extends StatelessWidget {
                   color: Colors.purple.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.diamond,
+                child: Icon(Icons.diamond,
                     size: 24, color: Color(0xFF8E24AA)),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,13 +337,13 @@ class _AbilityCard extends StatelessWidget {
                       PokemonHelpers.formatName(ability.name),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: 15,
-                        color: AppColors.textPrimary,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2),
                     Text(
                       [
                         if (ability.gen.isNotEmpty) _genLabel(ability.gen),
@@ -325,16 +352,19 @@ class _AbilityCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                          fontSize: 12, color: Colors.grey.shade600),
+                        fontSize: 12,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                      ),
                     ),
                     if (ability.description != null) ...[
-                      const SizedBox(height: 4),
+                      SizedBox(height: 4),
                       Text(
                         ability.description!,
                         style: TextStyle(
-                            fontSize: 12,
-                            height: 1.3,
-                            color: Colors.grey.shade700),
+                          fontSize: 12,
+                          height: 1.3,
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                        ),
                       ),
                     ],
                   ],
@@ -390,19 +420,19 @@ class AbilityDetailSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      decoration: const BoxDecoration(
-        color: _sheetBg,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         children: [
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Center(
             child: Container(
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: Theme.of(context).dividerColor,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -411,8 +441,8 @@ class AbilityDetailSheet extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               children: [
-                const SizedBox(height: 4),
-                const Center(
+                SizedBox(height: 4),
+                Center(
                   child: Text('ABILITY',
                       style: TextStyle(
                           fontSize: 12,
@@ -420,17 +450,17 @@ class AbilityDetailSheet extends ConsumerWidget {
                           fontWeight: FontWeight.w600,
                           color: Colors.grey)),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Center(
                   child: Text(
                     PokemonHelpers.formatName(ability.name),
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.textPrimary),
+                        color: Theme.of(context).textTheme.titleLarge?.color),
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Wrap(
                   alignment: WrapAlignment.center,
                   spacing: 10,
@@ -442,52 +472,53 @@ class AbilityDetailSheet extends ConsumerWidget {
                         label: '${ability.pokemon.length} Pok\u00e9mon'),
                   ],
                 ),
-                const SizedBox(height: 26),
+                SizedBox(height: 26),
                 _sectionCard(
+                  context,
                   'Details',
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (ability.flavor != null) ...[
                         const _CardHeading('Description'),
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6),
                         Text(ability.flavor!,
                             style: TextStyle(
                                 fontSize: 14,
                                 height: 1.4,
-                                color: Colors.grey.shade700)),
+                                color: Theme.of(context).textTheme.bodyMedium?.color)),
                       ],
                       if (ability.eff != null) ...[
-                        const SizedBox(height: 14),
+                        SizedBox(height: 14),
                         const _CardHeading('Effect'),
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6),
                         Text(ability.eff!,
                             style: TextStyle(
                                 fontSize: 14,
                                 height: 1.4,
-                                color: Colors.grey.shade700)),
+                                color: Theme.of(context).textTheme.bodyMedium?.color)),
                       ],
                       if (ability.hidden.isNotEmpty) ...[
-                        const SizedBox(height: 14),
+                        SizedBox(height: 14),
                         const _CardHeading('Hidden by'),
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6),
                         Text(
                             '${ability.hidden.length} Pok\u00e9mon have this as their hidden ability.',
                             style: TextStyle(
                                 fontSize: 14,
                                 height: 1.4,
-                                color: Colors.grey.shade700)),
+                                color: Theme.of(context).textTheme.bodyMedium?.color)),
                       ],
                       if (ability.flavor == null && ability.eff == null)
                         Text('No details available.',
                             style: TextStyle(
                                 fontSize: 13,
                                 fontStyle: FontStyle.italic,
-                                color: Colors.grey.shade500)),
+                                color: Theme.of(context).textTheme.bodyMedium?.color)),
                     ],
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
               ],
             ),
           ),
@@ -503,9 +534,9 @@ class AbilityDetailSheet extends ConsumerWidget {
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: ability.pokemon.isEmpty
-                        ? const LinearGradient(
+                        ? LinearGradient(
                             colors: [Colors.grey, Colors.grey])
-                        : const LinearGradient(
+                        : LinearGradient(
                             colors: [Color(0xFF7CB342), Color(0xFF26A69A)],
                           ),
                     borderRadius: BorderRadius.circular(16),
@@ -513,16 +544,16 @@ class AbilityDetailSheet extends ConsumerWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.catching_pokemon,
                         color: Colors.white,
                       ),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       Text(
                         ability.pokemon.isEmpty
                             ? 'NO POK\u00c9MON HAVE THIS ABILITY'
                             : 'POK\u00c9MON LIST',
-                        style: const TextStyle(
+                        style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.2,
@@ -539,7 +570,7 @@ class AbilityDetailSheet extends ConsumerWidget {
     );
   }
 
-  Widget _sectionCard(String title, Widget child) => Stack(
+  Widget _sectionCard(BuildContext context, String title, Widget child) => Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.topCenter,
         children: [
@@ -548,7 +579,7 @@ class AbilityDetailSheet extends ConsumerWidget {
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(16, 22, 16, 16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(16),
             ),
             child: child,
@@ -559,7 +590,7 @@ class AbilityDetailSheet extends ConsumerWidget {
               padding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: _accent, width: 1.5),
               ),
@@ -589,7 +620,7 @@ class _InfoPill extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
             color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
       ),
     );
@@ -603,10 +634,10 @@ class _CardHeading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(text,
-      style: const TextStyle(
+      style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w800,
-          color: AppColors.textPrimary));
+          color: Theme.of(context).textTheme.bodyLarge?.color));
 }
 
 /// Generation filter bottom sheet: 3-column grid of gen pills, same style
@@ -625,25 +656,25 @@ class _GenFilterSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Center(
             child: Container(
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: Theme.of(context).dividerColor,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: GridView.count(
@@ -692,7 +723,7 @@ class _GenFilterSheet extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: AppSpacing.lg),
+          SizedBox(height: AppSpacing.lg),
         ],
       ),
     );

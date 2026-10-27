@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../app/theme/theme_provider.dart';
 import '../pokedex_provider.dart';
 import 'pokemon_card.dart';
 
@@ -11,6 +12,7 @@ class PokemonGrid extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pokemonList = ref.watch(filteredPokemonProvider);
     final pokedexState = ref.watch(pokedexProvider);
+    final layoutMode = ref.watch(pokedexLayoutProvider);
 
     // Seeding/loading failed and there is nothing to show: surface it with a retry.
     if (pokedexState.hasError && pokedexState.pokemonList.isEmpty) {
@@ -26,6 +28,40 @@ class PokemonGrid extends ConsumerWidget {
       return const _EmptyResultView();
     }
 
+    if (layoutMode == PokedexLayoutMode.grid) {
+      final width = MediaQuery.of(context).size.width;
+      final crossAxisCount = (width / 180).floor().clamp(2, 6);
+
+      return RefreshIndicator(
+        onRefresh: () => ref.read(pokedexProvider.notifier).refresh(),
+        child: GridView.builder(
+          controller: scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            childAspectRatio: 1.0,
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+          ),
+          itemCount: pokemonList.length + (pokedexState.isLoading ? 1 : 0),
+          itemBuilder: (context, index) {
+            if (index < pokemonList.length) {
+              return PokemonCard(
+                pokemon: pokemonList[index],
+                isGrid: true,
+              );
+            } else {
+              return const SizedBox(
+                height: 100,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+          },
+        ),
+      );
+    }
+
     return RefreshIndicator(
       onRefresh: () => ref.read(pokedexProvider.notifier).refresh(),
       child: ListView.builder(
@@ -37,7 +73,7 @@ class PokemonGrid extends ConsumerWidget {
         itemCount: pokemonList.length + (pokedexState.isLoading ? 1 : 0),
         itemBuilder: (context, index) {
           if (index < pokemonList.length) {
-            return PokemonCard(pokemon: pokemonList[index]);
+            return PokemonCard(pokemon: pokemonList[index], isGrid: false);
           } else {
             return const SizedBox(
               height: 100,

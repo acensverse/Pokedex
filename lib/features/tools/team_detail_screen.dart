@@ -74,9 +74,9 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
     final membersAsync = ref.watch(localPokemonListProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         title: FutureBuilder(
           future: teamFuture,
@@ -84,8 +84,8 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
             snapshot.data?.name ?? 'Team',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Colors.black,
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodyLarge?.color,
               fontWeight: FontWeight.w800,
               fontSize: 18,
             ),
@@ -93,7 +93,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit, color: Colors.black54),
+            icon: Icon(Icons.edit, color: Theme.of(context).textTheme.bodyLarge?.color),
             onPressed: () =>
                 context.push('/tools/teams/new?id=${widget.teamId}'),
           ),
@@ -104,7 +104,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
         builder: (context, teamSnapshot) {
           final team = teamSnapshot.data;
           if (team == null) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator());
           }
           final slotIds = [
             team.slot1,
@@ -116,7 +116,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
           ].whereType<int>().toList();
 
           return membersAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => Center(child: CircularProgressIndicator()),
             error: (e, _) => Center(child: Text('Failed to load dex:\n$e')),
             data: (dex) {
               final byId = {for (final p in dex) p.id: p};
@@ -131,7 +131,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
                   // Members as home-grid gradient cards.
                   for (final p in members) PokemonCard(pokemon: p),
                   if (members.isEmpty)
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.all(32),
                       child: Center(
                         child: Text(
@@ -141,11 +141,11 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
                       ),
                     )
                   else ...[
-                    const SizedBox(height: 16),
+                    SizedBox(height: 16),
                     _sectionCard('Team stats', _teamStatsBody(members)),
-                    const SizedBox(height: 26),
+                    SizedBox(height: 26),
                     _sectionCard('Defensive coverage', _defenseBody(members)),
-                    const SizedBox(height: 26),
+                    SizedBox(height: 26),
                     _sectionCard(
                       'Move type coverage',
                       _moveCoverageBody(members),
@@ -188,16 +188,16 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
         children: [
           Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w800,
-              color: AppColors.textPrimary,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
           ),
           if (subtitle != null)
             Text(
               subtitle,
-              style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+              style: TextStyle(fontSize: 11, color: Theme.of(context).textTheme.bodyMedium?.color),
             ),
         ],
       ),
@@ -212,7 +212,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
           padding: const EdgeInsets.only(top: 2),
           child: Text(
             badge,
-            style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+            style: TextStyle(fontSize: 10, color: Theme.of(context).textTheme.bodyMedium?.color),
           ),
         ),
     ],
@@ -224,7 +224,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
     required List<String> types,
     required String? Function(String) badgeFor,
   }) {
-    if (types.isEmpty) return const SizedBox.shrink();
+    if (types.isEmpty) return SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -258,7 +258,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
       child: Container(
         height: 10,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             colors: [Color(0xFF26A69A), Color(0xFF66BB6A)],
           ),
           borderRadius: BorderRadius.circular(6),
@@ -284,7 +284,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
                 width: 78,
                 child: Text(
                   label,
-                  style: const TextStyle(fontSize: 12, color: Colors.black87),
+                  style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyLarge?.color),
                 ),
               ),
               Expanded(
@@ -293,7 +293,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
                     Container(
                       height: 10,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: (Theme.of(context).brightness == Brightness.dark) ? Colors.grey.shade800 : Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(6),
                       ),
                     ),
@@ -301,16 +301,16 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               SizedBox(
                 width: 34,
                 child: Text(
                   '$shown',
                   textAlign: TextAlign.end,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
               ),
@@ -327,7 +327,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
         const Divider(height: 20),
         Row(
           children: [
-            const SizedBox(
+            SizedBox(
               width: 78,
               child: Text(
                 'Total:',
@@ -337,15 +337,15 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
             const Expanded(child: SizedBox()),
             Text(
               '$total',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8),
         Text(
           'Each stat is an average of the stats of each Pok\u00e9mon in the party.',
           style: TextStyle(fontSize: 10.5, color: Colors.grey.shade500),
@@ -394,14 +394,14 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
           style: TextStyle(
             fontSize: 12.5,
             height: 1.4,
-            color: Colors.grey.shade700,
+            color: Theme.of(context).textTheme.bodyMedium?.color,
           ),
         ),
-        const SizedBox(height: 10),
+        SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Show Defense Index',
               style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             ),
@@ -440,13 +440,13 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
     final memberIds = members.map((m) => m.id).toSet();
 
     return seedAsync.when(
-      loading: () => const Padding(
+      loading: () => Padding(
         padding: EdgeInsets.all(24),
         child: Center(child: CircularProgressIndicator()),
       ),
       error: (e, _) => Text(
         'Failed to load move data',
-        style: TextStyle(color: Colors.grey.shade600),
+        style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
       ),
       data: (seedMoves) {
         // SEM per defending type: moves that any party member can learn and
@@ -483,17 +483,17 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
               style: TextStyle(
                 fontSize: 12.5,
                 height: 1.4,
-                color: Colors.grey.shade700,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Row(
               children: [
-                const SizedBox(
+                SizedBox(
                   width: 70,
                   child: Text(
                     'Coverage',
-                    style: TextStyle(fontSize: 12, color: Colors.black87),
+                    style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyLarge?.color),
                   ),
                 ),
                 Expanded(
@@ -502,7 +502,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
                       Container(
                         height: 10,
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade200,
+                          color: (Theme.of(context).brightness == Brightness.dark) ? Colors.grey.shade800 : Colors.grey.shade200,
                           borderRadius: BorderRadius.circular(6),
                         ),
                       ),
@@ -511,7 +511,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
                         child: Container(
                           height: 10,
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
+                            gradient: LinearGradient(
                               colors: [Color(0xFFFFB300), Color(0xFFE4613E)],
                             ),
                             borderRadius: BorderRadius.circular(6),
@@ -521,26 +521,26 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8),
                 SizedBox(
                   width: 40,
                   child: Text(
                     '${coveragePct.round()}%',
                     textAlign: TextAlign.end,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Show Super Effective Moves',
                   style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                 ),

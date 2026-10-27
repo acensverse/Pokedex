@@ -114,7 +114,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
             IconButton(
               icon: Icon(
                 LucideIcons.search,
-                color: _isSearching ? AppColors.primary : Colors.black54,
+                color: _isSearching ? AppColors.primary : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
                 size: 28,
               ),
               onPressed: () {
@@ -248,8 +248,8 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                 child: Row(
                   children: [
                     Chip(
-                      backgroundColor: Colors.white,
-                      side: BorderSide(color: Colors.grey.shade300),
+                      backgroundColor: Theme.of(context).chipTheme.backgroundColor,
+                      side: Theme.of(context).chipTheme.side ?? BorderSide(color: Colors.grey.shade300),
                       label: Text(
                         '${learnerFilter.kind.toUpperCase()}: ${learnerFilter.name.toUpperCase()}',
                         style: const TextStyle(
@@ -276,9 +276,9 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.grey.shade200),
+                        border: Border.all(color: Theme.of(context).dividerColor),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.05),
@@ -390,9 +390,9 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.grey.shade200),
+                        border: Border.all(color: Theme.of(context).dividerColor),
                       ),
                       padding: const EdgeInsets.all(4),
                       child: Row(
@@ -471,9 +471,9 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.grey.shade200),
+                        border: Border.all(color: Theme.of(context).dividerColor),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.05),
@@ -554,7 +554,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade50,
+                              color: Theme.of(context).scaffoldBackgroundColor,
                               borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
                             ),
                             child: Row(
@@ -625,10 +625,10 @@ class _MoveStatItem extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: Theme.of(context).textTheme.bodyLarge?.color,
           ),
         ),
       ],

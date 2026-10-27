@@ -102,9 +102,9 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
     final itemsAsync = ref.watch(itemsSeedProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const ToolsSheetTitle(label: 'Items'),
@@ -113,7 +113,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
             icon: Icon(
               LucideIcons.search,
               size: 26,
-              color: _isSearching ? AppColors.primary : Colors.black54,
+              color: _isSearching ? AppColors.primary : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
             ),
             onPressed: _toggleSearch,
           ),
@@ -122,7 +122,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
             icon: Icon(
               Icons.tune,
               size: 26,
-              color: _catFilter != null ? AppColors.primary : Colors.black54,
+              color: _catFilter != null ? AppColors.primary : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
             ),
             onPressed: () {
               final items = ref.read(itemsSeedProvider).value ?? const [];
@@ -133,18 +133,18 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
         ],
       ),
       body: itemsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.redAccent),
-              const SizedBox(height: 12),
-              const Text('Could not load items'),
-              const SizedBox(height: 12),
+              Icon(Icons.error_outline, size: 48, color: Colors.redAccent),
+              SizedBox(height: 12),
+              Text('Could not load items'),
+              SizedBox(height: 12),
               FilledButton(
                 onPressed: () => ref.invalidate(itemsSeedProvider),
-                child: const Text('Retry'),
+                child: Text('Retry'),
               ),
             ],
           ),
@@ -171,53 +171,53 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                           onChanged: (v) => setState(() => _query = v),
                           decoration: InputDecoration(
                             hintText: 'Search items...',
-                            hintStyle: TextStyle(color: Colors.grey.shade400),
-                            prefixIcon: const Icon(LucideIcons.search,
-                                color: Colors.black54),
+                            hintStyle: TextStyle(color: (Theme.of(context).brightness == Brightness.dark) ? Colors.grey.shade600 : Colors.grey.shade400),
+                            prefixIcon: Icon(LucideIcons.search,
+                                color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.7)),
                             suffixIcon: _query.isNotEmpty
                                 ? IconButton(
                                     padding: EdgeInsets.zero,
                                     constraints: const BoxConstraints(
                                         minWidth: 36, minHeight: 36),
-                                    icon: const Icon(Icons.close,
-                                        color: Colors.black54, size: 20),
+                                    icon: Icon(Icons.close,
+                                        color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.7), size: 20),
                                     onPressed: _clearSearch,
                                   )
                                 : null,
                             isDense: true,
                             filled: true,
-                            fillColor: Colors.white,
+                            fillColor: Theme.of(context).colorScheme.surface,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
                               borderSide:
-                                  BorderSide(color: Colors.grey.shade300),
+                                  BorderSide(color: Theme.of(context).dividerColor),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
                               borderSide:
-                                  BorderSide(color: Colors.grey.shade300),
+                                  BorderSide(color: Theme.of(context).dividerColor),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
-                              borderSide: const BorderSide(
+                              borderSide: BorderSide(
                                   color: AppColors.primary, width: 1.5),
                             ),
                           ),
                         ),
                       )
-                    : const SizedBox.shrink(),
+                    : SizedBox.shrink(),
               ),
               Expanded(
                 child: filtered.isEmpty
                     ? Center(
                         child: Text(
                             'No items match your search or filters',
-                            style: TextStyle(color: Colors.grey.shade500)))
+                            style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color)))
                     : ListView.separated(
                         padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                         itemCount: filtered.length,
                         separatorBuilder: (context, index) =>
-                            const SizedBox(height: 8),
+                            SizedBox(height: 8),
                         itemBuilder: (context, index) =>
                             _ItemCard(item: filtered[index]),
                       ),
@@ -242,12 +242,22 @@ class _ItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.35)
+                : Colors.black.withValues(alpha: 0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,21 +266,21 @@ class _ItemCard extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: Colors.blue.withValues(alpha: 0.08),
+              color: (Theme.of(context).brightness == Brightness.dark) ? Colors.blue.withValues(alpha: 0.15) : Colors.blue.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
             ),
             child: item.sprite == null
-                ? Icon(Icons.catching_pokemon, color: Colors.grey.shade300)
+                ? Icon(Icons.catching_pokemon, color: (Theme.of(context).brightness == Brightness.dark) ? Colors.grey.shade600 : Colors.grey.shade400)
                 : Image.network(
                     item.sprite!,
                     fit: BoxFit.contain,
                     cacheWidth: 96,
                     errorBuilder: (context, error, stackTrace) =>
                         Icon(Icons.catching_pokemon,
-                            color: Colors.grey.shade300),
+                            color: (Theme.of(context).brightness == Brightness.dark) ? Colors.grey.shade600 : Colors.grey.shade400),
                   ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -279,25 +289,31 @@ class _ItemCard extends StatelessWidget {
                   PokemonHelpers.formatName(item.name),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: 15,
-                    color: AppColors.textPrimary,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
                   _catLabel,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
                 ),
                 if (item.description != null) ...[
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4),
                   Text(
                     item.description!,
                     style: TextStyle(
-                        fontSize: 12, height: 1.3, color: Colors.grey.shade700),
+                      fontSize: 12,
+                      height: 1.3,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                    ),
                   ),
                 ],
               ],
@@ -329,25 +345,25 @@ class _CategoryFilterSheet extends StatelessWidget {
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * 0.7,
       ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Center(
             child: Container(
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: Theme.of(context).dividerColor,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Flexible(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -376,7 +392,7 @@ class _CategoryFilterSheet extends StatelessWidget {
                           border: Border.all(
                             color: selected == cat
                                 ? AppColors.primary
-                                : Colors.grey.shade400,
+                                : Theme.of(context).dividerColor,
                             width: selected == cat ? 3 : 1.5,
                           ),
                         ),
@@ -390,7 +406,7 @@ class _CategoryFilterSheet extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               color: selected == cat
                                   ? AppColors.primary
-                                  : Colors.grey.shade700,
+                                  : Theme.of(context).textTheme.bodyMedium?.color,
                             ),
                           ),
                         ),
@@ -400,7 +416,7 @@ class _CategoryFilterSheet extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: AppSpacing.lg),
+          SizedBox(height: AppSpacing.lg),
         ],
       ),
     );

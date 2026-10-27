@@ -48,7 +48,7 @@ class AboutTab extends ConsumerWidget {
         const SizedBox(width: 6),
         Text(
           text,
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: 16,
@@ -83,7 +83,7 @@ class AboutTab extends ConsumerWidget {
                 const SizedBox(width: 4),
                 Text(
                   maleText,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 11,
@@ -98,7 +98,7 @@ class AboutTab extends ConsumerWidget {
                 const SizedBox(width: 4),
                 Text(
                   femaleText,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 11,
@@ -142,7 +142,7 @@ class AboutTab extends ConsumerWidget {
                   child: Text(
                     _resolveDescription(ref),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 15,
                       color: Colors.white,
                       height: 1.5,
@@ -332,7 +332,7 @@ class AboutTab extends ConsumerWidget {
                                     ],
                                     Text(
                                       abilityName,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,

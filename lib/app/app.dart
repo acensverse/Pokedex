@@ -17,6 +17,8 @@ class PokedexApp extends ConsumerWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
+      themeAnimationDuration: const Duration(milliseconds: 500),
+      themeAnimationCurve: Curves.easeInOut,
       routerConfig: appRouter,
     );
   }

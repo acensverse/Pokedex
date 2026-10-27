@@ -72,11 +72,11 @@ class AppTheme {
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       hoverColor: Colors.transparent,
-      textTheme: const TextTheme(
-        titleLarge: AppTypography.titleLarge,
-        titleMedium: AppTypography.titleMedium,
-        bodyLarge: AppTypography.bodyLarge,
-        bodyMedium: AppTypography.bodyMedium,
+      textTheme: TextTheme(
+        titleLarge: AppTypography.titleLarge.copyWith(color: Colors.white),
+        titleMedium: AppTypography.titleMedium.copyWith(color: Colors.white),
+        bodyLarge: AppTypography.bodyLarge.copyWith(color: Colors.white.withValues(alpha: 0.9)),
+        bodyMedium: AppTypography.bodyMedium.copyWith(color: Colors.grey.shade400),
         labelLarge: AppTypography.labelLarge,
       ),
       appBarTheme: const AppBarTheme(

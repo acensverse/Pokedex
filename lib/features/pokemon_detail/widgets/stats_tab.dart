@@ -7,7 +7,7 @@ class StatsTab extends StatefulWidget {
   final Color themeColor;
   final Widget? header;
 
-  const StatsTab({
+  StatsTab({
     super.key,
     required this.pokemon,
     required this.themeColor,
@@ -88,15 +88,15 @@ class _StatsTabState extends State<StatsTab> {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.only(bottom: 16),
       child: Row(
         children: [
           SizedBox(
             width: 70,
             child: Text(
               label,
-              style: const TextStyle(
-                color: Colors.black54,
+              style: TextStyle(
+                color: Theme.of(context).textTheme.bodyMedium?.color,
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
@@ -116,7 +116,7 @@ class _StatsTabState extends State<StatsTab> {
                         (index) => Container(
                           width: constraints.maxWidth / 40,
                           height: 2,
-                          color: Colors.black12,
+                          color: Theme.of(context).dividerColor,
                         ),
                       ),
                     ),
@@ -124,7 +124,7 @@ class _StatsTabState extends State<StatsTab> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 500),
+                        duration: Duration(milliseconds: 500),
                         curve: Curves.easeOutCubic,
                         height: 6,
                         width:
@@ -138,14 +138,14 @@ class _StatsTabState extends State<StatsTab> {
               },
             ),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           SizedBox(
             width: 32,
             child: Text(
               displayValue.toString(),
               textAlign: TextAlign.right,
-              style: const TextStyle(
-                color: Colors.black87,
+              style: TextStyle(
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
               ),
@@ -159,7 +159,7 @@ class _StatsTabState extends State<StatsTab> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      key: const ValueKey('Stats'),
+      key: ValueKey('Stats'),
       children: [
         if (widget.header != null) widget.header!,
         Expanded(
@@ -177,12 +177,12 @@ class _StatsTabState extends State<StatsTab> {
                   title: 'Base Statistics',
                   themeColor: widget.themeColor,
                 ),
-                const SizedBox(height: 24),
+                SizedBox(height: 24),
 
                 // Mode Selector (Base, Min, Max)
                 Container(
                   height: 40,
-                  padding: const EdgeInsets.all(4),
+                  padding: EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(20),
@@ -196,7 +196,7 @@ class _StatsTabState extends State<StatsTab> {
                       return Stack(
                         children: [
                           AnimatedPositioned(
-                            duration: const Duration(milliseconds: 300),
+                            duration: Duration(milliseconds: 300),
                             curve: Curves.easeInOutCubic,
                             left: currentIndex * tabWidth,
                             top: 0,
@@ -220,13 +220,13 @@ class _StatsTabState extends State<StatsTab> {
                                       setState(() => _statsMode = mode),
                                   child: Center(
                                     child: AnimatedDefaultTextStyle(
-                                      duration: const Duration(
+                                      duration: Duration(
                                         milliseconds: 300,
                                       ),
                                       style: TextStyle(
                                         color: isActive
                                             ? Colors.white
-                                            : Colors.black45,
+                                            : Theme.of(context).textTheme.bodyMedium?.color,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 12,
                                       ),
@@ -242,37 +242,37 @@ class _StatsTabState extends State<StatsTab> {
                     },
                   ),
                 ),
-                const SizedBox(height: 32),
+                SizedBox(height: 32),
 
                 ...widget.pokemon.stats.map((s) {
                   final label = _getDisplayLabel(s.stat.name);
                   return _buildStatBar(label, s.baseStat, widget.themeColor);
                 }),
 
-                const Divider(
-                  color: Colors.black12,
+                Divider(
+                  color: Theme.of(context).dividerColor,
                   height: 32,
                   thickness: 1.5,
                 ),
 
                 Row(
                   children: [
-                    const SizedBox(
+                    SizedBox(
                       width: 70,
                       child: Text(
                         'Total',
                         style: TextStyle(
-                          color: Colors.black87,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    const Expanded(child: SizedBox()),
+                    Expanded(child: SizedBox()),
                     Text(
                       _calculateTotal().toString(),
-                      style: const TextStyle(
-                        color: Colors.black87,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),

@@ -306,35 +306,300 @@ const _knownRegionalChains = <int, RegionalEvoSpec>{
   ),
 };
 
+class EvoEntrySpec {
+  final int id;
+  final int? evolvesFrom;
+  final String condition;
+
+  const EvoEntrySpec({
+    required this.id,
+    this.evolvesFrom,
+    required this.condition,
+  });
+}
+
+const _customEvoChains = <int, List<EvoEntrySpec>>{
+  // Goomy line (#704)
+  704: [
+    EvoEntrySpec(id: 704, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 705, evolvesFrom: 704, condition: 'Level 40'),
+    EvoEntrySpec(id: 10241, evolvesFrom: 704, condition: 'Level 40 in Hisui'), // 10241 = Hisuian Sliggoo
+    EvoEntrySpec(id: 706, evolvesFrom: 705, condition: 'Level 50 in Rain'),
+    EvoEntrySpec(id: 10242, evolvesFrom: 10241, condition: 'Level 50 in Rain'), // 10242 = Hisuian Goodra
+  ],
+  // Cyndaquil line (#155)
+  155: [
+    EvoEntrySpec(id: 155, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 156, evolvesFrom: 155, condition: 'Level 14'),
+    EvoEntrySpec(id: 157, evolvesFrom: 156, condition: 'Level 36'),
+    EvoEntrySpec(id: 10233, evolvesFrom: 156, condition: 'Level 36 in Hisui'), // 10233 = Hisuian Typhlosion
+  ],
+  // Oshawott line (#501)
+  501: [
+    EvoEntrySpec(id: 501, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 502, evolvesFrom: 501, condition: 'Level 17'),
+    EvoEntrySpec(id: 503, evolvesFrom: 502, condition: 'Level 36'),
+    EvoEntrySpec(id: 10236, evolvesFrom: 502, condition: 'Level 36 in Hisui'), // 10236 = Hisuian Samurott
+  ],
+  // Rowlet line (#722)
+  722: [
+    EvoEntrySpec(id: 722, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 723, evolvesFrom: 722, condition: 'Level 17'),
+    EvoEntrySpec(id: 724, evolvesFrom: 723, condition: 'Level 34'),
+    EvoEntrySpec(id: 10244, evolvesFrom: 723, condition: 'Level 34 in Hisui'), // 10244 = Hisuian Decidueye
+  ],
+  // Petilil (#548)
+  548: [
+    EvoEntrySpec(id: 548, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 549, evolvesFrom: 548, condition: 'Use Sun Stone'),
+    EvoEntrySpec(id: 10237, evolvesFrom: 548, condition: 'Use Sun Stone in Hisui'), // 10237 = Hisuian Lilligant
+  ],
+  // Rufflet (#627)
+  627: [
+    EvoEntrySpec(id: 627, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 628, evolvesFrom: 627, condition: 'Level 54'),
+    EvoEntrySpec(id: 10240, evolvesFrom: 627, condition: 'Level 54 in Hisui'), // 10240 = Hisuian Braviary
+  ],
+  // Bergmite (#712)
+  712: [
+    EvoEntrySpec(id: 712, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 713, evolvesFrom: 712, condition: 'Level 37'),
+    EvoEntrySpec(id: 10243, evolvesFrom: 712, condition: 'Level 37 in Hisui'), // 10243 = Hisuian Avalugg
+  ],
+  // Koffing (#109)
+  109: [
+    EvoEntrySpec(id: 109, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 110, evolvesFrom: 109, condition: 'Level 35'),
+    EvoEntrySpec(id: 10167, evolvesFrom: 109, condition: 'Level 35 in Galar'),
+  ],
+  // Exeggcute (#102)
+  102: [
+    EvoEntrySpec(id: 102, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 103, evolvesFrom: 102, condition: 'Use Leaf Stone'),
+    EvoEntrySpec(id: 10114, evolvesFrom: 102, condition: 'Use Leaf Stone in Alola'),
+  ],
+  // Cubone (#104)
+  104: [
+    EvoEntrySpec(id: 104, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 105, evolvesFrom: 104, condition: 'Level 28'),
+    EvoEntrySpec(id: 10115, evolvesFrom: 104, condition: 'Level 28 Night in Alola'),
+  ],
+  // Pikachu line (Pichu -> Pikachu -> Raichu / Alolan Raichu)
+  172: [
+    EvoEntrySpec(id: 172, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 25, evolvesFrom: 172, condition: 'High Friendship'),
+    EvoEntrySpec(id: 26, evolvesFrom: 25, condition: 'Use Thunder Stone'),
+    EvoEntrySpec(id: 10100, evolvesFrom: 25, condition: 'Use Thunder Stone in Alola'),
+  ],
+  // Scyther (#123)
+  123: [
+    EvoEntrySpec(id: 123, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 212, evolvesFrom: 123, condition: 'Trade holding Metal Coat'),
+    EvoEntrySpec(id: 900, evolvesFrom: 123, condition: 'Use Black Augurite'),
+  ],
+  // Stantler (#234)
+  234: [
+    EvoEntrySpec(id: 234, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 899, evolvesFrom: 234, condition: 'Psyshield Bash 20x'),
+  ],
+  // Teddiursa (#216)
+  216: [
+    EvoEntrySpec(id: 216, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 217, evolvesFrom: 216, condition: 'Level 30'),
+    EvoEntrySpec(id: 901, evolvesFrom: 217, condition: 'Use Peat Block in Full Moon'),
+  ],
+  // Basculin (#550)
+  550: [
+    EvoEntrySpec(id: 550, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 902, evolvesFrom: 550, condition: '294+ Recoil Damage'),
+  ],
+
+  // Parallel Regional Chains:
+  10091: [
+    EvoEntrySpec(id: 10091, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 10092, evolvesFrom: 10091, condition: 'Level 20 Night'),
+  ],
+  10101: [
+    EvoEntrySpec(id: 10101, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 10102, evolvesFrom: 10101, condition: 'Use Ice Stone'),
+  ],
+  10103: [
+    EvoEntrySpec(id: 10103, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 10104, evolvesFrom: 10103, condition: 'Use Ice Stone'),
+  ],
+  10105: [
+    EvoEntrySpec(id: 10105, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 10106, evolvesFrom: 10105, condition: 'Level 26'),
+  ],
+  10107: [
+    EvoEntrySpec(id: 10107, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 10108, evolvesFrom: 10107, condition: 'High Friendship'),
+  ],
+  10161: [
+    EvoEntrySpec(id: 10161, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 863, evolvesFrom: 10161, condition: 'Level 28'),
+  ],
+  10229: [
+    EvoEntrySpec(id: 10229, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 10230, evolvesFrom: 10229, condition: 'Use Fire Stone'),
+  ],
+  10109: [
+    EvoEntrySpec(id: 10109, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 10110, evolvesFrom: 10109, condition: 'Level 25'),
+    EvoEntrySpec(id: 10111, evolvesFrom: 10110, condition: 'Trade'),
+  ],
+  10162: [
+    EvoEntrySpec(id: 10162, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 10163, evolvesFrom: 10162, condition: 'Level 40'),
+  ],
+  10164: [
+    EvoEntrySpec(id: 10164, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 10165, evolvesFrom: 10164, condition: 'Use Galarica Cuff'),
+    EvoEntrySpec(id: 10172, evolvesFrom: 10164, condition: 'Use Galarica Wreath'),
+  ],
+  10166: [
+    EvoEntrySpec(id: 10166, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 865, evolvesFrom: 10166, condition: 'Land 3 Critical Hits'),
+  ],
+  10112: [
+    EvoEntrySpec(id: 10112, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 10113, evolvesFrom: 10112, condition: 'Level 38'),
+  ],
+  10231: [
+    EvoEntrySpec(id: 10231, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 10232, evolvesFrom: 10231, condition: 'Use Leaf Stone'),
+  ],
+  439: [
+    EvoEntrySpec(id: 439, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 122, evolvesFrom: 439, condition: 'Level Up with Mimic'),
+    EvoEntrySpec(id: 10168, evolvesFrom: 439, condition: 'Level Up with Mimic in Galar'),
+    EvoEntrySpec(id: 866, evolvesFrom: 10168, condition: 'Level 42'),
+  ],
+  10253: [
+    EvoEntrySpec(id: 10253, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 980, evolvesFrom: 10253, condition: 'Level 20'),
+  ],
+  10234: [
+    EvoEntrySpec(id: 10234, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 904, evolvesFrom: 10234, condition: 'Use Barb Barrage 20x'),
+  ],
+  10235: [
+    EvoEntrySpec(id: 10235, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 903, evolvesFrom: 10235, condition: 'Use Razor Claw Day'),
+  ],
+  10173: [
+    EvoEntrySpec(id: 10173, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 864, evolvesFrom: 10173, condition: 'Level 38'),
+  ],
+  10174: [
+    EvoEntrySpec(id: 10174, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 10175, evolvesFrom: 10174, condition: 'Level 20'),
+    EvoEntrySpec(id: 862, evolvesFrom: 10175, condition: 'Level 35 Night'),
+  ],
+  10176: [
+    EvoEntrySpec(id: 10176, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 10177, evolvesFrom: 10176, condition: 'Use Ice Stone'),
+  ],
+  10179: [
+    EvoEntrySpec(id: 10179, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 867, evolvesFrom: 10179, condition: '49+ DMG & Stone Arch'),
+  ],
+  10238: [
+    EvoEntrySpec(id: 10238, evolvesFrom: null, condition: ''),
+    EvoEntrySpec(id: 10239, evolvesFrom: 10238, condition: 'Level 30'),
+  ],
+};
+
+final _childToRootMap = <int, int>{
+  for (final entry in _customEvoChains.entries)
+    for (final node in entry.value) node.id: entry.key,
+};
+
+class EvoChainParam {
+  final String json;
+  final int? pokemonId;
+  final int? speciesId;
+
+  const EvoChainParam({
+    required this.json,
+    this.pokemonId,
+    this.speciesId,
+  });
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is EvoChainParam &&
+          runtimeType == other.runtimeType &&
+          json == other.json &&
+          pokemonId == other.pokemonId &&
+          speciesId == other.speciesId;
+
+  @override
+  int get hashCode => json.hashCode ^ pokemonId.hashCode ^ speciesId.hashCode;
+}
+
 /// Builds the evolution tree from baked seed data, resolving accurate Pokemon models offline.
-final evolutionChainProvider = FutureProvider.family<EvoNode?, String>((
+final evolutionChainProvider = FutureProvider.family<EvoNode?, EvoChainParam>((
   ref,
-  evolutionInfoJson,
+  param,
 ) async {
-  final entries = (jsonDecode(evolutionInfoJson) as List? ?? const [])
-      .cast<Map>()
-      .map(
-        (e) => {
-          'id': e['id'] as int,
-          'name': (e['name'] ?? '') as String,
-          'evolves_from': e['evolves_from'] as int?,
-          'condition': (e['condition'] ?? '') as String,
-        },
-      )
-      .toList();
-  if (entries.isEmpty) return null;
+  final repo = ref.read(pokemonRepositoryProvider);
+  final targetId = param.pokemonId ?? param.speciesId;
+
+  List<Map<String, dynamic>> rawEntries = [];
+
+  if (targetId != null && _childToRootMap.containsKey(targetId)) {
+    final rootId = _childToRootMap[targetId]!;
+    final specs = _customEvoChains[rootId]!;
+    rawEntries = specs
+        .map(
+          (s) => {
+            'id': s.id,
+            'name': '',
+            'evolves_from': s.evolvesFrom,
+            'condition': s.condition,
+          },
+        )
+        .toList();
+  } else {
+    String rawJson = param.json;
+    if ((rawJson.isEmpty || rawJson == '[]') && param.speciesId != null) {
+      try {
+        final speciesP = await repo.getPokemonDetails(param.speciesId!);
+        if (speciesP.evolutionInfo != null && speciesP.evolutionInfo!.isNotEmpty) {
+          rawJson = speciesP.evolutionInfo!;
+        }
+      } catch (_) {}
+    }
+
+    final parsed = (jsonDecode(rawJson) as List? ?? const []).cast<Map>();
+    rawEntries = parsed
+        .map(
+          (e) => {
+            'id': e['id'] as int,
+            'name': (e['name'] ?? '') as String,
+            'evolves_from': e['evolves_from'] as int?,
+            'condition': (e['condition'] ?? '') as String,
+          },
+        )
+        .toList();
+  }
+
+  if (rawEntries.isEmpty) return null;
 
   // Create nodes, linking children to parents
   final nodes = <int, EvoNode>{
-    for (final e in entries)
+    for (final e in rawEntries)
       e['id'] as int: EvoNode(
         pokemonId: e['id'] as int,
         condition: e['condition'] as String,
         evolvesTo: [],
       ),
   };
+
   EvoNode? root;
-  for (final e in entries) {
+  for (final e in rawEntries) {
     final node = nodes[e['id'] as int]!;
     final from = e['evolves_from'] as int?;
     if (from == null) {
@@ -343,22 +608,18 @@ final evolutionChainProvider = FutureProvider.family<EvoNode?, String>((
       nodes[from]?.evolvesTo.add(node);
     }
   }
+
   if (root == null) return null;
 
   // Resolve display models from DB
-  final repo = ref.read(pokemonRepositoryProvider);
-  final entryById = {for (final e in entries) e['id'] as int: e};
-
   Future<void> resolveModels(EvoNode node) async {
-    // 1. Fetch primary base Pokemon model
     try {
       node.pokemon = await repo.getPokemonDetails(node.pokemonId);
     } catch (_) {
-      final entry = entryById[node.pokemonId];
       node.pokemon = Pokemon(
         id: node.pokemonId,
         speciesId: node.pokemonId,
-        name: (entry?['name'] as String?) ?? '',
+        name: '',
         height: 0,
         weight: 0,
         types: const [],
@@ -422,9 +683,17 @@ final evolutionChainProvider = FutureProvider.family<EvoNode?, String>((
 
 class EvolutionTab extends ConsumerStatefulWidget {
   final String evolutionInfoJson;
+  final int? pokemonId;
+  final int? speciesId;
   final Widget? header;
 
-  const EvolutionTab({super.key, required this.evolutionInfoJson, this.header});
+  const EvolutionTab({
+    super.key,
+    required this.evolutionInfoJson,
+    this.pokemonId,
+    this.speciesId,
+    this.header,
+  });
 
   @override
   ConsumerState<EvolutionTab> createState() => _EvolutionTabState();
@@ -435,7 +704,15 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
 
   @override
   Widget build(BuildContext context) {
-    final asyncChain = ref.watch(evolutionChainProvider(widget.evolutionInfoJson));
+    final asyncChain = ref.watch(
+      evolutionChainProvider(
+        EvoChainParam(
+          json: widget.evolutionInfoJson,
+          pokemonId: widget.pokemonId,
+          speciesId: widget.speciesId,
+        ),
+      ),
+    );
 
     return Column(
       children: [
@@ -471,7 +748,7 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
             error: (e, st) => Center(
               child: Text(
                 'Error: $e',
-                style: const TextStyle(color: Colors.redAccent),
+                style: TextStyle(color: Colors.redAccent),
               ),
             ),
           ),
@@ -496,7 +773,7 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
-            color: _showAlternateForm ? AppColors.primary : Colors.white,
+            color: _showAlternateForm ? AppColors.primary : Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(30),
             border: Border.all(
               color: AppColors.primary,
@@ -688,35 +965,25 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
       return _CleanEvoNode(node: root);
     }
 
-    // Multi-branch evolutions (e.g. Tyrogue, Wurmple, Ralts, Slowpoke, Oddish)
+    // Multi-branch evolutions (e.g. Tyrogue, Wurmple, Ralts, Slowpoke, Goomy, Scyther)
     if (root.evolvesTo.length > 1) {
       return _buildBranchLayout(context, root);
     }
 
-    // Standard linear chain (1 -> 2 -> 3 stage vertical flow)
-    return _buildVerticalLinearChain(context, root);
-  }
-
-  /// Top-to-bottom vertical linear chain (fits portrait space cleanly)
-  Widget _buildVerticalLinearChain(BuildContext context, EvoNode node) {
-    final list = <Widget>[_CleanEvoNode(node: node)];
-
-    var current = node;
-    while (current.evolvesTo.isNotEmpty) {
-      final child = current.evolvesTo.first;
-      list.add(_buildVerticalArrow(child.condition));
-      list.add(_CleanEvoNode(node: child));
-      current = child;
-    }
-
+    // Single child at root, but child might branch downstream (e.g. Cyndaquil -> Quilava -> Typhlosion/Hisuian Typhlosion)
+    final child = root.evolvesTo.first;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: list,
+      children: [
+        _CleanEvoNode(node: root),
+        _buildVerticalArrow(child.condition),
+        _buildChainContent(context, child),
+      ],
     );
   }
 
-  /// Branching evolution tree (e.g. Ralts, Tyrogue, Slowpoke, Meowth)
+  /// Branching evolution tree (e.g. Ralts, Tyrogue, Slowpoke, Meowth, Goomy, Scyther)
   Widget _buildBranchLayout(BuildContext context, EvoNode parent) {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -735,10 +1002,7 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
                 children: [
                   _buildVerticalArrow(child.condition),
                   const SizedBox(height: 6),
-                  if (child.evolvesTo.isEmpty)
-                    _CleanEvoNode(node: child)
-                  else
-                    _buildBranchLayout(context, child),
+                  _buildChainContent(context, child),
                 ],
               ),
             );
@@ -748,63 +1012,28 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
     );
   }
 
-  /// Eevee (8 evolutions) compact portrait grid layout
+  /// Eevee (8 evolutions) compact portrait grid layout with condition arrows
   Widget _buildEeveeCompactGrid(BuildContext context, EvoNode eevee) {
-    EvoNode? findEvo(int id) {
-      for (final e in eevee.evolvesTo) {
-        if (e.pokemonId == id || e.pokemon?.id == id) return e;
-      }
-      return null;
-    }
-
-    Widget cell(int id) {
-      final node = findEvo(id);
-      if (node == null) return const SizedBox(width: 80, height: 100);
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _CleanEvoNode(node: node, compact: true),
-        ],
-      );
-    }
-
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        // Row 1
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            cell(134), // Vaporeon
-            const SizedBox(width: 16),
-            cell(135), // Jolteon
-            const SizedBox(width: 16),
-            cell(136), // Flareon
-          ],
-        ),
+        _CleanEvoNode(node: eevee, compact: true),
         const SizedBox(height: 12),
-        // Row 2 (Eevee in center)
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            cell(700), // Sylveon
-            const SizedBox(width: 20),
-            _CleanEvoNode(node: eevee, compact: true),
-            const SizedBox(width: 20),
-            cell(196), // Espeon
-          ],
-        ),
-        const SizedBox(height: 12),
-        // Row 3
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            cell(471), // Glaceon
-            const SizedBox(width: 16),
-            cell(470), // Leafeon
-            const SizedBox(width: 16),
-            cell(197), // Umbreon
-          ],
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 12,
+          runSpacing: 16,
+          children: eevee.evolvesTo.map((child) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildVerticalArrow(child.condition),
+                const SizedBox(height: 4),
+                _CleanEvoNode(node: child, compact: true),
+              ],
+            );
+          }).toList(),
         ),
       ],
     );
@@ -828,7 +1057,7 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
               margin: const EdgeInsets.symmetric(vertical: 2),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
                 boxShadow: [
@@ -842,7 +1071,7 @@ class _EvolutionTabState extends ConsumerState<EvolutionTab> {
               child: Text(
                 cleanCond,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.primary,
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
@@ -882,10 +1111,10 @@ class _AltFormSquareCard extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 6),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: Colors.grey.shade200,
+            color: Theme.of(context).dividerColor,
             width: 1,
           ),
           boxShadow: [
@@ -903,7 +1132,7 @@ class _AltFormSquareCard extends StatelessWidget {
               width: 68,
               height: 68,
               decoration: BoxDecoration(
-                color: Colors.grey.shade50,
+                color: Theme.of(context).scaffoldBackgroundColor,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
@@ -946,16 +1175,17 @@ class _AltFormSquareCard extends StatelessWidget {
                     ),
                   Text(
                     name,
-                    style: const TextStyle(
-                      color: AppColors.textPrimary,
+                    style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      fontSize: 15,
                     ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     speciesIdStr,
                     style: TextStyle(
-                      color: Colors.grey.shade600,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1046,7 +1276,7 @@ class _CleanEvoNode extends StatelessWidget {
               height: imageSize + 12,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.08),
@@ -1088,7 +1318,7 @@ class _CleanEvoNode extends StatelessWidget {
               name,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.bold,
                 fontSize: compact ? 12 : 14,
               ),

@@ -179,11 +179,12 @@ class _MovesScreenState extends ConsumerState<MovesScreen> {
   @override
   Widget build(BuildContext context) {
     final movesAsync = ref.watch(movesSeedProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const ToolsSheetTitle(label: 'Moves'),
@@ -192,7 +193,9 @@ class _MovesScreenState extends ConsumerState<MovesScreen> {
             icon: Icon(
               LucideIcons.search,
               size: 26,
-              color: _isSearching ? AppColors.primary : Colors.black54,
+              color: _isSearching
+                  ? AppColors.primary
+                  : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
             ),
             onPressed: _toggleSearch,
           ),
@@ -201,27 +204,27 @@ class _MovesScreenState extends ConsumerState<MovesScreen> {
             icon: Icon(
               Icons.tune,
               size: 26,
-              color: _typeFilter != null || _clsFilter != null
+              color: (_typeFilter != null || _clsFilter != null)
                   ? AppColors.primary
-                  : Colors.black54,
+                  : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
             ),
             onPressed: _openFilterSheet,
           ),
         ],
       ),
       body: movesAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.redAccent),
-              const SizedBox(height: 12),
-              const Text('Could not load moves'),
-              const SizedBox(height: 12),
+              Icon(Icons.error_outline, size: 48, color: Colors.redAccent),
+              SizedBox(height: 12),
+              Text('Could not load moves'),
+              SizedBox(height: 12),
               FilledButton(
                 onPressed: () => ref.invalidate(movesSeedProvider),
-                child: const Text('Retry'),
+                child: Text('Retry'),
               ),
             ],
           ),
@@ -247,59 +250,74 @@ class _MovesScreenState extends ConsumerState<MovesScreen> {
                         child: TextField(
                           controller: _searchController,
                           autofocus: true,
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                          ),
                           onChanged: (v) => setState(() => _query = v),
                           decoration: InputDecoration(
                             hintText: 'Search moves...',
-                            hintStyle: TextStyle(color: Colors.grey.shade400),
-                            prefixIcon: const Icon(LucideIcons.search,
-                                color: Colors.black54),
+                            hintStyle: TextStyle(
+                              color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
+                            ),
+                            prefixIcon: Icon(
+                              LucideIcons.search,
+                              color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.6),
+                            ),
                             suffixIcon: _query.isNotEmpty
                                 ? IconButton(
                                     padding: EdgeInsets.zero,
                                     constraints: const BoxConstraints(
                                         minWidth: 36, minHeight: 36),
-                                    icon: const Icon(Icons.close,
-                                        color: Colors.black54, size: 20),
+                                    icon: Icon(
+                                      Icons.close,
+                                      color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.6),
+                                      size: 20,
+                                    ),
                                     onPressed: _clearSearch,
                                   )
                                 : null,
                             isDense: true,
                             filled: true,
-                            fillColor: Colors.white,
+                            fillColor: Theme.of(context).cardColor,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
-                              borderSide:
-                                  BorderSide(color: Colors.grey.shade300),
+                              borderSide: BorderSide(color: Theme.of(context).dividerColor),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
-                              borderSide:
-                                  BorderSide(color: Colors.grey.shade300),
+                              borderSide: BorderSide(color: Theme.of(context).dividerColor),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
-                              borderSide: const BorderSide(
+                              borderSide: BorderSide(
                                   color: AppColors.primary, width: 1.5),
                             ),
                           ),
                         ),
                       )
-                    : const SizedBox.shrink(),
+                    : SizedBox.shrink(),
               ),
               Expanded(
                 child: filtered.isEmpty
                     ? Center(
                         child: Text(
-                            'No moves match your search or filters',
-                            style: TextStyle(color: Colors.grey.shade500)))
+                          'No moves match your search or filters',
+                          style: TextStyle(
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                          ),
+                        ),
+                      )
                     : ListView.separated(
-                        padding:
-                            const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                        padding: EdgeInsets.fromLTRB(
+                          16,
+                          4,
+                          16,
+                          16 + MediaQuery.paddingOf(context).bottom,
+                        ),
                         itemCount: filtered.length,
                         separatorBuilder: (context, index) =>
-                            const SizedBox(height: 8),
-                        itemBuilder: (context, index) =>
-                            _MoveCard(
+                            SizedBox(height: 8),
+                        itemBuilder: (context, index) => _MoveCard(
                           move: filtered[index],
                           onTap: () => _openDetail(filtered[index]),
                         ),
@@ -332,25 +350,25 @@ class _MovesFilterSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Center(
             child: Container(
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: Theme.of(context).dividerColor,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: GridView.count(
@@ -382,7 +400,7 @@ class _MovesFilterSheet extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: AppSpacing.lg),
+          SizedBox(height: AppSpacing.lg),
         ],
       ),
     );
@@ -422,7 +440,7 @@ class _FilterTypePill extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset('assets/types/$type.svg', width: 24, height: 24),
-            const SizedBox(width: 4),
+            SizedBox(width: 4),
             Text(
               type[0].toUpperCase() + type.substring(1),
               style: TextStyle(
@@ -461,27 +479,22 @@ class _FilterClsPill extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 4),
         decoration: BoxDecoration(
-          color: clsColor.withValues(alpha: isSelected ? 0.22 : 0.08),
+          color: clsColor.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: clsColor,
-            width: isSelected ? 3 : 1.5,
+            color: isSelected ? clsColor : Colors.transparent,
+            width: 2.5,
           ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.sports_martial_arts, size: 18, color: clsColor),
-            const SizedBox(width: 4),
-            Text(
-              _clsLabel(cls),
-              style: TextStyle(
-                color: clsColor,
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-              ),
+        child: Center(
+          child: Text(
+            _clsLabel(cls),
+            style: TextStyle(
+              color: clsColor,
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -496,6 +509,7 @@ class _MoveCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final typeColor = AppColors.getTypeColor(move.type);
     final clsColor = _clsColor(move.cls);
 
@@ -507,9 +521,17 @@ class _MoveCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.grey.shade200),
+            boxShadow: [
+              BoxShadow(
+                color: isDark
+                    ? Colors.black.withValues(alpha: 0.35)
+                    : Colors.black.withValues(alpha: 0.06),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              ),
+            ],
           ),
           child: Row(
             children: [
@@ -528,7 +550,7 @@ class _MoveCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -537,13 +559,13 @@ class _MoveCard extends StatelessWidget {
                       PokemonHelpers.formatName(move.name),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: 15,
-                        color: AppColors.textPrimary,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    SizedBox(height: 2),
                     Text(
                       [
                         move.type[0].toUpperCase() + move.type.substring(1),
@@ -554,12 +576,14 @@ class _MoveCard extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                          fontSize: 12, color: Colors.grey.shade600),
+                        fontSize: 12,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                      ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -642,19 +666,19 @@ class MoveDetailSheet extends ConsumerWidget {
     }
 
     return Container(
-      decoration: const BoxDecoration(
-        color: _sheetBg,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         children: [
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           Center(
             child: Container(
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: Theme.of(context).dividerColor,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -663,8 +687,8 @@ class MoveDetailSheet extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
               children: [
-                const SizedBox(height: 4),
-                const Center(
+                SizedBox(height: 4),
+                Center(
                   child: Text('MOVE',
                       style: TextStyle(
                           fontSize: 12,
@@ -672,17 +696,17 @@ class MoveDetailSheet extends ConsumerWidget {
                           fontWeight: FontWeight.w600,
                           color: Colors.grey)),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Center(
                   child: Text(
                     PokemonHelpers.formatName(move.name),
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontSize: 26,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.textPrimary),
+                        color: Theme.of(context).textTheme.titleLarge?.color),
                   ),
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: 12),
                 Wrap(
                   alignment: WrapAlignment.center,
                   spacing: 10,
@@ -692,23 +716,24 @@ class MoveDetailSheet extends ConsumerWidget {
                     _SolidClsPill(cls: move.cls, color: clsColor),
                   ],
                 ),
-                const SizedBox(height: 26),
+                SizedBox(height: 26),
                 _sectionCard(
+                  context,
                   'Stats',
                   Row(
                     children: [
                       _StatColumn(
                           label: 'Power',
                           value: move.power?.toString() ?? '\u2014'),
-                      _verticalDivider(),
+                      _verticalDivider(context),
                       _StatColumn(
                           label: 'Accuracy',
                           value: move.acc != null ? '${move.acc}' : '\u2014'),
-                      _verticalDivider(),
+                      _verticalDivider(context),
                       _StatColumn(
                           label: 'PP',
                           value: move.pp?.toString() ?? '\u2014'),
-                      _verticalDivider(),
+                      _verticalDivider(context),
                       _StatColumn(
                           label: 'Priority',
                           value: move.pri > 0
@@ -717,51 +742,52 @@ class MoveDetailSheet extends ConsumerWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 26),
+                SizedBox(height: 26),
                 _sectionCard(
+                  context,
                   'Details',
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (move.flavor != null) ...[
                         const _CardHeading('Description'),
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6),
                         Text(move.flavor!,
                             style: TextStyle(
                                 fontSize: 14,
                                 height: 1.4,
-                                color: Colors.grey.shade700)),
+                                color: Theme.of(context).textTheme.bodyMedium?.color)),
                       ],
                       if (move.eff != null) ...[
-                        const SizedBox(height: 14),
+                        if (move.flavor != null) SizedBox(height: 12),
                         const _CardHeading('Effect'),
-                        const SizedBox(height: 6),
+                        SizedBox(height: 6),
                         Text(move.eff!,
                             style: TextStyle(
                                 fontSize: 14,
                                 height: 1.4,
-                                color: Colors.grey.shade700)),
+                                color: Theme.of(context).textTheme.bodyMedium?.color)),
                       ],
                       if (move.contest != null) ...[
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16),
                         Row(
                           children: [
                             const _CardHeading('Contest:'),
-                            const SizedBox(width: 10),
+                            SizedBox(width: 10),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 14, vertical: 6),
                               decoration: BoxDecoration(
-                                color: Colors.grey.shade200,
+                                color: (Theme.of(context).brightness == Brightness.dark) ? Colors.grey.shade800 : Colors.grey.shade200,
                                 borderRadius: BorderRadius.circular(18),
                               ),
                               child: Text(
                                 move.contest![0].toUpperCase() +
                                     move.contest!.substring(1),
-                                style: const TextStyle(
+                                style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
-                                    color: AppColors.textPrimary),
+                                    color: Theme.of(context).textTheme.bodyLarge?.color),
                               ),
                             ),
                           ],
@@ -774,12 +800,13 @@ class MoveDetailSheet extends ConsumerWidget {
                             style: TextStyle(
                                 fontSize: 13,
                                 fontStyle: FontStyle.italic,
-                                color: Colors.grey.shade500)),
+                                color: Theme.of(context).textTheme.bodyMedium?.color)),
                     ],
                   ),
                 ),
-                const SizedBox(height: 26),
+                SizedBox(height: 26),
                 _sectionCard(
+                  context,
                   'Damage dealt',
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -807,7 +834,7 @@ class MoveDetailSheet extends ConsumerWidget {
                     ],
                   ),
                  ),
-                 const SizedBox(height: 8),
+                 SizedBox(height: 8),
                ],
              ),
            ),
@@ -823,9 +850,9 @@ class MoveDetailSheet extends ConsumerWidget {
                  child: Container(
                    decoration: BoxDecoration(
                      gradient: move.learn.isEmpty
-                         ? const LinearGradient(
+                         ? LinearGradient(
                              colors: [Colors.grey, Colors.grey])
-                         : const LinearGradient(
+                         : LinearGradient(
                              colors: [Color(0xFF7CB342), Color(0xFF26A69A)],
                            ),
                      borderRadius: BorderRadius.circular(16),
@@ -833,16 +860,16 @@ class MoveDetailSheet extends ConsumerWidget {
                    child: Row(
                      mainAxisAlignment: MainAxisAlignment.center,
                      children: [
-                       const Icon(
+                       Icon(
                          Icons.catching_pokemon,
                          color: Colors.white,
                        ),
-                       const SizedBox(width: 8),
+                       SizedBox(width: 8),
                        Text(
                          move.learn.isEmpty
                              ? 'NO POK\u00c9MON LEARN THIS MOVE'
                              : 'POK\u00c9MON LIST',
-                         style: const TextStyle(
+                         style: TextStyle(
                              color: Colors.white,
                              fontWeight: FontWeight.w900,
                              letterSpacing: 1.2,
@@ -859,10 +886,10 @@ class MoveDetailSheet extends ConsumerWidget {
     );
   }
 
-  Widget _verticalDivider() =>
-      Container(width: 1, height: 36, color: Colors.grey.shade300);
+  Widget _verticalDivider(BuildContext context) =>
+      Container(width: 1, height: 36, color: Theme.of(context).dividerColor);
 
-  Widget _sectionCard(String title, Widget child) => Stack(
+  Widget _sectionCard(BuildContext context, String title, Widget child) => Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.topCenter,
         children: [
@@ -871,7 +898,7 @@ class MoveDetailSheet extends ConsumerWidget {
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(16, 22, 16, 16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(16),
             ),
             child: child,
@@ -882,12 +909,12 @@ class MoveDetailSheet extends ConsumerWidget {
               padding:
                   const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: _accent, width: 1.5),
               ),
               child: Text(title,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w800,
                       color: _accent)),
@@ -904,10 +931,10 @@ class _CardHeading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(text,
-      style: const TextStyle(
+      style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w800,
-          color: AppColors.textPrimary));
+          color: Theme.of(context).textTheme.bodyLarge?.color));
 }
 
 class _StatColumn extends StatelessWidget {
@@ -922,13 +949,13 @@ class _StatColumn extends StatelessWidget {
           children: [
             Text(label,
                 style:
-                    TextStyle(fontSize: 13, color: Colors.grey.shade600)),
-            const SizedBox(height: 2),
+                    TextStyle(fontSize: 13, color: Theme.of(context).textTheme.bodyMedium?.color)),
+            SizedBox(height: 2),
             Text(value,
-                style: const TextStyle(
+                style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary)),
+                    color: Theme.of(context).textTheme.bodyLarge?.color)),
           ],
         ),
       );
@@ -947,22 +974,22 @@ class _DamageGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (types.isEmpty) return const SizedBox.shrink();
+    if (types.isEmpty) return SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(heading,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary)),
-          const SizedBox(height: 2),
+                  color: Theme.of(context).textTheme.bodyLarge?.color)),
+          SizedBox(height: 2),
           Text(subtitle,
               style:
-                  TextStyle(fontSize: 12, color: Colors.grey.shade600)),
-          const SizedBox(height: 8),
+                  TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyMedium?.color)),
+          SizedBox(height: 8),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -1010,7 +1037,7 @@ class _TypePill extends StatelessWidget {
             width: compact ? 16 : 18,
             height: compact ? 16 : 18,
           ),
-          const SizedBox(width: 6),
+          SizedBox(width: 6),
           Text(
             type[0].toUpperCase() + type.substring(1),
             style: TextStyle(
@@ -1046,9 +1073,9 @@ class _SolidClsPill extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 16, color: Colors.white),
-          const SizedBox(width: 6),
+          SizedBox(width: 6),
           Text(_clsLabel(cls),
-              style: const TextStyle(
+              style: TextStyle(
                   color: Colors.white,
                   fontSize: 13,
                   fontWeight: FontWeight.w700)),

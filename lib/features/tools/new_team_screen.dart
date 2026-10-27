@@ -57,14 +57,14 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
   Widget build(BuildContext context) {
     final isEdit = widget.editId != null;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 1,
         centerTitle: true,
         title: Text(
           isEdit ? 'Edit team' : 'New team',
-          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
         ),
       ),
       body: SafeArea(
@@ -82,14 +82,14 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
                     decoration: InputDecoration(
                       hintText: 'Enter the name of your team',
                       filled: true,
-                      fillColor: Colors.grey.shade200,
+                      fillColor: (Theme.of(context).brightness == Brightness.dark) ? Colors.grey.shade800 : Colors.grey.shade200,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                         borderSide: BorderSide.none,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20),
                   const _SectionLabel('Pok\u00e9mon party'),
                   ...[for (var i = 0; i < 6; i++) _slotTile(i)],
                 ],
@@ -113,7 +113,7 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
                       ),
                       borderRadius: BorderRadius.circular(28),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.check, color: Colors.white),
@@ -163,7 +163,7 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
           child: Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.grey.shade200,
+              color: (Theme.of(context).brightness == Brightness.dark) ? Colors.grey.shade800 : Colors.grey.shade200,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
@@ -173,28 +173,28 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
                   width: 72,
                   height: 72,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
+                    color: Theme.of(context).dividerColor,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     Icons.catching_pokemon,
-                    color: Colors.grey.shade500,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
                   ),
                 ),
-                const SizedBox(width: 16),
+                SizedBox(width: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Pok\u00e9mon #${index + 1}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
                     Text(
                       'Add your #${index + 1} Pok\u00e9mon',
-                      style: TextStyle(color: Colors.grey.shade600),
+                      style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
                     ),
                   ],
                 ),
@@ -247,25 +247,25 @@ class _NewTeamScreenState extends ConsumerState<NewTeamScreen> {
                         errorBuilder: (context, error, stackTrace) => Icon(
                           Icons.catching_pokemon,
                           size: 36,
-                          color: Colors.grey.shade400,
+                          color: Theme.of(context).dividerColor,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  SizedBox(width: 16),
                   Expanded(
                     child: Text(
                       row == null
                           ? 'Loading...'
                           : PokemonHelpers.formatName(row.name),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.black45),
+                    icon: Icon(Icons.close, color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.7)),
                     onPressed: () => setState(() => _slots[index] = null),
                   ),
                 ],
@@ -308,7 +308,7 @@ class _SectionLabel extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: Text(
         text,
-        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
       ),
     );
   }

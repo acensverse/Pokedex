@@ -35,19 +35,19 @@ class _PokemonPickerSheetState extends ConsumerState<PokemonPickerSheet> {
   Widget build(BuildContext context) {
     final listAsync = ref.watch(localPokemonListProvider);
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.background,
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
       child: Column(
         children: [
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Container(
             width: 36,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
+              color: Theme.of(context).dividerColor,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -58,9 +58,9 @@ class _PokemonPickerSheetState extends ConsumerState<PokemonPickerSheet> {
               onChanged: (v) => setState(() => _query = v),
               decoration: InputDecoration(
                 hintText: 'Search for a Pok\u00e9mon...',
-                prefixIcon: const Icon(LucideIcons.search),
+                prefixIcon: Icon(LucideIcons.search),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: Theme.of(context).colorScheme.surface,
                 contentPadding: EdgeInsets.zero,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
@@ -71,7 +71,7 @@ class _PokemonPickerSheetState extends ConsumerState<PokemonPickerSheet> {
           ),
           Expanded(
             child: listAsync.when(
-              loading: () => const Center(child: CircularProgressIndicator()),
+              loading: () => Center(child: CircularProgressIndicator()),
               error: (e, _) => Center(child: Text('Failed to load dex:\n$e')),
               data: (all) {
                 final q = _query.toLowerCase().trim();
@@ -83,7 +83,7 @@ class _PokemonPickerSheetState extends ConsumerState<PokemonPickerSheet> {
                     )
                     .toList();
                 if (results.isEmpty) {
-                  return const Center(child: Text('No matches'));
+                  return Center(child: Text('No matches'));
                 }
                 return ListView.builder(
                   padding: const EdgeInsets.only(bottom: 16),

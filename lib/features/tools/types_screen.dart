@@ -45,9 +45,9 @@ class _TypesScreenState extends ConsumerState<TypesScreen> {
   Widget build(BuildContext context) {
     final hasSelection = _type1 != null || _type2 != null;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const ToolsSheetTitle(label: 'Types'),
@@ -59,14 +59,14 @@ class _TypesScreenState extends ConsumerState<TypesScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _typePillButton(1, _type1),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               _typePillButton(2, _type2),
             ],
           ),
           if (!hasSelection)
             const _EmptyTypesView()
           else ...[
-            const SizedBox(height: 24),
+            SizedBox(height: 24),
             Stack(
               alignment: Alignment.topCenter,
               children: [
@@ -78,14 +78,14 @@ class _TypesScreenState extends ConsumerState<TypesScreen> {
               ],
             ),
             if (_type1 != null) ...[
-              const SizedBox(height: 28),
+              SizedBox(height: 28),
               _dealtSection(_type1!),
             ],
             if (_type2 != null) ...[
-              const SizedBox(height: 28),
+              SizedBox(height: 28),
               _dealtSection(_type2!),
             ],
-            const SizedBox(height: 32),
+            SizedBox(height: 32),
           ],
         ],
       ),
@@ -94,7 +94,7 @@ class _TypesScreenState extends ConsumerState<TypesScreen> {
 
   Widget _typePillButton(int slot, String? type) {
     final filled = type != null;
-    final color = filled ? AppColors.getTypeColor(type) : Colors.grey.shade400;
+    final color = filled ? AppColors.getTypeColor(type) : Theme.of(context).dividerColor;
     return InkWell(
       borderRadius: BorderRadius.circular(21),
       onTap: () => _pickType(slot),
@@ -102,7 +102,7 @@ class _TypesScreenState extends ConsumerState<TypesScreen> {
         height: 42,
         padding: EdgeInsets.symmetric(horizontal: filled ? 16 : 20),
         decoration: BoxDecoration(
-          color: filled ? color.withValues(alpha: 0.15) : Colors.grey.shade200,
+          color: filled ? color.withValues(alpha: 0.15) : (Theme.of(context).brightness == Brightness.dark) ? Colors.grey.shade800 : Colors.grey.shade200,
           borderRadius: BorderRadius.circular(21),
           border: filled ? Border.all(color: color, width: 1.5) : null,
         ),
@@ -111,14 +111,14 @@ class _TypesScreenState extends ConsumerState<TypesScreen> {
           children: [
             if (filled) ...[
               SvgPicture.asset('assets/types/$type.svg', width: 20, height: 20),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
             ],
             Text(
               filled
                   ? '${type[0].toUpperCase()}${type.substring(1)}'
                   : 'Type $slot',
               style: TextStyle(
-                color: filled ? color : Colors.grey.shade600,
+                color: filled ? color : Theme.of(context).textTheme.bodyMedium?.color,
                 fontWeight: FontWeight.w800,
                 fontSize: 15,
               ),
@@ -150,24 +150,24 @@ class _EmptyTypesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(height: 56),
-        const Center(child: ToolsIllustration()),
-        const SizedBox(height: 20),
-        const Center(
+        SizedBox(height: 56),
+        Center(child: ToolsIllustration()),
+        SizedBox(height: 20),
+        Center(
           child: Text(
             'Select a type to start',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
           ),
         ),
-        const SizedBox(height: 8),
-        const Center(
+        SizedBox(height: 8),
+        Center(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 32),
             child: Text(
               "Once selected at least one type, you can check its "
               "weaknesses and strengths",
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.textSecondary),
+              style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
             ),
           ),
         ),
@@ -178,7 +178,7 @@ class _EmptyTypesView extends StatelessWidget {
 
 extension _DamageBuckets on _TypesScreenState {
   Widget _group(String title, String subtitle, List<String> types) {
-    if (types.isEmpty) return const SizedBox.shrink();
+    if (types.isEmpty) return SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Column(
@@ -186,13 +186,13 @@ extension _DamageBuckets on _TypesScreenState {
         children: [
           Text(
             title,
-            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
           ),
           Text(
             subtitle,
-            style: const TextStyle(fontSize: 11, color: Colors.black45),
+            style: TextStyle(fontSize: 11, color: Theme.of(context).textTheme.bodyMedium?.color),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Wrap(
             spacing: 8,
             runSpacing: 8,

@@ -12,7 +12,7 @@ class MovesTab extends ConsumerStatefulWidget {
   final Color themeColor;
   final Widget? header;
 
-  const MovesTab({
+  MovesTab({
     super.key,
     required this.pokemon,
     required this.themeColor,
@@ -35,7 +35,7 @@ class _MovesTabState extends ConsumerState<MovesTab> {
         final lookup = {for (final m in allMoves) m.name: m};
         return _buildContent(lookup);
       },
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: CircularProgressIndicator()),
       error: (e, st) => Center(child: Text('Error loading moves: $e')),
     );
   }
@@ -94,12 +94,12 @@ class _MovesTabState extends ConsumerState<MovesTab> {
     }
 
     return Column(
-      key: const ValueKey('Moves'),
+      key: ValueKey('Moves'),
       children: [
         if (widget.header != null) widget.header!,
         Expanded(
           child: Container(
-            padding: const EdgeInsets.only(
+            padding: EdgeInsets.only(
               top: 0,
               bottom: 16,
               left: 16,
@@ -109,10 +109,10 @@ class _MovesTabState extends ConsumerState<MovesTab> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SectionHeader(title: 'Movesets', themeColor: widget.themeColor),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Container(
                   height: 40,
-                  padding: const EdgeInsets.all(4),
+                  padding: EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(20),
@@ -126,7 +126,7 @@ class _MovesTabState extends ConsumerState<MovesTab> {
                       return Stack(
                         children: [
                           AnimatedPositioned(
-                            duration: const Duration(milliseconds: 300),
+                            duration: Duration(milliseconds: 300),
                             curve: Curves.easeInOutCubic,
                             left: currentIndex * tabWidth,
                             top: 0,
@@ -150,13 +150,13 @@ class _MovesTabState extends ConsumerState<MovesTab> {
                                       setState(() => _activeMoveTab = mode),
                                   child: Center(
                                     child: AnimatedDefaultTextStyle(
-                                      duration: const Duration(
+                                      duration: Duration(
                                         milliseconds: 300,
                                       ),
                                       style: TextStyle(
                                         color: isActive
                                             ? Colors.white
-                                            : Colors.black45,
+                                            : Theme.of(context).textTheme.bodyMedium?.color,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 11,
                                       ),
@@ -172,7 +172,7 @@ class _MovesTabState extends ConsumerState<MovesTab> {
                     },
                   ),
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: EdgeInsets.only(
@@ -191,12 +191,12 @@ class _MovesTabState extends ConsumerState<MovesTab> {
 
   Widget _buildMoveTable(List<_LocalMove> moves, {required bool isLevelUp}) {
     if (moves.isEmpty) {
-      return const Padding(
+      return Padding(
         padding: EdgeInsets.all(32.0),
         child: Center(
           child: Text(
             'No moves found for this category.',
-            style: TextStyle(color: Colors.black54),
+            style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
           ),
         ),
       );
@@ -204,37 +204,37 @@ class _MovesTabState extends ConsumerState<MovesTab> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 8.0, left: 4, right: 4),
+          padding: EdgeInsets.only(bottom: 8.0, left: 4, right: 4),
           child: Row(
             children: [
               SizedBox(
                 width: 32,
                 child: Text(
                   isLevelUp ? 'Lvl' : '-',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black45,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
                   ),
                   textAlign: TextAlign.right,
                 ),
               ),
-              const SizedBox(width: 12),
-              const Expanded(
+              SizedBox(width: 12),
+              Expanded(
                 flex: 3,
                 child: Text(
                   'Move',
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black45,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
                   ),
                 ),
               ),
               Expanded(
                 flex: 5,
                 child: Row(
-                  children: const [
+                  children: [
                     Expanded(
                       flex: 2,
                       child: Center(
@@ -243,7 +243,7 @@ class _MovesTabState extends ConsumerState<MovesTab> {
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black45,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
                           ),
                         ),
                       ),
@@ -257,7 +257,7 @@ class _MovesTabState extends ConsumerState<MovesTab> {
                           style: TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black45,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
                           ),
                         ),
                       ),
@@ -270,7 +270,7 @@ class _MovesTabState extends ConsumerState<MovesTab> {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black45,
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
                         ),
                       ),
                     ),
@@ -282,7 +282,7 @@ class _MovesTabState extends ConsumerState<MovesTab> {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black45,
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
                         ),
                       ),
                     ),
@@ -306,14 +306,14 @@ class _MovesTabState extends ConsumerState<MovesTab> {
 class _LocalMove {
   final MoveEntry entry;
   final int level;
-  const _LocalMove({required this.entry, required this.level});
+  _LocalMove({required this.entry, required this.level});
 }
 
 class _LocalMoveRow extends ConsumerWidget {
   final _LocalMove move;
   final String methodText;
 
-  const _LocalMoveRow({required this.move, required this.methodText});
+  _LocalMoveRow({required this.move, required this.methodText});
 
   String _formatName(String name) => name
       .replaceAll('-', ' ')
@@ -355,9 +355,9 @@ class _LocalMoveRow extends ConsumerWidget {
         }
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        decoration: const BoxDecoration(
-          border: Border(bottom: BorderSide(color: Colors.black12)),
+        padding: EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
         ),
         child: Row(
           children: [
@@ -365,16 +365,16 @@ class _LocalMoveRow extends ConsumerWidget {
               width: 32,
               child: Text(
                 methodText,
-                style: const TextStyle(fontSize: 12, color: Colors.black54),
+                style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyMedium?.color),
                 textAlign: TextAlign.right,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12),
             Expanded(
               flex: 3,
               child: Text(
                 _formatName(m.name),
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.bold,
                   color: Colors.blueAccent,
@@ -386,14 +386,14 @@ class _LocalMoveRow extends ConsumerWidget {
               child: Row(
                 children: [
                   Expanded(flex: 2, child: _TypePill(type: m.type)),
-                  const SizedBox(width: 4),
+                  SizedBox(width: 4),
                   Expanded(flex: 2, child: _CatPill(cls: m.cls)),
                   SizedBox(
                     width: 36,
                     child: Text(
                       m.power?.toString() ?? '—',
                       textAlign: TextAlign.right,
-                      style: const TextStyle(fontSize: 12, color: Colors.black87),
+                      style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyLarge?.color),
                     ),
                   ),
                   SizedBox(
@@ -401,7 +401,7 @@ class _LocalMoveRow extends ConsumerWidget {
                     child: Text(
                       m.acc?.toString() ?? '∞',
                       textAlign: TextAlign.right,
-                      style: const TextStyle(fontSize: 12, color: Colors.black87),
+                      style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyLarge?.color),
                     ),
                   ),
                 ],
@@ -416,7 +416,7 @@ class _LocalMoveRow extends ConsumerWidget {
 
 class _TypePill extends StatelessWidget {
   final String type;
-  const _TypePill({required this.type});
+  _TypePill({required this.type});
   @override
   Widget build(BuildContext context) {
     final c = AppColors.getTypeColor(type);
@@ -429,7 +429,7 @@ class _TypePill extends StatelessWidget {
       child: Center(
         child: Text(
           type.toUpperCase(),
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
             fontSize: 8,
             fontWeight: FontWeight.bold,
@@ -442,7 +442,7 @@ class _TypePill extends StatelessWidget {
 
 class _CatPill extends StatelessWidget {
   final String cls;
-  const _CatPill({required this.cls});
+  _CatPill({required this.cls});
   @override
   Widget build(BuildContext context) {
     Color c = Colors.grey;
@@ -457,7 +457,7 @@ class _CatPill extends StatelessWidget {
       child: Center(
         child: Text(
           cls.toUpperCase(),
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
             fontSize: 8,
             fontWeight: FontWeight.bold,

@@ -24,8 +24,8 @@ class TypePickerSheet extends StatelessWidget {
         maxHeight: MediaQuery.sizeOf(context).height * 0.9,
       ),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: SingleChildScrollView(
@@ -36,25 +36,25 @@ class TypePickerSheet extends StatelessWidget {
               width: 36,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: Theme.of(context).dividerColor,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: 12),
             Column(
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 Container(width: 64, height: 3, color: AppColors.primary),
               ],
             ),
-            const SizedBox(height: 14),
+            SizedBox(height: 14),
             GridView.count(
               crossAxisCount: 3,
               shrinkWrap: true,
@@ -93,7 +93,7 @@ class TypePickerSheet extends StatelessWidget {
                               width: 22,
                               height: 22,
                             ),
-                            const SizedBox(width: 5),
+                            SizedBox(width: 5),
                             Flexible(
                               child: Text(
                                 '${t[0].toUpperCase()}${t.substring(1)}',
@@ -142,20 +142,20 @@ class _ClearButton extends StatelessWidget {
           child: Container(
             height: 50,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                 colors: [Color(0xFFFDD835), Color(0xFFFF9800)],
               ),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.close, color: Colors.white, size: 18),
+                Icon(Icons.close, color: Theme.of(context).colorScheme.surface, size: 18),
                 SizedBox(width: 8),
                 Text(
                   'CLEAR',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.2,
                     fontSize: 15,

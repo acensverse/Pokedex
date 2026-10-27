@@ -554,7 +554,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                       ),
                     ),
                     Container(
-                      color: Colors.white,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       padding: EdgeInsets.only(
                         top: MediaQuery.paddingOf(context).top + 8,
                       ),
@@ -585,6 +585,8 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                                 EvolutionTab(
                                   evolutionInfoJson:
                                       pokemon.evolutionInfo ?? '[]',
+                                  pokemonId: pokemon.id,
+                                  speciesId: pokemon.speciesId,
                                 ),
                               ],
                             ),

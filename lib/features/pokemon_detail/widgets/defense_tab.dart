@@ -18,6 +18,7 @@ class DefenseTab extends StatelessWidget {
   });
 
   Widget _buildDefenseCategory(
+    BuildContext context,
     String title,
     List<String> typesList,
     Color titleColor,
@@ -68,8 +69,8 @@ class DefenseTab extends StatelessWidget {
                     ),
                     Text(
                       type[0].toUpperCase() + type.substring(1),
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: Theme.of(context).cardColor,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
@@ -112,10 +113,12 @@ class DefenseTab extends StatelessWidget {
       }
     });
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       key: const ValueKey('Defense'),
       children: [
-        ?header,
+        if (header != null) header!,
         Expanded(
           child: Container(
             padding: const EdgeInsets.only(
@@ -139,45 +142,51 @@ class DefenseTab extends StatelessWidget {
                       children: [
                         if (veryWeakTo.isNotEmpty)
                           _buildDefenseCategory(
+                            context,
                             'Very Weak to (4×)',
                             veryWeakTo,
-                            Colors.red.shade900,
-                            Colors.red.shade50,
+                            isDark ? Colors.red.shade200 : Colors.red.shade900,
+                            isDark ? Colors.red.shade900.withValues(alpha: 0.3) : Colors.red.shade50,
                           ),
                         if (weakTo.isNotEmpty)
                           _buildDefenseCategory(
+                            context,
                             'Weak to (2×)',
                             weakTo,
-                            Colors.red.shade700,
-                            Colors.red.shade50,
+                            isDark ? Colors.red.shade300 : Colors.red.shade700,
+                            isDark ? Colors.red.shade900.withValues(alpha: 0.25) : Colors.red.shade50,
                           ),
                         if (normalTo.isNotEmpty)
                           _buildDefenseCategory(
+                            context,
                             'Normal Damage (1×)',
                             normalTo,
-                            Colors.blueGrey.shade700,
-                            Colors.blueGrey.shade50,
+                            isDark ? Colors.blueGrey.shade200 : Colors.blueGrey.shade700,
+                            isDark ? Colors.blueGrey.shade800.withValues(alpha: 0.4) : Colors.blueGrey.shade50,
                           ),
                         if (resistantTo.isNotEmpty)
                           _buildDefenseCategory(
+                            context,
                             'Resistant to (½×)',
                             resistantTo,
-                            Colors.brown.shade700,
-                            Colors.orange.shade50,
+                            isDark ? Colors.orange.shade300 : Colors.brown.shade700,
+                            isDark ? Colors.orange.shade900.withValues(alpha: 0.3) : Colors.orange.shade50,
                           ),
                         if (veryResistantTo.isNotEmpty)
                           _buildDefenseCategory(
+                            context,
                             'Strongly Resistant to (¼×)',
                             veryResistantTo,
-                            Colors.green.shade700,
-                            Colors.green.shade50,
+                            isDark ? Colors.green.shade300 : Colors.green.shade700,
+                            isDark ? Colors.green.shade900.withValues(alpha: 0.3) : Colors.green.shade50,
                           ),
                         if (immuneTo.isNotEmpty)
                           _buildDefenseCategory(
+                            context,
                             'No Effect (0×)',
                             immuneTo,
-                            Colors.grey.shade700,
-                            Colors.grey.shade100,
+                            isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+                            isDark ? Colors.grey.shade800.withValues(alpha: 0.4) : Colors.grey.shade100,
                           ),
                       ],
                     ),

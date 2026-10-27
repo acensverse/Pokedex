@@ -119,11 +119,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ? 'light'
           : (currentTheme == ThemeMode.dark ? 'dark' : 'system');
 
+      final currentLayout = ref.read(pokedexLayoutProvider);
+      final layoutStr = currentLayout == PokedexLayoutMode.grid ? 'grid' : 'list';
+
       final backupData = {
         'app': 'Pokédex',
         'version': '1.0.0',
         'exportedAt': DateTime.now().toIso8601String(),
         'themeMode': themeStr,
+        'layoutMode': layoutStr,
         'favorites': favoriteIds,
         'teams': teamsData,
       };
@@ -327,6 +331,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         }
       }
 
+      // Restore LayoutMode if available
+      if (data.containsKey('layoutMode') && data['layoutMode'] is String) {
+        final lm = data['layoutMode'];
+        if (lm == 'grid') {
+          LayoutHelper.setLayout(ref, PokedexLayoutMode.grid);
+        } else if (lm == 'list') {
+          LayoutHelper.setLayout(ref, PokedexLayoutMode.list);
+        }
+      }
+
       // Refresh providers
       ref.invalidate(localPokemonListProvider);
 
@@ -357,6 +371,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final activeThemeMode = ref.watch(themeModeProvider);
+    final activeLayoutMode = ref.watch(pokedexLayoutProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -415,7 +430,40 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             const SizedBox(height: 24),
 
             // -----------------------------------------------------------------
-            // SECTION 2: BACKUP & RESTORE
+            // SECTION 2: POKÉDEX LAYOUT MODE (GRID / LIST)
+            // -----------------------------------------------------------------
+            _buildSectionHeader('Pokédex View', Icons.grid_view_rounded),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildLayoutCard(
+                    context: context,
+                    mode: PokedexLayoutMode.grid,
+                    title: 'Grid View',
+                    subtitle: '2+ Columns',
+                    icon: Icons.grid_view_rounded,
+                    isSelected: activeLayoutMode == PokedexLayoutMode.grid,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildLayoutCard(
+                    context: context,
+                    mode: PokedexLayoutMode.list,
+                    title: 'List View',
+                    subtitle: 'Full Width',
+                    icon: Icons.view_list_rounded,
+                    isSelected: activeLayoutMode == PokedexLayoutMode.list,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 24),
+
+            // -----------------------------------------------------------------
+            // SECTION 3: BACKUP & RESTORE
             // -----------------------------------------------------------------
             _buildSectionHeader(
               'Data Backup & Restore',
@@ -976,6 +1024,86 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               ),
             ),
             const SizedBox(height: 4),
+            Icon(
+              isSelected
+                  ? Icons.check_circle_rounded
+                  : Icons.radio_button_unchecked_rounded,
+              size: 16,
+              color: isSelected ? AppColors.primary : Colors.grey.shade400,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLayoutCard({
+    required BuildContext context,
+    required PokedexLayoutMode mode,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required bool isSelected,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return InkWell(
+      onTap: () {
+        LayoutHelper.setLayout(ref, mode);
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: isDark ? 0.25 : 0.1)
+              : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected
+                ? AppColors.primary
+                : (isDark ? Colors.grey.shade800 : Colors.grey.shade300),
+            width: isSelected ? 2.0 : 1.0,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ]
+              : null,
+        ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              color: isSelected
+                  ? AppColors.primary
+                  : (isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+              size: 26,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected
+                    ? AppColors.primary
+                    : (isDark ? Colors.white : AppColors.textPrimary),
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 10,
+                color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 6),
             Icon(
               isSelected
                   ? Icons.check_circle_rounded

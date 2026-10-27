@@ -31,9 +31,9 @@ class BreedingScreen extends ConsumerWidget {
     final breedingInfoAsync = ref.watch(breedingInfoProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const ToolsSheetTitle(label: 'Breeding'),
@@ -272,12 +272,12 @@ class _GenderBar extends StatelessWidget {
           color: Colors.grey.shade100,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: const Center(
+        child: Center(
           child: Text(
             'Genderless',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.black54,
+              color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
             ),
           ),
         ),

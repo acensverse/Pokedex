@@ -50,38 +50,48 @@ class _PokedexSearchBarState extends ConsumerState<PokedexSearchBar> {
   Widget build(BuildContext context) {
     final query = ref.watch(searchQueryProvider);
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return TextField(
       controller: _controller,
       onChanged: _onChanged,
       // No autofocus: the box slides down on icon tap; tap the box itself
       // to activate typing.
-      style: const TextStyle(fontSize: 16, color: Colors.black87),
+      style: TextStyle(
+          fontSize: 16, color: Theme.of(context).textTheme.bodyLarge?.color),
       decoration: InputDecoration(
         hintText: 'Search Pokémon...',
-        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 16),
+        hintStyle: TextStyle(
+            color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
+            fontSize: 16),
         prefixIcon: query.isEmpty
-            ? const Icon(LucideIcons.search, color: Colors.black54, size: 22)
+            ? Icon(LucideIcons.search,
+                color: Theme.of(context).iconTheme.color?.withOpacity(0.6),
+                size: 22)
             : null,
         suffixIcon: query.isNotEmpty
             ? IconButton(
-                icon: const Icon(Icons.close, color: Colors.black54, size: 22),
+                icon: Icon(Icons.close,
+                    color: Theme.of(context).iconTheme.color?.withOpacity(0.6),
+                    size: 22),
                 onPressed: _onSuffixTap,
               )
             : null,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(color: Theme.of(context).dividerColor),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(color: Theme.of(context).dividerColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.black87, width: 1.5),
+          borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.onSurface, width: 1.5),
         ),
         filled: true,
-        fillColor: Colors.grey.shade50,
+        fillColor: Theme.of(context).scaffoldBackgroundColor,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 12,

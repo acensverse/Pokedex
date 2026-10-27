@@ -60,9 +60,9 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
   Widget build(BuildContext context) {
     final ready = _a != null && _b != null;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const ToolsSheetTitle(label: 'Comparator'),
@@ -234,7 +234,7 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
             // Actual Pokedex number (base species), matching the home grid.
             Text(
               '#${pokemon.speciesId.toString().padLeft(3, '0')}',
-              style: TextStyle(color: Colors.black54, fontSize: 11),
+              style: TextStyle(color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.7), fontSize: 11),
             ),
           ],
         ),
@@ -360,18 +360,18 @@ class _ComparatorScreenState extends ConsumerState<ComparatorScreen> {
                         Icon(Icons.male, size: 13, color: Colors.blueAccent),
                         Text(
                           ' ${ratio.male.toStringAsFixed(1)}%',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11,
-                            color: Colors.black54,
+                            color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
                           ),
                         ),
                         const SizedBox(width: 12),
                         Icon(Icons.female, size: 13, color: Colors.pinkAccent),
                         Text(
                           ' ${ratio.female.toStringAsFixed(1)}%',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11,
-                            color: Colors.black54,
+                            color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
                           ),
                         ),
                       ],
