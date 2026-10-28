@@ -59,3 +59,7 @@ flutter:
     - assets/items_seed.json
     - assets/abilities_seed.json
     - assets/natures_seed.json
+    - assets/name_forms.json
+    - assets/species_fallback.json
+    - assets/champions_seed.json
+    - assets/speed_tiers.json

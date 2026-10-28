@@ -3,6 +3,49 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/utils/type_icons.dart';
 
+/// Purple champions-mode accent color shared by the tools screens.
+const Color championsPurple = Color(0xFF8E24AA);
+
+/// Slim banner shown at the top of the Moves/Abilities/Items screens while
+/// Champions mode is active, explaining that the list is scoped to the
+/// Champions roster.
+class ChampionsModeBanner extends StatelessWidget {
+  final String message;
+
+  const ChampionsModeBanner({super.key, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: championsPurple.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: championsPurple, width: 1.2),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.emoji_events, size: 18, color: championsPurple),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: championsPurple,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// Type pill in the app's standard style: natural colored SVG type icon on a
 /// tinted background with a matching colored label.
 class TypePill extends StatelessWidget {

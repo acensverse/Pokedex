@@ -44,5 +44,8 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Downloaded upstream data cache (tool/build_champions_from_champout.js)
+/research/cache/
+
 # Widget Preview related
 .widget_preview/

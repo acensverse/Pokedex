@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import '../../core/champions.dart';
 import '../../core/providers.dart';
 import '../../models/pokemon.dart';
 
@@ -183,6 +184,8 @@ final filteredPokemonProvider = Provider<List<Pokemon>>((ref) {
   final learnerFilter = ref.watch(toolLearnerFilterProvider);
   final abilityFilter = ref.watch(toolAbilityFilterProvider);
   final moveFilter = ref.watch(toolMoveFilterProvider);
+  final championsMode = ref.watch(championsModeProvider);
+  final championIds = ref.watch(championsDataProvider).value?.pokemonIds;
 
   return pokedexState.pokemonList.where((pokemon) {
     final matchesSearch =
@@ -228,6 +231,11 @@ final filteredPokemonProvider = Provider<List<Pokemon>>((ref) {
         _abilityIdsForMode(abilityFilter).contains(pokemon.id);
     final matchesMove = moveFilter == null ||
         moveFilter.ids.contains(pokemon.id);
+    // Champions mode scopes the whole grid to the Champions roster; other
+    // filters (search/type/gen/tool chips) still apply within that subset.
+    // Before the roster asset finishes loading the grid is empty for a frame.
+    final matchesChampions = !championsMode ||
+        (championIds?.contains(pokemon.id) ?? false);
 
     return matchesSearch &&
         matchesType &&
@@ -235,6 +243,7 @@ final filteredPokemonProvider = Provider<List<Pokemon>>((ref) {
         matchesFavorite &&
         matchesLearner &&
         matchesAbility &&
-        matchesMove;
+        matchesMove &&
+        matchesChampions;
   }).toList();
 });

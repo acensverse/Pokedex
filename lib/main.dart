@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app/app.dart';
+import 'core/utils/name_forms.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Load the data-driven name/cry rules before the UI resolves any name.
+  await NameForms.load();
   runApp(const ProviderScope(child: PokedexApp()));
 }

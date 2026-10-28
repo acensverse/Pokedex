@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_spacing.dart';
+import '../../../core/champions.dart';
 import '../pokedex_provider.dart';
 
 class _ToolAction {
@@ -15,6 +16,28 @@ class _ToolAction {
 }
 
 const Color _sheetRed = AppColors.primary;
+
+/// Uniform vertical gap between every tab in the sheet — hero buttons and
+/// grid rows all use this, so spacing stays identical everywhere.
+const double _sheetGap = AppSpacing.md;
+
+/// Purple gradient for the Champions Pokédex button and champions-mode
+/// accents across the app.
+const List<Color> championsGradient = [
+  Color(0xFF9C27B0),
+  Color(0xFF6A1B9A),
+];
+
+/// Clears every home-screen filter so switching Pokédex modes starts clean.
+void _clearPokedexFilters(WidgetRef ref) {
+  ref.read(selectedTypesProvider.notifier).state = [];
+  ref.read(genFilterProvider.notifier).state = 0;
+  ref.read(searchQueryProvider.notifier).state = '';
+  ref.read(debouncedSearchQueryProvider.notifier).state = '';
+  ref.read(toolLearnerFilterProvider.notifier).state = null;
+  ref.read(toolAbilityFilterProvider.notifier).state = null;
+  ref.read(toolMoveFilterProvider.notifier).state = null;
+}
 
 /// Tappable tool-screen header title (label + dropdown dot) that opens the
 /// tools menu sheet — same behavior as the POKEDEX title on the home screen.
@@ -96,6 +119,7 @@ class ToolsSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isChampions = ref.watch(championsModeProvider);
     final gridTools = [
       _ToolAction('Moves', Icons.shield, const [
         Color(0xFFF57C00),
@@ -113,10 +137,16 @@ class ToolsSheet extends ConsumerWidget {
         Color(0xFF2196F3),
         Color(0xFF00BCD4),
       ], '/tools/items'),
-      _ToolAction('Breeding', Icons.egg, const [
-        Color(0xFFEC407A),
-        Color(0xFF8E24AA),
-      ], '/tools/breeding'),
+      if (isChampions)
+        _ToolAction('Speed Tiers', Icons.speed, const [
+          Color(0xFF00897B),
+          Color(0xFF4DB6AC),
+        ], '/tools/speed-tiers')
+      else
+        _ToolAction('Breeding', Icons.egg, const [
+          Color(0xFFEC407A),
+          Color(0xFF8E24AA),
+        ], '/tools/breeding'),
       _ToolAction('Types', Icons.layers, const [
         Color(0xFF3949AB),
         Color(0xFF7E57C2),
@@ -168,16 +198,11 @@ class ToolsSheet extends ConsumerWidget {
                 icon: Icons.catching_pokemon,
                 colors: const [Color(0xFFEF5350), _sheetRed],
                 height: 56,
-                isActive: true,
+                isActive: !isChampions,
                 onTap: () async {
-                  // Clear active filters
-                  ref.read(selectedTypesProvider.notifier).state = [];
-                  ref.read(genFilterProvider.notifier).state = 0;
-                  ref.read(searchQueryProvider.notifier).state = '';
-                  ref.read(debouncedSearchQueryProvider.notifier).state = '';
-                  ref.read(toolLearnerFilterProvider.notifier).state = null;
-                  ref.read(toolAbilityFilterProvider.notifier).state = null;
-                  ref.read(toolMoveFilterProvider.notifier).state = null;
+                  // Clear active filters and leave champions mode
+                  _clearPokedexFilters(ref);
+                  ref.read(championsModeProvider.notifier).state = false;
                   await Future.delayed(const Duration(milliseconds: 300));
                   if (context.mounted) {
                     Navigator.of(context).pop();
@@ -185,12 +210,31 @@ class ToolsSheet extends ConsumerWidget {
                   }
                 },
               ),
-              const SizedBox(height: AppSpacing.md),
+              const SizedBox(height: _sheetGap),
+              _SheetButton(
+                label: 'Champions Pok\u00e9dex',
+                icon: Icons.emoji_events,
+                colors: championsGradient,
+                height: 56,
+                isActive: isChampions,
+                onTap: () async {
+                  // Clear active filters and scope everything to the
+                  // Champions roster
+                  _clearPokedexFilters(ref);
+                  ref.read(championsModeProvider.notifier).state = true;
+                  await Future.delayed(const Duration(milliseconds: 300));
+                  if (context.mounted) {
+                    Navigator.of(context).pop();
+                    GoRouter.of(context).go('/');
+                  }
+                },
+              ),
+              const SizedBox(height: _sheetGap),
               GridView.count(
                 crossAxisCount: 2,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: AppSpacing.sm + 2,
+                mainAxisSpacing: _sheetGap,
                 crossAxisSpacing: AppSpacing.sm + 2,
                 childAspectRatio: 3.0,
                 children: [
@@ -232,70 +276,67 @@ class _SheetButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Material(
-        color: Colors.transparent,
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(14),
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(14),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOutCubic,
-            height: height,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: colors ?? [Colors.grey, Colors.grey],
-              ),
-              borderRadius: BorderRadius.circular(14),
-              border: isActive
-                  ? Border.all(color: Colors.white, width: 2.5)
-                  : Border.all(color: Colors.transparent, width: 2.5),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutCubic,
+          height: height,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: colors ?? [Colors.grey, Colors.grey],
             ),
-            child: Stack(
-              clipBehavior: Clip.none,
-              fit: StackFit.expand,
-              children: [
-                if (icon != null)
-                  Positioned(
-                    right: -6,
-                    bottom: -height * 0.22,
-                    child: Icon(
-                      icon,
-                      size: height * 1.05,
-                      color: Colors.white.withValues(alpha: 0.35),
-                    ),
+            borderRadius: BorderRadius.circular(14),
+            border: isActive
+                ? Border.all(color: Colors.white, width: 2.5)
+                : Border.all(color: Colors.transparent, width: 2.5),
+          ),
+          child: Stack(
+            clipBehavior: Clip.none,
+            fit: StackFit.expand,
+            children: [
+              if (icon != null)
+                Positioned(
+                  right: -6,
+                  bottom: -height * 0.22,
+                  child: Icon(
+                    icon,
+                    size: height * 1.05,
+                    color: Colors.white.withValues(alpha: 0.35),
                   ),
-                if (customIconPath != null)
-                  Positioned(
-                    right: 8,
-                    top: 8,
-                    bottom: 8,
-                    child: Opacity(
-                      opacity: 0.35,
-                      child: Image.asset(customIconPath!, fit: BoxFit.contain),
-                    ),
+                ),
+              if (customIconPath != null)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  bottom: 8,
+                  child: Opacity(
+                    opacity: 0.35,
+                    child: Image.asset(customIconPath!, fit: BoxFit.contain),
                   ),
+                ),
 
-                Center(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      label.toUpperCase(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1.1,
-                        fontSize: 15,
-                      ),
+              Center(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label.toUpperCase(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.1,
+                      fontSize: 15,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

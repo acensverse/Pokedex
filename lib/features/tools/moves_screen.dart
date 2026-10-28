@@ -8,10 +8,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_spacing.dart';
+import '../../core/champions.dart';
 import '../../core/utils/pokemon_helpers.dart';
 import '../../core/utils/type_chart.dart';
 import '../pokedex/pokedex_provider.dart';
 import '../pokedex/widgets/tools_sheet.dart';
+import 'widgets/tool_widgets.dart';
 
 
 class MoveEntry {
@@ -231,16 +233,30 @@ class _MovesScreenState extends ConsumerState<MovesScreen> {
         ),
         data: (moves) {
           final q = _query.toLowerCase();
+          final championsMode = ref.watch(championsModeProvider);
+          final championSpecies =
+              ref.watch(championsDataProvider).value?.speciesIds;
           final filtered = moves.where((m) {
             final matchesQuery = q.isEmpty || m.name.replaceAll('-', ' ').contains(q);
             final matchesType =
                 _typeFilter == null || m.type == _typeFilter;
             final matchesCls = _clsFilter == null || m.cls == _clsFilter;
-            return matchesQuery && matchesType && matchesCls;
+            // Champions mode: keep only moves a roster Pokemon can learn.
+            // `learn` holds base-form ids, so compare against the roster's
+            // species (dex) ids.
+            final matchesChampions = !championsMode ||
+                (championSpecies != null &&
+                    m.learn.any(championSpecies.contains));
+            return matchesQuery && matchesType && matchesCls && matchesChampions;
           }).toList()
             ..sort((a, b) => a.name.compareTo(b.name)); // A-Z
           return Column(
             children: [
+              if (championsMode)
+                const ChampionsModeBanner(
+                  message:
+                      'Champions Pok\u00e9dex \u2014 only moves a roster Pok\u00e9mon can learn',
+                ),
               AnimatedSize(
                 duration: const Duration(milliseconds: 250),
                 curve: Curves.easeInOut,

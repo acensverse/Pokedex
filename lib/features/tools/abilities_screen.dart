@@ -7,9 +7,11 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:go_router/go_router.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_spacing.dart';
+import '../../core/champions.dart';
 import '../../core/utils/pokemon_helpers.dart';
 import '../pokedex/pokedex_provider.dart';
 import '../pokedex/widgets/tools_sheet.dart';
+import 'widgets/tool_widgets.dart';
 
 class AbilityEntry {
   final int id;
@@ -186,14 +188,27 @@ class _AbilitiesScreenState extends ConsumerState<AbilitiesScreen> {
         ),
         data: (abilities) {
           final q = _query.toLowerCase().replaceAll('-', ' ');
+          final championsMode = ref.watch(championsModeProvider);
+          final championIds =
+              ref.watch(championsDataProvider).value?.pokemonIds;
           final filtered = abilities.where((a) {
             final matchesQuery = q.isEmpty || a.name.replaceAll('-', ' ').contains(q);
             final matchesGen = _genFilter == null || a.gen == _genFilter;
-            return matchesQuery && matchesGen;
+            // Champions mode: keep only abilities a roster Pokemon has.
+            // `pokemon` includes form ids, so compare against the roster's
+            // seed row ids directly.
+            final matchesChampions = !championsMode ||
+                (championIds != null && a.pokemon.any(championIds.contains));
+            return matchesQuery && matchesGen && matchesChampions;
           }).toList()
             ..sort((a, b) => a.name.compareTo(b.name)); // A-Z
           return Column(
             children: [
+              if (championsMode)
+                const ChampionsModeBanner(
+                  message:
+                      'Champions Pok\u00e9dex \u2014 only abilities a roster Pok\u00e9mon has',
+                ),
               AnimatedSize(
                 duration: const Duration(milliseconds: 250),
                 curve: Curves.easeInOut,

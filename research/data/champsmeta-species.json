@@ -1,0 +1,7535 @@
+[
+ {
+  "dexNumber": 3,
+  "name": "Venusaur",
+  "baseName": "Venusaur",
+  "types": [
+   "Grass",
+   "Poison"
+  ],
+  "abilities": [
+   "Overgrow",
+   "Chlorophyll"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 82,
+   "defense": 83,
+   "spAtk": 100,
+   "spDef": 100,
+   "speed": 80,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 3,
+  "name": "Mega Venusaur",
+  "baseName": "Venusaur",
+  "types": [
+   "Grass",
+   "Poison"
+  ],
+  "abilities": [
+   "Thick Fat"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 100,
+   "defense": 123,
+   "spAtk": 122,
+   "spDef": 120,
+   "speed": 80,
+   "total": 625
+  }
+ },
+ {
+  "dexNumber": 6,
+  "name": "Charizard",
+  "baseName": "Charizard",
+  "types": [
+   "Fire",
+   "Flying"
+  ],
+  "abilities": [
+   "Blaze",
+   "Solar Power"
+  ],
+  "baseStats": {
+   "hp": 78,
+   "attack": 84,
+   "defense": 78,
+   "spAtk": 109,
+   "spDef": 85,
+   "speed": 100,
+   "total": 534
+  }
+ },
+ {
+  "dexNumber": 6,
+  "name": "Mega Charizard X",
+  "baseName": "Charizard",
+  "types": [
+   "Fire",
+   "Dragon"
+  ],
+  "abilities": [
+   "Tough Claws"
+  ],
+  "baseStats": {
+   "hp": 78,
+   "attack": 130,
+   "defense": 111,
+   "spAtk": 130,
+   "spDef": 85,
+   "speed": 100,
+   "total": 634
+  }
+ },
+ {
+  "dexNumber": 6,
+  "name": "Mega Charizard Y",
+  "baseName": "Charizard",
+  "types": [
+   "Fire",
+   "Flying"
+  ],
+  "abilities": [
+   "Drought"
+  ],
+  "baseStats": {
+   "hp": 78,
+   "attack": 104,
+   "defense": 78,
+   "spAtk": 159,
+   "spDef": 115,
+   "speed": 100,
+   "total": 634
+  }
+ },
+ {
+  "dexNumber": 9,
+  "name": "Blastoise",
+  "baseName": "Blastoise",
+  "types": [
+   "Water"
+  ],
+  "abilities": [
+   "Torrent",
+   "Rain Dish"
+  ],
+  "baseStats": {
+   "hp": 79,
+   "attack": 83,
+   "defense": 100,
+   "spAtk": 85,
+   "spDef": 105,
+   "speed": 78,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 9,
+  "name": "Mega Blastoise",
+  "baseName": "Blastoise",
+  "types": [
+   "Water"
+  ],
+  "abilities": [
+   "Mega Launcher"
+  ],
+  "baseStats": {
+   "hp": 79,
+   "attack": 103,
+   "defense": 120,
+   "spAtk": 135,
+   "spDef": 115,
+   "speed": 78,
+   "total": 630
+  }
+ },
+ {
+  "dexNumber": 15,
+  "name": "Beedrill",
+  "baseName": "Beedrill",
+  "types": [
+   "Bug",
+   "Poison"
+  ],
+  "abilities": [
+   "Swarm",
+   "Sniper"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 90,
+   "defense": 40,
+   "spAtk": 45,
+   "spDef": 80,
+   "speed": 75,
+   "total": 395
+  }
+ },
+ {
+  "dexNumber": 15,
+  "name": "Mega Beedrill",
+  "baseName": "Beedrill",
+  "types": [
+   "Bug",
+   "Poison"
+  ],
+  "abilities": [
+   "Adaptability"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 150,
+   "defense": 40,
+   "spAtk": 15,
+   "spDef": 80,
+   "speed": 145,
+   "total": 495
+  }
+ },
+ {
+  "dexNumber": 18,
+  "name": "Pidgeot",
+  "baseName": "Pidgeot",
+  "types": [
+   "Normal",
+   "Flying"
+  ],
+  "abilities": [
+   "Keen Eye",
+   "Tangled Feet",
+   "Big Pecks"
+  ],
+  "baseStats": {
+   "hp": 83,
+   "attack": 80,
+   "defense": 75,
+   "spAtk": 70,
+   "spDef": 70,
+   "speed": 101,
+   "total": 479
+  }
+ },
+ {
+  "dexNumber": 18,
+  "name": "Mega Pidgeot",
+  "baseName": "Pidgeot",
+  "types": [
+   "Normal",
+   "Flying"
+  ],
+  "abilities": [
+   "No Guard"
+  ],
+  "baseStats": {
+   "hp": 83,
+   "attack": 80,
+   "defense": 80,
+   "spAtk": 135,
+   "spDef": 80,
+   "speed": 121,
+   "total": 579
+  }
+ },
+ {
+  "dexNumber": 24,
+  "name": "Arbok",
+  "baseName": "Arbok",
+  "types": [
+   "Poison"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Shed Skin",
+   "Unnerve"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 95,
+   "defense": 69,
+   "spAtk": 65,
+   "spDef": 79,
+   "speed": 80,
+   "total": 448
+  }
+ },
+ {
+  "dexNumber": 25,
+  "name": "Pikachu",
+  "baseName": "Pikachu",
+  "types": [
+   "Electric"
+  ],
+  "abilities": [
+   "Static",
+   "Lightning Rod"
+  ],
+  "baseStats": {
+   "hp": 35,
+   "attack": 55,
+   "defense": 40,
+   "spAtk": 50,
+   "spDef": 50,
+   "speed": 90,
+   "total": 320
+  }
+ },
+ {
+  "dexNumber": 26,
+  "name": "Raichu",
+  "baseName": "Raichu",
+  "types": [
+   "Electric"
+  ],
+  "abilities": [
+   "Static",
+   "Lightning Rod"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 90,
+   "defense": 55,
+   "spAtk": 90,
+   "spDef": 80,
+   "speed": 110,
+   "total": 485
+  }
+ },
+ {
+  "dexNumber": 26,
+  "name": "Mega Raichu X",
+  "baseName": "Raichu",
+  "types": [
+   "Electric"
+  ],
+  "abilities": [
+   "Electric Surge"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 135,
+   "defense": 95,
+   "spAtk": 90,
+   "spDef": 95,
+   "speed": 110,
+   "total": 585
+  }
+ },
+ {
+  "dexNumber": 26,
+  "name": "Mega Raichu Y",
+  "baseName": "Raichu",
+  "types": [
+   "Electric"
+  ],
+  "abilities": [
+   "No Guard"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 100,
+   "defense": 55,
+   "spAtk": 160,
+   "spDef": 80,
+   "speed": 130,
+   "total": 585
+  }
+ },
+ {
+  "dexNumber": 26,
+  "name": "Raichu (Alolan)",
+  "baseName": "Raichu",
+  "types": [
+   "Electric",
+   "Psychic"
+  ],
+  "abilities": [
+   "Surge Surfer"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 85,
+   "defense": 50,
+   "spAtk": 95,
+   "spDef": 85,
+   "speed": 110,
+   "total": 485
+  }
+ },
+ {
+  "dexNumber": 36,
+  "name": "Clefable",
+  "baseName": "Clefable",
+  "types": [
+   "Fairy"
+  ],
+  "abilities": [
+   "Cute Charm",
+   "Magic Guard",
+   "Unaware"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 70,
+   "defense": 73,
+   "spAtk": 95,
+   "spDef": 90,
+   "speed": 60,
+   "total": 483
+  }
+ },
+ {
+  "dexNumber": 36,
+  "name": "Mega Clefable",
+  "baseName": "Clefable",
+  "types": [
+   "Fairy",
+   "Flying"
+  ],
+  "abilities": [
+   "Magic Bounce"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 80,
+   "defense": 93,
+   "spAtk": 135,
+   "spDef": 110,
+   "speed": 70,
+   "total": 583
+  }
+ },
+ {
+  "dexNumber": 38,
+  "name": "Ninetales",
+  "baseName": "Ninetales",
+  "types": [
+   "Fire"
+  ],
+  "abilities": [
+   "Flash Fire",
+   "Drought"
+  ],
+  "baseStats": {
+   "hp": 73,
+   "attack": 76,
+   "defense": 75,
+   "spAtk": 81,
+   "spDef": 100,
+   "speed": 100,
+   "total": 505
+  }
+ },
+ {
+  "dexNumber": 38,
+  "name": "Ninetales (Alolan)",
+  "baseName": "Ninetales",
+  "types": [
+   "Ice",
+   "Fairy"
+  ],
+  "abilities": [
+   "Snow Cloak",
+   "Snow Warning"
+  ],
+  "baseStats": {
+   "hp": 73,
+   "attack": 67,
+   "defense": 75,
+   "spAtk": 81,
+   "spDef": 100,
+   "speed": 109,
+   "total": 505
+  }
+ },
+ {
+  "dexNumber": 40,
+  "name": "Wigglytuff",
+  "baseName": "Wigglytuff",
+  "types": [
+   "Normal",
+   "Fairy"
+  ],
+  "abilities": [
+   "Cute Charm",
+   "Competitive",
+   "Frisk"
+  ],
+  "baseStats": {
+   "hp": 140,
+   "attack": 70,
+   "defense": 45,
+   "spAtk": 85,
+   "spDef": 50,
+   "speed": 45,
+   "total": 435
+  }
+ },
+ {
+  "dexNumber": 45,
+  "name": "Vileplume",
+  "baseName": "Vileplume",
+  "types": [
+   "Grass",
+   "Poison"
+  ],
+  "abilities": [
+   "Chlorophyll",
+   "Effect Spore"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 80,
+   "defense": 85,
+   "spAtk": 110,
+   "spDef": 90,
+   "speed": 50,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 53,
+  "name": "Persian",
+  "baseName": "Persian",
+  "types": [
+   "Normal"
+  ],
+  "abilities": [
+   "Limber",
+   "Technician",
+   "Unnerve"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 70,
+   "defense": 60,
+   "spAtk": 65,
+   "spDef": 65,
+   "speed": 115,
+   "total": 440
+  }
+ },
+ {
+  "dexNumber": 53,
+  "name": "Persian (Alolan)",
+  "baseName": "Persian",
+  "types": [
+   "Dark"
+  ],
+  "abilities": [
+   "Fur Coat",
+   "Technician",
+   "Rattled"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 60,
+   "defense": 60,
+   "spAtk": 75,
+   "spDef": 65,
+   "speed": 115,
+   "total": 440
+  }
+ },
+ {
+  "dexNumber": 59,
+  "name": "Arcanine",
+  "baseName": "Arcanine",
+  "types": [
+   "Fire"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Flash Fire",
+   "Justified"
+  ],
+  "baseStats": {
+   "hp": 90,
+   "attack": 110,
+   "defense": 80,
+   "spAtk": 100,
+   "spDef": 80,
+   "speed": 95,
+   "total": 555
+  }
+ },
+ {
+  "dexNumber": 59,
+  "name": "Arcanine (Hisuian)",
+  "baseName": "Arcanine",
+  "types": [
+   "Fire",
+   "Rock"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Flash Fire",
+   "Rock Head"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 115,
+   "defense": 80,
+   "spAtk": 95,
+   "spDef": 80,
+   "speed": 90,
+   "total": 555
+  }
+ },
+ {
+  "dexNumber": 65,
+  "name": "Alakazam",
+  "baseName": "Alakazam",
+  "types": [
+   "Psychic"
+  ],
+  "abilities": [
+   "Synchronize",
+   "Inner Focus",
+   "Magic Guard"
+  ],
+  "baseStats": {
+   "hp": 55,
+   "attack": 50,
+   "defense": 45,
+   "spAtk": 135,
+   "spDef": 95,
+   "speed": 120,
+   "total": 500
+  }
+ },
+ {
+  "dexNumber": 65,
+  "name": "Mega Alakazam",
+  "baseName": "Alakazam",
+  "types": [
+   "Psychic"
+  ],
+  "abilities": [
+   "Trace"
+  ],
+  "baseStats": {
+   "hp": 55,
+   "attack": 50,
+   "defense": 65,
+   "spAtk": 175,
+   "spDef": 105,
+   "speed": 150,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 68,
+  "name": "Machamp",
+  "baseName": "Machamp",
+  "types": [
+   "Fighting"
+  ],
+  "abilities": [
+   "Guts",
+   "No Guard",
+   "Steadfast"
+  ],
+  "baseStats": {
+   "hp": 90,
+   "attack": 130,
+   "defense": 80,
+   "spAtk": 65,
+   "spDef": 85,
+   "speed": 55,
+   "total": 505
+  }
+ },
+ {
+  "dexNumber": 71,
+  "name": "Victreebel",
+  "baseName": "Victreebel",
+  "types": [
+   "Grass",
+   "Poison"
+  ],
+  "abilities": [
+   "Chlorophyll",
+   "Gluttony"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 105,
+   "defense": 65,
+   "spAtk": 100,
+   "spDef": 70,
+   "speed": 70,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 71,
+  "name": "Mega Victreebel",
+  "baseName": "Victreebel",
+  "types": [
+   "Grass",
+   "Poison"
+  ],
+  "abilities": [
+   "Innards Out"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 125,
+   "defense": 85,
+   "spAtk": 135,
+   "spDef": 95,
+   "speed": 70,
+   "total": 590
+  }
+ },
+ {
+  "dexNumber": 80,
+  "name": "Slowbro",
+  "baseName": "Slowbro",
+  "types": [
+   "Water",
+   "Psychic"
+  ],
+  "abilities": [
+   "Oblivious",
+   "Own Tempo",
+   "Regenerator"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 75,
+   "defense": 110,
+   "spAtk": 100,
+   "spDef": 80,
+   "speed": 30,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 80,
+  "name": "Mega Slowbro",
+  "baseName": "Slowbro",
+  "types": [
+   "Water",
+   "Psychic"
+  ],
+  "abilities": [
+   "Shell Armor"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 75,
+   "defense": 180,
+   "spAtk": 130,
+   "spDef": 80,
+   "speed": 30,
+   "total": 590
+  }
+ },
+ {
+  "dexNumber": 80,
+  "name": "Slowbro (Galarian)",
+  "baseName": "Slowbro",
+  "types": [
+   "Poison",
+   "Psychic"
+  ],
+  "abilities": [
+   "Quick Draw",
+   "Own Tempo",
+   "Regenerator"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 100,
+   "defense": 95,
+   "spAtk": 100,
+   "spDef": 70,
+   "speed": 30,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 83,
+  "name": "Farfetch'd",
+  "baseName": "Farfetch'd",
+  "types": [
+   "Normal",
+   "Flying"
+  ],
+  "abilities": [
+   "Keen Eye",
+   "Inner Focus",
+   "Defiant"
+  ],
+  "baseStats": {
+   "hp": 52,
+   "attack": 90,
+   "defense": 55,
+   "spAtk": 58,
+   "spDef": 62,
+   "speed": 60,
+   "total": 377
+  }
+ },
+ {
+  "dexNumber": 94,
+  "name": "Gengar",
+  "baseName": "Gengar",
+  "types": [
+   "Ghost",
+   "Poison"
+  ],
+  "abilities": [
+   "Cursed Body"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 65,
+   "defense": 60,
+   "spAtk": 130,
+   "spDef": 75,
+   "speed": 110,
+   "total": 500
+  }
+ },
+ {
+  "dexNumber": 94,
+  "name": "Mega Gengar",
+  "baseName": "Gengar",
+  "types": [
+   "Ghost",
+   "Poison"
+  ],
+  "abilities": [
+   "Shadow Tag"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 65,
+   "defense": 80,
+   "spAtk": 170,
+   "spDef": 95,
+   "speed": 130,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 115,
+  "name": "Kangaskhan",
+  "baseName": "Kangaskhan",
+  "types": [
+   "Normal"
+  ],
+  "abilities": [
+   "Early Bird",
+   "Scrappy",
+   "Inner Focus"
+  ],
+  "baseStats": {
+   "hp": 105,
+   "attack": 95,
+   "defense": 80,
+   "spAtk": 40,
+   "spDef": 80,
+   "speed": 90,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 115,
+  "name": "Mega Kangaskhan",
+  "baseName": "Kangaskhan",
+  "types": [
+   "Normal"
+  ],
+  "abilities": [
+   "Parental Bond"
+  ],
+  "baseStats": {
+   "hp": 105,
+   "attack": 125,
+   "defense": 100,
+   "spAtk": 60,
+   "spDef": 100,
+   "speed": 100,
+   "total": 590
+  }
+ },
+ {
+  "dexNumber": 121,
+  "name": "Starmie",
+  "baseName": "Starmie",
+  "types": [
+   "Water",
+   "Psychic"
+  ],
+  "abilities": [
+   "Illuminate",
+   "Natural Cure",
+   "Analytic"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 75,
+   "defense": 85,
+   "spAtk": 100,
+   "spDef": 85,
+   "speed": 115,
+   "total": 520
+  }
+ },
+ {
+  "dexNumber": 121,
+  "name": "Mega Starmie",
+  "baseName": "Starmie",
+  "types": [
+   "Water",
+   "Psychic"
+  ],
+  "abilities": [
+   "Huge Power"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 100,
+   "defense": 105,
+   "spAtk": 130,
+   "spDef": 105,
+   "speed": 120,
+   "total": 620
+  }
+ },
+ {
+  "dexNumber": 122,
+  "name": "Mr. Mime",
+  "baseName": "Mr. Mime",
+  "types": [
+   "Psychic",
+   "Fairy"
+  ],
+  "abilities": [
+   "Soundproof",
+   "Filter",
+   "Technician"
+  ],
+  "baseStats": {
+   "hp": 40,
+   "attack": 45,
+   "defense": 65,
+   "spAtk": 100,
+   "spDef": 120,
+   "speed": 90,
+   "total": 460
+  }
+ },
+ {
+  "dexNumber": 127,
+  "name": "Pinsir",
+  "baseName": "Pinsir",
+  "types": [
+   "Bug"
+  ],
+  "abilities": [
+   "Hyper Cutter",
+   "Mold Breaker",
+   "Moxie"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 125,
+   "defense": 100,
+   "spAtk": 55,
+   "spDef": 70,
+   "speed": 85,
+   "total": 500
+  }
+ },
+ {
+  "dexNumber": 127,
+  "name": "Mega Pinsir",
+  "baseName": "Pinsir",
+  "types": [
+   "Bug",
+   "Flying"
+  ],
+  "abilities": [
+   "Aerilate"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 155,
+   "defense": 120,
+   "spAtk": 65,
+   "spDef": 90,
+   "speed": 105,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 128,
+  "name": "Tauros",
+  "baseName": "Tauros",
+  "types": [
+   "Normal"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Anger Point",
+   "Sheer Force"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 100,
+   "defense": 95,
+   "spAtk": 40,
+   "spDef": 70,
+   "speed": 110,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 128,
+  "name": "Tauros (Paldean)",
+  "baseName": "Tauros",
+  "types": [
+   "Fighting"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Anger Point",
+   "Cud Chew"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 110,
+   "defense": 105,
+   "spAtk": 30,
+   "spDef": 70,
+   "speed": 100,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 128,
+  "name": "Tauros (Paldean Fire Breed)",
+  "baseName": "Tauros",
+  "types": [
+   "Fighting",
+   "Fire"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Anger Point",
+   "Cud Chew"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 110,
+   "defense": 105,
+   "spAtk": 30,
+   "spDef": 70,
+   "speed": 100,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 128,
+  "name": "Tauros (Paldean Water Breed)",
+  "baseName": "Tauros",
+  "types": [
+   "Fighting",
+   "Water"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Anger Point",
+   "Cud Chew"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 110,
+   "defense": 105,
+   "spAtk": 30,
+   "spDef": 70,
+   "speed": 100,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 130,
+  "name": "Gyarados",
+  "baseName": "Gyarados",
+  "types": [
+   "Water",
+   "Flying"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Moxie"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 125,
+   "defense": 79,
+   "spAtk": 60,
+   "spDef": 100,
+   "speed": 81,
+   "total": 540
+  }
+ },
+ {
+  "dexNumber": 130,
+  "name": "Mega Gyarados",
+  "baseName": "Gyarados",
+  "types": [
+   "Water",
+   "Dark"
+  ],
+  "abilities": [
+   "Mold Breaker"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 155,
+   "defense": 109,
+   "spAtk": 70,
+   "spDef": 130,
+   "speed": 81,
+   "total": 640
+  }
+ },
+ {
+  "dexNumber": 132,
+  "name": "Ditto",
+  "baseName": "Ditto",
+  "types": [
+   "Normal"
+  ],
+  "abilities": [
+   "Limber",
+   "Imposter"
+  ],
+  "baseStats": {
+   "hp": 48,
+   "attack": 48,
+   "defense": 48,
+   "spAtk": 48,
+   "spDef": 48,
+   "speed": 48,
+   "total": 288
+  }
+ },
+ {
+  "dexNumber": 134,
+  "name": "Vaporeon",
+  "baseName": "Vaporeon",
+  "types": [
+   "Water"
+  ],
+  "abilities": [
+   "Water Absorb",
+   "Hydration"
+  ],
+  "baseStats": {
+   "hp": 130,
+   "attack": 65,
+   "defense": 60,
+   "spAtk": 110,
+   "spDef": 95,
+   "speed": 65,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 135,
+  "name": "Jolteon",
+  "baseName": "Jolteon",
+  "types": [
+   "Electric"
+  ],
+  "abilities": [
+   "Volt Absorb",
+   "Quick Feet"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 65,
+   "defense": 60,
+   "spAtk": 110,
+   "spDef": 95,
+   "speed": 130,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 136,
+  "name": "Flareon",
+  "baseName": "Flareon",
+  "types": [
+   "Fire"
+  ],
+  "abilities": [
+   "Flash Fire",
+   "Guts"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 130,
+   "defense": 60,
+   "spAtk": 95,
+   "spDef": 110,
+   "speed": 65,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 142,
+  "name": "Aerodactyl",
+  "baseName": "Aerodactyl",
+  "types": [
+   "Rock",
+   "Flying"
+  ],
+  "abilities": [
+   "Rock Head",
+   "Pressure",
+   "Unnerve"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 105,
+   "defense": 65,
+   "spAtk": 60,
+   "spDef": 75,
+   "speed": 130,
+   "total": 515
+  }
+ },
+ {
+  "dexNumber": 142,
+  "name": "Mega Aerodactyl",
+  "baseName": "Aerodactyl",
+  "types": [
+   "Rock",
+   "Flying"
+  ],
+  "abilities": [
+   "Tough Claws"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 135,
+   "defense": 85,
+   "spAtk": 70,
+   "spDef": 95,
+   "speed": 150,
+   "total": 615
+  }
+ },
+ {
+  "dexNumber": 143,
+  "name": "Snorlax",
+  "baseName": "Snorlax",
+  "types": [
+   "Normal"
+  ],
+  "abilities": [
+   "Immunity",
+   "Thick Fat",
+   "Gluttony"
+  ],
+  "baseStats": {
+   "hp": 160,
+   "attack": 110,
+   "defense": 65,
+   "spAtk": 65,
+   "spDef": 110,
+   "speed": 30,
+   "total": 540
+  }
+ },
+ {
+  "dexNumber": 149,
+  "name": "Dragonite",
+  "baseName": "Dragonite",
+  "types": [
+   "Dragon",
+   "Flying"
+  ],
+  "abilities": [
+   "Inner Focus",
+   "Multiscale"
+  ],
+  "baseStats": {
+   "hp": 91,
+   "attack": 134,
+   "defense": 95,
+   "spAtk": 100,
+   "spDef": 100,
+   "speed": 80,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 149,
+  "name": "Mega Dragonite",
+  "baseName": "Dragonite",
+  "types": [
+   "Dragon",
+   "Flying"
+  ],
+  "abilities": [
+   "Multiscale"
+  ],
+  "baseStats": {
+   "hp": 91,
+   "attack": 124,
+   "defense": 115,
+   "spAtk": 145,
+   "spDef": 125,
+   "speed": 100,
+   "total": 700
+  }
+ },
+ {
+  "dexNumber": 154,
+  "name": "Meganium",
+  "baseName": "Meganium",
+  "types": [
+   "Grass"
+  ],
+  "abilities": [
+   "Overgrow",
+   "Leaf Guard"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 82,
+   "defense": 100,
+   "spAtk": 83,
+   "spDef": 100,
+   "speed": 80,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 154,
+  "name": "Mega Meganium",
+  "baseName": "Meganium",
+  "types": [
+   "Grass",
+   "Fairy"
+  ],
+  "abilities": [
+   "Mega Sol"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 92,
+   "defense": 115,
+   "spAtk": 143,
+   "spDef": 115,
+   "speed": 80,
+   "total": 625
+  }
+ },
+ {
+  "dexNumber": 157,
+  "name": "Typhlosion",
+  "baseName": "Typhlosion",
+  "types": [
+   "Fire"
+  ],
+  "abilities": [
+   "Blaze",
+   "Flash Fire"
+  ],
+  "baseStats": {
+   "hp": 78,
+   "attack": 84,
+   "defense": 78,
+   "spAtk": 109,
+   "spDef": 85,
+   "speed": 100,
+   "total": 534
+  }
+ },
+ {
+  "dexNumber": 157,
+  "name": "Typhlosion (Hisuian)",
+  "baseName": "Typhlosion",
+  "types": [
+   "Fire",
+   "Ghost"
+  ],
+  "abilities": [
+   "Blaze",
+   "Frisk"
+  ],
+  "baseStats": {
+   "hp": 73,
+   "attack": 84,
+   "defense": 78,
+   "spAtk": 119,
+   "spDef": 85,
+   "speed": 95,
+   "total": 534
+  }
+ },
+ {
+  "dexNumber": 160,
+  "name": "Feraligatr",
+  "baseName": "Feraligatr",
+  "types": [
+   "Water"
+  ],
+  "abilities": [
+   "Torrent",
+   "Sheer Force"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 105,
+   "defense": 100,
+   "spAtk": 79,
+   "spDef": 83,
+   "speed": 78,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 160,
+  "name": "Mega Feraligatr",
+  "baseName": "Feraligatr",
+  "types": [
+   "Water",
+   "Dragon"
+  ],
+  "abilities": [
+   "Dragonize"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 160,
+   "defense": 125,
+   "spAtk": 89,
+   "spDef": 93,
+   "speed": 78,
+   "total": 630
+  }
+ },
+ {
+  "dexNumber": 168,
+  "name": "Ariados",
+  "baseName": "Ariados",
+  "types": [
+   "Bug",
+   "Poison"
+  ],
+  "abilities": [
+   "Swarm",
+   "Insomnia",
+   "Sniper"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 90,
+   "defense": 70,
+   "spAtk": 60,
+   "spDef": 70,
+   "speed": 40,
+   "total": 400
+  }
+ },
+ {
+  "dexNumber": 181,
+  "name": "Ampharos",
+  "baseName": "Ampharos",
+  "types": [
+   "Electric"
+  ],
+  "abilities": [
+   "Static",
+   "Plus"
+  ],
+  "baseStats": {
+   "hp": 90,
+   "attack": 75,
+   "defense": 85,
+   "spAtk": 115,
+   "spDef": 90,
+   "speed": 55,
+   "total": 510
+  }
+ },
+ {
+  "dexNumber": 181,
+  "name": "Mega Ampharos",
+  "baseName": "Ampharos",
+  "types": [
+   "Electric",
+   "Dragon"
+  ],
+  "abilities": [
+   "Mold Breaker"
+  ],
+  "baseStats": {
+   "hp": 90,
+   "attack": 95,
+   "defense": 105,
+   "spAtk": 165,
+   "spDef": 110,
+   "speed": 45,
+   "total": 610
+  }
+ },
+ {
+  "dexNumber": 184,
+  "name": "Azumarill",
+  "baseName": "Azumarill",
+  "types": [
+   "Water",
+   "Fairy"
+  ],
+  "abilities": [
+   "Thick Fat",
+   "Huge Power",
+   "Sap Sipper"
+  ],
+  "baseStats": {
+   "hp": 100,
+   "attack": 50,
+   "defense": 80,
+   "spAtk": 60,
+   "spDef": 80,
+   "speed": 50,
+   "total": 420
+  }
+ },
+ {
+  "dexNumber": 186,
+  "name": "Politoed",
+  "baseName": "Politoed",
+  "types": [
+   "Water"
+  ],
+  "abilities": [
+   "Water Absorb",
+   "Damp",
+   "Drizzle"
+  ],
+  "baseStats": {
+   "hp": 90,
+   "attack": 75,
+   "defense": 75,
+   "spAtk": 90,
+   "spDef": 100,
+   "speed": 70,
+   "total": 500
+  }
+ },
+ {
+  "dexNumber": 196,
+  "name": "Espeon",
+  "baseName": "Espeon",
+  "types": [
+   "Psychic"
+  ],
+  "abilities": [
+   "Synchronize",
+   "Magic Bounce"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 65,
+   "defense": 60,
+   "spAtk": 130,
+   "spDef": 95,
+   "speed": 110,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 197,
+  "name": "Umbreon",
+  "baseName": "Umbreon",
+  "types": [
+   "Dark"
+  ],
+  "abilities": [
+   "Synchronize",
+   "Inner Focus"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 65,
+   "defense": 110,
+   "spAtk": 60,
+   "spDef": 130,
+   "speed": 65,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 199,
+  "name": "Slowking",
+  "baseName": "Slowking",
+  "types": [
+   "Water",
+   "Psychic"
+  ],
+  "abilities": [
+   "Oblivious",
+   "Own Tempo",
+   "Regenerator"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 75,
+   "defense": 80,
+   "spAtk": 100,
+   "spDef": 110,
+   "speed": 30,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 199,
+  "name": "Slowking (Galarian)",
+  "baseName": "Slowking",
+  "types": [
+   "Poison",
+   "Psychic"
+  ],
+  "abilities": [
+   "Curious Medicine",
+   "Own Tempo",
+   "Regenerator"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 65,
+   "defense": 80,
+   "spAtk": 110,
+   "spDef": 110,
+   "speed": 30,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 205,
+  "name": "Forretress",
+  "baseName": "Forretress",
+  "types": [
+   "Bug",
+   "Steel"
+  ],
+  "abilities": [
+   "Sturdy",
+   "Overcoat"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 90,
+   "defense": 140,
+   "spAtk": 60,
+   "spDef": 60,
+   "speed": 40,
+   "total": 465
+  }
+ },
+ {
+  "dexNumber": 208,
+  "name": "Steelix",
+  "baseName": "Steelix",
+  "types": [
+   "Steel",
+   "Ground"
+  ],
+  "abilities": [
+   "Rock Head",
+   "Sturdy",
+   "Sheer Force"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 85,
+   "defense": 200,
+   "spAtk": 55,
+   "spDef": 65,
+   "speed": 30,
+   "total": 510
+  }
+ },
+ {
+  "dexNumber": 208,
+  "name": "Mega Steelix",
+  "baseName": "Steelix",
+  "types": [
+   "Steel",
+   "Ground"
+  ],
+  "abilities": [
+   "Sand Force"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 125,
+   "defense": 230,
+   "spAtk": 55,
+   "spDef": 95,
+   "speed": 30,
+   "total": 610
+  }
+ },
+ {
+  "dexNumber": 211,
+  "name": "Qwilfish",
+  "baseName": "Qwilfish",
+  "types": [
+   "Water",
+   "Poison"
+  ],
+  "abilities": [
+   "Poison Point",
+   "Swift Swim",
+   "Intimidate"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 95,
+   "defense": 85,
+   "spAtk": 55,
+   "spDef": 55,
+   "speed": 85,
+   "total": 440
+  }
+ },
+ {
+  "dexNumber": 212,
+  "name": "Scizor",
+  "baseName": "Scizor",
+  "types": [
+   "Bug",
+   "Steel"
+  ],
+  "abilities": [
+   "Swarm",
+   "Technician",
+   "Light Metal"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 130,
+   "defense": 100,
+   "spAtk": 55,
+   "spDef": 80,
+   "speed": 65,
+   "total": 500
+  }
+ },
+ {
+  "dexNumber": 212,
+  "name": "Mega Scizor",
+  "baseName": "Scizor",
+  "types": [
+   "Bug",
+   "Steel"
+  ],
+  "abilities": [
+   "Technician"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 150,
+   "defense": 140,
+   "spAtk": 65,
+   "spDef": 100,
+   "speed": 75,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 214,
+  "name": "Heracross",
+  "baseName": "Heracross",
+  "types": [
+   "Bug",
+   "Fighting"
+  ],
+  "abilities": [
+   "Swarm",
+   "Guts",
+   "Moxie"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 125,
+   "defense": 75,
+   "spAtk": 40,
+   "spDef": 95,
+   "speed": 85,
+   "total": 500
+  }
+ },
+ {
+  "dexNumber": 214,
+  "name": "Mega Heracross",
+  "baseName": "Heracross",
+  "types": [
+   "Bug",
+   "Fighting"
+  ],
+  "abilities": [
+   "Skill Link"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 185,
+   "defense": 115,
+   "spAtk": 40,
+   "spDef": 105,
+   "speed": 75,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 227,
+  "name": "Skarmory",
+  "baseName": "Skarmory",
+  "types": [
+   "Steel",
+   "Flying"
+  ],
+  "abilities": [
+   "Keen Eye",
+   "Sturdy",
+   "Weak Armor"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 80,
+   "defense": 140,
+   "spAtk": 40,
+   "spDef": 70,
+   "speed": 70,
+   "total": 465
+  }
+ },
+ {
+  "dexNumber": 227,
+  "name": "Mega Skarmory",
+  "baseName": "Skarmory",
+  "types": [
+   "Steel",
+   "Flying"
+  ],
+  "abilities": [
+   "Stalwart"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 140,
+   "defense": 110,
+   "spAtk": 40,
+   "spDef": 100,
+   "speed": 110,
+   "total": 565
+  }
+ },
+ {
+  "dexNumber": 229,
+  "name": "Houndoom",
+  "baseName": "Houndoom",
+  "types": [
+   "Dark",
+   "Fire"
+  ],
+  "abilities": [
+   "Early Bird",
+   "Flash Fire",
+   "Unnerve"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 90,
+   "defense": 50,
+   "spAtk": 110,
+   "spDef": 80,
+   "speed": 95,
+   "total": 500
+  }
+ },
+ {
+  "dexNumber": 229,
+  "name": "Mega Houndoom",
+  "baseName": "Houndoom",
+  "types": [
+   "Dark",
+   "Fire"
+  ],
+  "abilities": [
+   "Solar Power"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 90,
+   "defense": 90,
+   "spAtk": 140,
+   "spDef": 90,
+   "speed": 115,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 248,
+  "name": "Tyranitar",
+  "baseName": "Tyranitar",
+  "types": [
+   "Rock",
+   "Dark"
+  ],
+  "abilities": [
+   "Sand Stream",
+   "Unnerve"
+  ],
+  "baseStats": {
+   "hp": 100,
+   "attack": 134,
+   "defense": 110,
+   "spAtk": 95,
+   "spDef": 100,
+   "speed": 61,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 248,
+  "name": "Mega Tyranitar",
+  "baseName": "Tyranitar",
+  "types": [
+   "Rock",
+   "Dark"
+  ],
+  "abilities": [
+   "Sand Stream"
+  ],
+  "baseStats": {
+   "hp": 100,
+   "attack": 164,
+   "defense": 150,
+   "spAtk": 95,
+   "spDef": 120,
+   "speed": 71,
+   "total": 700
+  }
+ },
+ {
+  "dexNumber": 254,
+  "name": "Sceptile",
+  "baseName": "Sceptile",
+  "types": [
+   "Grass"
+  ],
+  "abilities": [
+   "Overgrow",
+   "Unburden"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 85,
+   "defense": 65,
+   "spAtk": 105,
+   "spDef": 85,
+   "speed": 120,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 254,
+  "name": "Mega Sceptile",
+  "baseName": "Sceptile",
+  "types": [
+   "Grass",
+   "Dragon"
+  ],
+  "abilities": [
+   "Lightning Rod"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 110,
+   "defense": 75,
+   "spAtk": 145,
+   "spDef": 85,
+   "speed": 145,
+   "total": 630
+  }
+ },
+ {
+  "dexNumber": 257,
+  "name": "Blaziken",
+  "baseName": "Blaziken",
+  "types": [
+   "Fire",
+   "Fighting"
+  ],
+  "abilities": [
+   "Blaze",
+   "Speed Boost"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 120,
+   "defense": 70,
+   "spAtk": 110,
+   "spDef": 70,
+   "speed": 80,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 257,
+  "name": "Mega Blaziken",
+  "baseName": "Blaziken",
+  "types": [
+   "Fire",
+   "Fighting"
+  ],
+  "abilities": [
+   "Speed Boost"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 160,
+   "defense": 80,
+   "spAtk": 130,
+   "spDef": 80,
+   "speed": 100,
+   "total": 630
+  }
+ },
+ {
+  "dexNumber": 260,
+  "name": "Swampert",
+  "baseName": "Swampert",
+  "types": [
+   "Water",
+   "Ground"
+  ],
+  "abilities": [
+   "Torrent",
+   "Damp"
+  ],
+  "baseStats": {
+   "hp": 100,
+   "attack": 110,
+   "defense": 90,
+   "spAtk": 85,
+   "spDef": 90,
+   "speed": 60,
+   "total": 535
+  }
+ },
+ {
+  "dexNumber": 260,
+  "name": "Mega Swampert",
+  "baseName": "Swampert",
+  "types": [
+   "Water",
+   "Ground"
+  ],
+  "abilities": [
+   "Swift Swim"
+  ],
+  "baseStats": {
+   "hp": 100,
+   "attack": 150,
+   "defense": 110,
+   "spAtk": 95,
+   "spDef": 110,
+   "speed": 70,
+   "total": 635
+  }
+ },
+ {
+  "dexNumber": 279,
+  "name": "Pelipper",
+  "baseName": "Pelipper",
+  "types": [
+   "Water",
+   "Flying"
+  ],
+  "abilities": [
+   "Keen Eye",
+   "Drizzle",
+   "Rain Dish"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 50,
+   "defense": 100,
+   "spAtk": 95,
+   "spDef": 70,
+   "speed": 65,
+   "total": 440
+  }
+ },
+ {
+  "dexNumber": 282,
+  "name": "Gardevoir",
+  "baseName": "Gardevoir",
+  "types": [
+   "Psychic",
+   "Fairy"
+  ],
+  "abilities": [
+   "Synchronize",
+   "Trace",
+   "Telepathy"
+  ],
+  "baseStats": {
+   "hp": 68,
+   "attack": 65,
+   "defense": 65,
+   "spAtk": 125,
+   "spDef": 115,
+   "speed": 80,
+   "total": 518
+  }
+ },
+ {
+  "dexNumber": 282,
+  "name": "Mega Gardevoir",
+  "baseName": "Gardevoir",
+  "types": [
+   "Psychic",
+   "Fairy"
+  ],
+  "abilities": [
+   "Pixilate"
+  ],
+  "baseStats": {
+   "hp": 68,
+   "attack": 85,
+   "defense": 65,
+   "spAtk": 165,
+   "spDef": 135,
+   "speed": 100,
+   "total": 618
+  }
+ },
+ {
+  "dexNumber": 302,
+  "name": "Sableye",
+  "baseName": "Sableye",
+  "types": [
+   "Dark",
+   "Ghost"
+  ],
+  "abilities": [
+   "Keen Eye",
+   "Stall",
+   "Prankster"
+  ],
+  "baseStats": {
+   "hp": 50,
+   "attack": 75,
+   "defense": 75,
+   "spAtk": 65,
+   "spDef": 65,
+   "speed": 50,
+   "total": 380
+  }
+ },
+ {
+  "dexNumber": 302,
+  "name": "Mega Sableye",
+  "baseName": "Sableye",
+  "types": [
+   "Dark",
+   "Ghost"
+  ],
+  "abilities": [
+   "Magic Bounce"
+  ],
+  "baseStats": {
+   "hp": 50,
+   "attack": 85,
+   "defense": 125,
+   "spAtk": 85,
+   "spDef": 115,
+   "speed": 20,
+   "total": 480
+  }
+ },
+ {
+  "dexNumber": 303,
+  "name": "Mawile",
+  "baseName": "Mawile",
+  "types": [
+   "Steel",
+   "Fairy"
+  ],
+  "abilities": [
+   "Hyper Cutter",
+   "Intimidate",
+   "Sheer Force"
+  ],
+  "baseStats": {
+   "hp": 50,
+   "attack": 85,
+   "defense": 85,
+   "spAtk": 55,
+   "spDef": 55,
+   "speed": 50,
+   "total": 380
+  }
+ },
+ {
+  "dexNumber": 303,
+  "name": "Mega Mawile",
+  "baseName": "Mawile",
+  "types": [
+   "Steel",
+   "Fairy"
+  ],
+  "abilities": [
+   "Huge Power"
+  ],
+  "baseStats": {
+   "hp": 50,
+   "attack": 105,
+   "defense": 125,
+   "spAtk": 55,
+   "spDef": 95,
+   "speed": 50,
+   "total": 480
+  }
+ },
+ {
+  "dexNumber": 306,
+  "name": "Aggron",
+  "baseName": "Aggron",
+  "types": [
+   "Steel",
+   "Rock"
+  ],
+  "abilities": [
+   "Sturdy",
+   "Rock Head",
+   "Heavy Metal"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 110,
+   "defense": 180,
+   "spAtk": 60,
+   "spDef": 60,
+   "speed": 50,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 306,
+  "name": "Mega Aggron",
+  "baseName": "Aggron",
+  "types": [
+   "Steel"
+  ],
+  "abilities": [
+   "Filter"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 140,
+   "defense": 230,
+   "spAtk": 60,
+   "spDef": 80,
+   "speed": 50,
+   "total": 630
+  }
+ },
+ {
+  "dexNumber": 308,
+  "name": "Medicham",
+  "baseName": "Medicham",
+  "types": [
+   "Fighting",
+   "Psychic"
+  ],
+  "abilities": [
+   "Pure Power",
+   "Telepathy"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 60,
+   "defense": 75,
+   "spAtk": 60,
+   "spDef": 75,
+   "speed": 80,
+   "total": 410
+  }
+ },
+ {
+  "dexNumber": 308,
+  "name": "Mega Medicham",
+  "baseName": "Medicham",
+  "types": [
+   "Fighting",
+   "Psychic"
+  ],
+  "abilities": [
+   "Pure Power"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 100,
+   "defense": 85,
+   "spAtk": 80,
+   "spDef": 85,
+   "speed": 100,
+   "total": 510
+  }
+ },
+ {
+  "dexNumber": 310,
+  "name": "Manectric",
+  "baseName": "Manectric",
+  "types": [
+   "Electric"
+  ],
+  "abilities": [
+   "Static",
+   "Lightning Rod",
+   "Minus"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 75,
+   "defense": 60,
+   "spAtk": 105,
+   "spDef": 60,
+   "speed": 105,
+   "total": 475
+  }
+ },
+ {
+  "dexNumber": 310,
+  "name": "Mega Manectric",
+  "baseName": "Manectric",
+  "types": [
+   "Electric"
+  ],
+  "abilities": [
+   "Intimidate"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 75,
+   "defense": 80,
+   "spAtk": 135,
+   "spDef": 80,
+   "speed": 135,
+   "total": 575
+  }
+ },
+ {
+  "dexNumber": 317,
+  "name": "Swalot",
+  "baseName": "Swalot",
+  "types": [
+   "Poison"
+  ],
+  "abilities": [
+   "Liquid Ooze",
+   "Sticky Hold",
+   "Gluttony"
+  ],
+  "baseStats": {
+   "hp": 100,
+   "attack": 73,
+   "defense": 83,
+   "spAtk": 73,
+   "spDef": 83,
+   "speed": 55,
+   "total": 467
+  }
+ },
+ {
+  "dexNumber": 319,
+  "name": "Sharpedo",
+  "baseName": "Sharpedo",
+  "types": [
+   "Water",
+   "Dark"
+  ],
+  "abilities": [
+   "Rough Skin",
+   "Speed Boost"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 120,
+   "defense": 40,
+   "spAtk": 95,
+   "spDef": 40,
+   "speed": 95,
+   "total": 460
+  }
+ },
+ {
+  "dexNumber": 319,
+  "name": "Mega Sharpedo",
+  "baseName": "Sharpedo",
+  "types": [
+   "Water",
+   "Dark"
+  ],
+  "abilities": [
+   "Strong Jaw"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 140,
+   "defense": 70,
+   "spAtk": 110,
+   "spDef": 65,
+   "speed": 105,
+   "total": 560
+  }
+ },
+ {
+  "dexNumber": 323,
+  "name": "Camerupt",
+  "baseName": "Camerupt",
+  "types": [
+   "Fire",
+   "Ground"
+  ],
+  "abilities": [
+   "Magma Armor",
+   "Solid Rock",
+   "Anger Point"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 100,
+   "defense": 70,
+   "spAtk": 105,
+   "spDef": 75,
+   "speed": 40,
+   "total": 460
+  }
+ },
+ {
+  "dexNumber": 323,
+  "name": "Mega Camerupt",
+  "baseName": "Camerupt",
+  "types": [
+   "Fire",
+   "Ground"
+  ],
+  "abilities": [
+   "Sheer Force"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 120,
+   "defense": 100,
+   "spAtk": 145,
+   "spDef": 105,
+   "speed": 20,
+   "total": 560
+  }
+ },
+ {
+  "dexNumber": 324,
+  "name": "Torkoal",
+  "baseName": "Torkoal",
+  "types": [
+   "Fire"
+  ],
+  "abilities": [
+   "White Smoke",
+   "Drought",
+   "Shell Armor"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 85,
+   "defense": 140,
+   "spAtk": 85,
+   "spDef": 70,
+   "speed": 20,
+   "total": 470
+  }
+ },
+ {
+  "dexNumber": 334,
+  "name": "Altaria",
+  "baseName": "Altaria",
+  "types": [
+   "Dragon",
+   "Flying"
+  ],
+  "abilities": [
+   "Natural Cure",
+   "Cloud Nine"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 70,
+   "defense": 90,
+   "spAtk": 70,
+   "spDef": 105,
+   "speed": 80,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 334,
+  "name": "Mega Altaria",
+  "baseName": "Altaria",
+  "types": [
+   "Dragon",
+   "Fairy"
+  ],
+  "abilities": [
+   "Pixilate"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 110,
+   "defense": 110,
+   "spAtk": 110,
+   "spDef": 105,
+   "speed": 80,
+   "total": 590
+  }
+ },
+ {
+  "dexNumber": 350,
+  "name": "Milotic",
+  "baseName": "Milotic",
+  "types": [
+   "Water"
+  ],
+  "abilities": [
+   "Marvel Scale",
+   "Competitive",
+   "Cute Charm"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 60,
+   "defense": 79,
+   "spAtk": 100,
+   "spDef": 125,
+   "speed": 81,
+   "total": 540
+  }
+ },
+ {
+  "dexNumber": 351,
+  "name": "Castform",
+  "baseName": "Castform",
+  "types": [
+   "Normal"
+  ],
+  "abilities": [
+   "Forecast",
+   "Swift Swim",
+   "Hydration"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 70,
+   "defense": 70,
+   "spAtk": 70,
+   "spDef": 70,
+   "speed": 70,
+   "total": 420
+  }
+ },
+ {
+  "dexNumber": 354,
+  "name": "Banette",
+  "baseName": "Banette",
+  "types": [
+   "Ghost"
+  ],
+  "abilities": [
+   "Insomnia",
+   "Frisk",
+   "Cursed Body"
+  ],
+  "baseStats": {
+   "hp": 64,
+   "attack": 115,
+   "defense": 65,
+   "spAtk": 83,
+   "spDef": 63,
+   "speed": 65,
+   "total": 455
+  }
+ },
+ {
+  "dexNumber": 354,
+  "name": "Mega Banette",
+  "baseName": "Banette",
+  "types": [
+   "Ghost"
+  ],
+  "abilities": [
+   "Prankster"
+  ],
+  "baseStats": {
+   "hp": 64,
+   "attack": 165,
+   "defense": 75,
+   "spAtk": 93,
+   "spDef": 83,
+   "speed": 75,
+   "total": 555
+  }
+ },
+ {
+  "dexNumber": 358,
+  "name": "Chimecho",
+  "baseName": "Chimecho",
+  "types": [
+   "Psychic"
+  ],
+  "abilities": [
+   "Levitate"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 50,
+   "defense": 80,
+   "spAtk": 95,
+   "spDef": 90,
+   "speed": 65,
+   "total": 455
+  }
+ },
+ {
+  "dexNumber": 358,
+  "name": "Mega Chimecho",
+  "baseName": "Chimecho",
+  "types": [
+   "Psychic",
+   "Steel"
+  ],
+  "abilities": [
+   "Levitate"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 50,
+   "defense": 110,
+   "spAtk": 135,
+   "spDef": 120,
+   "speed": 65,
+   "total": 555
+  }
+ },
+ {
+  "dexNumber": 359,
+  "name": "Absol",
+  "baseName": "Absol",
+  "types": [
+   "Dark"
+  ],
+  "abilities": [
+   "Pressure",
+   "Super Luck",
+   "Justified"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 130,
+   "defense": 60,
+   "spAtk": 75,
+   "spDef": 60,
+   "speed": 75,
+   "total": 465
+  }
+ },
+ {
+  "dexNumber": 359,
+  "name": "Mega Absol",
+  "baseName": "Absol",
+  "types": [
+   "Dark"
+  ],
+  "abilities": [
+   "Magic Bounce"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 150,
+   "defense": 60,
+   "spAtk": 115,
+   "spDef": 60,
+   "speed": 115,
+   "total": 565
+  }
+ },
+ {
+  "dexNumber": 359,
+  "name": "Mega Absol Z",
+  "baseName": "Absol",
+  "types": [
+   "Dark",
+   "Ghost"
+  ],
+  "abilities": [
+   "Sharpness"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 154,
+   "defense": 60,
+   "spAtk": 75,
+   "spDef": 60,
+   "speed": 151,
+   "total": 565
+  }
+ },
+ {
+  "dexNumber": 362,
+  "name": "Glalie",
+  "baseName": "Glalie",
+  "types": [
+   "Ice"
+  ],
+  "abilities": [
+   "Inner Focus",
+   "Ice Body",
+   "Moody"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 80,
+   "defense": 80,
+   "spAtk": 80,
+   "spDef": 80,
+   "speed": 80,
+   "total": 480
+  }
+ },
+ {
+  "dexNumber": 362,
+  "name": "Mega Glalie",
+  "baseName": "Glalie",
+  "types": [
+   "Ice"
+  ],
+  "abilities": [
+   "Refrigerate"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 120,
+   "defense": 80,
+   "spAtk": 120,
+   "spDef": 80,
+   "speed": 100,
+   "total": 580
+  }
+ },
+ {
+  "dexNumber": 373,
+  "name": "Salamence",
+  "baseName": "Salamence",
+  "types": [
+   "Dragon",
+   "Flying"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Moxie"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 135,
+   "defense": 80,
+   "spAtk": 110,
+   "spDef": 80,
+   "speed": 100,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 373,
+  "name": "Mega Salamence",
+  "baseName": "Salamence",
+  "types": [
+   "Dragon",
+   "Flying"
+  ],
+  "abilities": [
+   "Aerilate"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 145,
+   "defense": 130,
+   "spAtk": 120,
+   "spDef": 90,
+   "speed": 120,
+   "total": 700
+  }
+ },
+ {
+  "dexNumber": 376,
+  "name": "Metagross",
+  "baseName": "Metagross",
+  "types": [
+   "Steel",
+   "Psychic"
+  ],
+  "abilities": [
+   "Clear Body",
+   "Light Metal"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 135,
+   "defense": 130,
+   "spAtk": 95,
+   "spDef": 90,
+   "speed": 70,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 376,
+  "name": "Mega Metagross",
+  "baseName": "Metagross",
+  "types": [
+   "Steel",
+   "Psychic"
+  ],
+  "abilities": [
+   "Tough Claws"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 145,
+   "defense": 150,
+   "spAtk": 105,
+   "spDef": 110,
+   "speed": 110,
+   "total": 700
+  }
+ },
+ {
+  "dexNumber": 389,
+  "name": "Torterra",
+  "baseName": "Torterra",
+  "types": [
+   "Grass",
+   "Ground"
+  ],
+  "abilities": [
+   "Overgrow",
+   "Shell Armor"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 109,
+   "defense": 105,
+   "spAtk": 75,
+   "spDef": 85,
+   "speed": 56,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 392,
+  "name": "Infernape",
+  "baseName": "Infernape",
+  "types": [
+   "Fire",
+   "Fighting"
+  ],
+  "abilities": [
+   "Blaze",
+   "Iron Fist"
+  ],
+  "baseStats": {
+   "hp": 76,
+   "attack": 104,
+   "defense": 71,
+   "spAtk": 104,
+   "spDef": 71,
+   "speed": 108,
+   "total": 534
+  }
+ },
+ {
+  "dexNumber": 395,
+  "name": "Empoleon",
+  "baseName": "Empoleon",
+  "types": [
+   "Water",
+   "Steel"
+  ],
+  "abilities": [
+   "Torrent",
+   "Competitive"
+  ],
+  "baseStats": {
+   "hp": 84,
+   "attack": 86,
+   "defense": 88,
+   "spAtk": 111,
+   "spDef": 101,
+   "speed": 60,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 398,
+  "name": "Staraptor",
+  "baseName": "Staraptor",
+  "types": [
+   "Normal",
+   "Flying"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Reckless"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 120,
+   "defense": 70,
+   "spAtk": 50,
+   "spDef": 60,
+   "speed": 100,
+   "total": 485
+  }
+ },
+ {
+  "dexNumber": 398,
+  "name": "Mega Staraptor",
+  "baseName": "Staraptor",
+  "types": [
+   "Fighting",
+   "Flying"
+  ],
+  "abilities": [
+   "Contrary"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 140,
+   "defense": 100,
+   "spAtk": 60,
+   "spDef": 90,
+   "speed": 110,
+   "total": 585
+  }
+ },
+ {
+  "dexNumber": 405,
+  "name": "Luxray",
+  "baseName": "Luxray",
+  "types": [
+   "Electric"
+  ],
+  "abilities": [
+   "Rivalry",
+   "Intimidate",
+   "Guts"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 120,
+   "defense": 79,
+   "spAtk": 95,
+   "spDef": 79,
+   "speed": 70,
+   "total": 523
+  }
+ },
+ {
+  "dexNumber": 407,
+  "name": "Roserade",
+  "baseName": "Roserade",
+  "types": [
+   "Grass",
+   "Poison"
+  ],
+  "abilities": [
+   "Natural Cure",
+   "Poison Point",
+   "Technician"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 70,
+   "defense": 65,
+   "spAtk": 125,
+   "spDef": 105,
+   "speed": 90,
+   "total": 515
+  }
+ },
+ {
+  "dexNumber": 409,
+  "name": "Rampardos",
+  "baseName": "Rampardos",
+  "types": [
+   "Rock"
+  ],
+  "abilities": [
+   "Mold Breaker",
+   "Sheer Force"
+  ],
+  "baseStats": {
+   "hp": 97,
+   "attack": 165,
+   "defense": 60,
+   "spAtk": 65,
+   "spDef": 50,
+   "speed": 58,
+   "total": 495
+  }
+ },
+ {
+  "dexNumber": 411,
+  "name": "Bastiodon",
+  "baseName": "Bastiodon",
+  "types": [
+   "Rock",
+   "Steel"
+  ],
+  "abilities": [
+   "Sturdy",
+   "Soundproof"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 52,
+   "defense": 168,
+   "spAtk": 47,
+   "spDef": 138,
+   "speed": 30,
+   "total": 495
+  }
+ },
+ {
+  "dexNumber": 428,
+  "name": "Lopunny",
+  "baseName": "Lopunny",
+  "types": [
+   "Normal"
+  ],
+  "abilities": [
+   "Cute Charm",
+   "Klutz",
+   "Limber"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 76,
+   "defense": 84,
+   "spAtk": 54,
+   "spDef": 96,
+   "speed": 105,
+   "total": 480
+  }
+ },
+ {
+  "dexNumber": 428,
+  "name": "Mega Lopunny",
+  "baseName": "Lopunny",
+  "types": [
+   "Normal",
+   "Fighting"
+  ],
+  "abilities": [
+   "Scrappy"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 136,
+   "defense": 94,
+   "spAtk": 54,
+   "spDef": 96,
+   "speed": 135,
+   "total": 580
+  }
+ },
+ {
+  "dexNumber": 442,
+  "name": "Spiritomb",
+  "baseName": "Spiritomb",
+  "types": [
+   "Ghost",
+   "Dark"
+  ],
+  "abilities": [
+   "Pressure",
+   "Infiltrator"
+  ],
+  "baseStats": {
+   "hp": 50,
+   "attack": 92,
+   "defense": 108,
+   "spAtk": 92,
+   "spDef": 108,
+   "speed": 35,
+   "total": 485
+  }
+ },
+ {
+  "dexNumber": 445,
+  "name": "Garchomp",
+  "baseName": "Garchomp",
+  "types": [
+   "Dragon",
+   "Ground"
+  ],
+  "abilities": [
+   "Sand Veil",
+   "Rough Skin"
+  ],
+  "baseStats": {
+   "hp": 108,
+   "attack": 130,
+   "defense": 95,
+   "spAtk": 80,
+   "spDef": 85,
+   "speed": 102,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 445,
+  "name": "Mega Garchomp",
+  "baseName": "Garchomp",
+  "types": [
+   "Dragon",
+   "Ground"
+  ],
+  "abilities": [
+   "Sand Force"
+  ],
+  "baseStats": {
+   "hp": 108,
+   "attack": 170,
+   "defense": 115,
+   "spAtk": 120,
+   "spDef": 95,
+   "speed": 92,
+   "total": 700
+  }
+ },
+ {
+  "dexNumber": 445,
+  "name": "Mega Garchomp Z",
+  "baseName": "Garchomp",
+  "types": [
+   "Dragon"
+  ],
+  "abilities": [
+   "Levitate"
+  ],
+  "baseStats": {
+   "hp": 108,
+   "attack": 130,
+   "defense": 85,
+   "spAtk": 141,
+   "spDef": 85,
+   "speed": 151,
+   "total": 700
+  }
+ },
+ {
+  "dexNumber": 448,
+  "name": "Lucario",
+  "baseName": "Lucario",
+  "types": [
+   "Fighting",
+   "Steel"
+  ],
+  "abilities": [
+   "Steadfast",
+   "Inner Focus",
+   "Justified"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 110,
+   "defense": 70,
+   "spAtk": 115,
+   "spDef": 70,
+   "speed": 90,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 448,
+  "name": "Mega Lucario",
+  "baseName": "Lucario",
+  "types": [
+   "Fighting",
+   "Steel"
+  ],
+  "abilities": [
+   "Adaptability"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 145,
+   "defense": 88,
+   "spAtk": 140,
+   "spDef": 70,
+   "speed": 112,
+   "total": 625
+  }
+ },
+ {
+  "dexNumber": 448,
+  "name": "Mega Lucario Z",
+  "baseName": "Lucario",
+  "types": [
+   "Fighting",
+   "Steel"
+  ],
+  "abilities": [
+   "Aura Guard"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 100,
+   "defense": 70,
+   "spAtk": 164,
+   "spDef": 70,
+   "speed": 151,
+   "total": 625
+  }
+ },
+ {
+  "dexNumber": 450,
+  "name": "Hippowdon",
+  "baseName": "Hippowdon",
+  "types": [
+   "Ground"
+  ],
+  "abilities": [
+   "Sand Stream",
+   "Sand Force"
+  ],
+  "baseStats": {
+   "hp": 108,
+   "attack": 112,
+   "defense": 118,
+   "spAtk": 68,
+   "spDef": 72,
+   "speed": 47,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 454,
+  "name": "Toxicroak",
+  "baseName": "Toxicroak",
+  "types": [
+   "Poison",
+   "Fighting"
+  ],
+  "abilities": [
+   "Anticipation",
+   "Dry Skin",
+   "Poison Touch"
+  ],
+  "baseStats": {
+   "hp": 83,
+   "attack": 106,
+   "defense": 65,
+   "spAtk": 86,
+   "spDef": 65,
+   "speed": 85,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 460,
+  "name": "Abomasnow",
+  "baseName": "Abomasnow",
+  "types": [
+   "Grass",
+   "Ice"
+  ],
+  "abilities": [
+   "Snow Warning",
+   "Soundproof"
+  ],
+  "baseStats": {
+   "hp": 90,
+   "attack": 92,
+   "defense": 75,
+   "spAtk": 92,
+   "spDef": 85,
+   "speed": 60,
+   "total": 494
+  }
+ },
+ {
+  "dexNumber": 460,
+  "name": "Mega Abomasnow",
+  "baseName": "Abomasnow",
+  "types": [
+   "Grass",
+   "Ice"
+  ],
+  "abilities": [
+   "Snow Warning"
+  ],
+  "baseStats": {
+   "hp": 90,
+   "attack": 132,
+   "defense": 105,
+   "spAtk": 132,
+   "spDef": 105,
+   "speed": 30,
+   "total": 594
+  }
+ },
+ {
+  "dexNumber": 461,
+  "name": "Weavile",
+  "baseName": "Weavile",
+  "types": [
+   "Dark",
+   "Ice"
+  ],
+  "abilities": [
+   "Pressure",
+   "Pickpocket"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 120,
+   "defense": 65,
+   "spAtk": 45,
+   "spDef": 85,
+   "speed": 125,
+   "total": 510
+  }
+ },
+ {
+  "dexNumber": 464,
+  "name": "Rhyperior",
+  "baseName": "Rhyperior",
+  "types": [
+   "Ground",
+   "Rock"
+  ],
+  "abilities": [
+   "Lightning Rod",
+   "Solid Rock",
+   "Reckless"
+  ],
+  "baseStats": {
+   "hp": 115,
+   "attack": 140,
+   "defense": 130,
+   "spAtk": 55,
+   "spDef": 55,
+   "speed": 40,
+   "total": 535
+  }
+ },
+ {
+  "dexNumber": 470,
+  "name": "Leafeon",
+  "baseName": "Leafeon",
+  "types": [
+   "Grass"
+  ],
+  "abilities": [
+   "Leaf Guard",
+   "Chlorophyll"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 110,
+   "defense": 130,
+   "spAtk": 60,
+   "spDef": 65,
+   "speed": 95,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 471,
+  "name": "Glaceon",
+  "baseName": "Glaceon",
+  "types": [
+   "Ice"
+  ],
+  "abilities": [
+   "Snow Cloak",
+   "Ice Body"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 60,
+   "defense": 110,
+   "spAtk": 130,
+   "spDef": 95,
+   "speed": 65,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 472,
+  "name": "Gliscor",
+  "baseName": "Gliscor",
+  "types": [
+   "Ground",
+   "Flying"
+  ],
+  "abilities": [
+   "Hyper Cutter",
+   "Sand Veil",
+   "Poison Heal"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 95,
+   "defense": 125,
+   "spAtk": 45,
+   "spDef": 75,
+   "speed": 95,
+   "total": 510
+  }
+ },
+ {
+  "dexNumber": 473,
+  "name": "Mamoswine",
+  "baseName": "Mamoswine",
+  "types": [
+   "Ice",
+   "Ground"
+  ],
+  "abilities": [
+   "Oblivious",
+   "Snow Cloak",
+   "Thick Fat"
+  ],
+  "baseStats": {
+   "hp": 110,
+   "attack": 130,
+   "defense": 80,
+   "spAtk": 70,
+   "spDef": 60,
+   "speed": 80,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 475,
+  "name": "Gallade",
+  "baseName": "Gallade",
+  "types": [
+   "Psychic",
+   "Fighting"
+  ],
+  "abilities": [
+   "Steadfast",
+   "Sharpness",
+   "Justified"
+  ],
+  "baseStats": {
+   "hp": 68,
+   "attack": 125,
+   "defense": 65,
+   "spAtk": 65,
+   "spDef": 115,
+   "speed": 80,
+   "total": 518
+  }
+ },
+ {
+  "dexNumber": 475,
+  "name": "Mega Gallade",
+  "baseName": "Gallade",
+  "types": [
+   "Psychic",
+   "Fighting"
+  ],
+  "abilities": [
+   "Inner Focus"
+  ],
+  "baseStats": {
+   "hp": 68,
+   "attack": 165,
+   "defense": 95,
+   "spAtk": 65,
+   "spDef": 115,
+   "speed": 110,
+   "total": 618
+  }
+ },
+ {
+  "dexNumber": 478,
+  "name": "Froslass",
+  "baseName": "Froslass",
+  "types": [
+   "Ice",
+   "Ghost"
+  ],
+  "abilities": [
+   "Snow Cloak",
+   "Cursed Body"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 80,
+   "defense": 70,
+   "spAtk": 80,
+   "spDef": 70,
+   "speed": 110,
+   "total": 480
+  }
+ },
+ {
+  "dexNumber": 478,
+  "name": "Mega Froslass",
+  "baseName": "Froslass",
+  "types": [
+   "Ice",
+   "Ghost"
+  ],
+  "abilities": [
+   "Snow Warning"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 80,
+   "defense": 70,
+   "spAtk": 140,
+   "spDef": 100,
+   "speed": 120,
+   "total": 580
+  }
+ },
+ {
+  "dexNumber": 479,
+  "name": "Rotom",
+  "baseName": "Rotom",
+  "types": [
+   "Electric",
+   "Ghost"
+  ],
+  "abilities": [
+   "Levitate"
+  ],
+  "baseStats": {
+   "hp": 50,
+   "attack": 50,
+   "defense": 77,
+   "spAtk": 95,
+   "spDef": 77,
+   "speed": 91,
+   "total": 440
+  }
+ },
+ {
+  "dexNumber": 479,
+  "name": "Rotom (Heat)",
+  "baseName": "Rotom",
+  "types": [
+   "Electric",
+   "Fire"
+  ],
+  "abilities": [
+   "Levitate"
+  ],
+  "baseStats": {
+   "hp": 50,
+   "attack": 65,
+   "defense": 107,
+   "spAtk": 105,
+   "spDef": 107,
+   "speed": 86,
+   "total": 520
+  }
+ },
+ {
+  "dexNumber": 479,
+  "name": "Rotom (Wash)",
+  "baseName": "Rotom",
+  "types": [
+   "Electric",
+   "Water"
+  ],
+  "abilities": [
+   "Levitate"
+  ],
+  "baseStats": {
+   "hp": 50,
+   "attack": 65,
+   "defense": 107,
+   "spAtk": 105,
+   "spDef": 107,
+   "speed": 86,
+   "total": 520
+  }
+ },
+ {
+  "dexNumber": 479,
+  "name": "Rotom (Frost)",
+  "baseName": "Rotom",
+  "types": [
+   "Electric",
+   "Ice"
+  ],
+  "abilities": [
+   "Levitate"
+  ],
+  "baseStats": {
+   "hp": 50,
+   "attack": 65,
+   "defense": 107,
+   "spAtk": 105,
+   "spDef": 107,
+   "speed": 86,
+   "total": 520
+  }
+ },
+ {
+  "dexNumber": 479,
+  "name": "Rotom (Fan)",
+  "baseName": "Rotom",
+  "types": [
+   "Electric",
+   "Flying"
+  ],
+  "abilities": [
+   "Levitate"
+  ],
+  "baseStats": {
+   "hp": 50,
+   "attack": 65,
+   "defense": 107,
+   "spAtk": 105,
+   "spDef": 107,
+   "speed": 86,
+   "total": 520
+  }
+ },
+ {
+  "dexNumber": 479,
+  "name": "Rotom (Mow)",
+  "baseName": "Rotom",
+  "types": [
+   "Electric",
+   "Grass"
+  ],
+  "abilities": [
+   "Levitate"
+  ],
+  "baseStats": {
+   "hp": 50,
+   "attack": 65,
+   "defense": 107,
+   "spAtk": 105,
+   "spDef": 107,
+   "speed": 86,
+   "total": 520
+  }
+ },
+ {
+  "dexNumber": 497,
+  "name": "Serperior",
+  "baseName": "Serperior",
+  "types": [
+   "Grass"
+  ],
+  "abilities": [
+   "Overgrow",
+   "Contrary"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 75,
+   "defense": 95,
+   "spAtk": 75,
+   "spDef": 95,
+   "speed": 113,
+   "total": 528
+  }
+ },
+ {
+  "dexNumber": 500,
+  "name": "Emboar",
+  "baseName": "Emboar",
+  "types": [
+   "Fire",
+   "Fighting"
+  ],
+  "abilities": [
+   "Blaze",
+   "Reckless"
+  ],
+  "baseStats": {
+   "hp": 110,
+   "attack": 123,
+   "defense": 65,
+   "spAtk": 100,
+   "spDef": 65,
+   "speed": 65,
+   "total": 528
+  }
+ },
+ {
+  "dexNumber": 500,
+  "name": "Mega Emboar",
+  "baseName": "Emboar",
+  "types": [
+   "Fire",
+   "Fighting"
+  ],
+  "abilities": [
+   "Mold Breaker"
+  ],
+  "baseStats": {
+   "hp": 110,
+   "attack": 148,
+   "defense": 75,
+   "spAtk": 110,
+   "spDef": 110,
+   "speed": 75,
+   "total": 628
+  }
+ },
+ {
+  "dexNumber": 503,
+  "name": "Samurott",
+  "baseName": "Samurott",
+  "types": [
+   "Water"
+  ],
+  "abilities": [
+   "Torrent",
+   "Shell Armor"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 100,
+   "defense": 85,
+   "spAtk": 108,
+   "spDef": 70,
+   "speed": 70,
+   "total": 528
+  }
+ },
+ {
+  "dexNumber": 503,
+  "name": "Samurott (Hisuian)",
+  "baseName": "Samurott",
+  "types": [
+   "Water",
+   "Dark"
+  ],
+  "abilities": [
+   "Torrent",
+   "Sharpness"
+  ],
+  "baseStats": {
+   "hp": 90,
+   "attack": 108,
+   "defense": 80,
+   "spAtk": 100,
+   "spDef": 65,
+   "speed": 85,
+   "total": 528
+  }
+ },
+ {
+  "dexNumber": 504,
+  "name": "Patrat",
+  "baseName": "Patrat",
+  "types": [
+   "Normal"
+  ],
+  "abilities": [
+   "Run Away",
+   "Keen Eye",
+   "Analytic"
+  ],
+  "baseStats": {
+   "hp": 45,
+   "attack": 55,
+   "defense": 39,
+   "spAtk": 35,
+   "spDef": 39,
+   "speed": 42,
+   "total": 255
+  }
+ },
+ {
+  "dexNumber": 505,
+  "name": "Watchog",
+  "baseName": "Watchog",
+  "types": [
+   "Normal"
+  ],
+  "abilities": [
+   "Illuminate",
+   "Keen Eye",
+   "Analytic"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 85,
+   "defense": 69,
+   "spAtk": 60,
+   "spDef": 69,
+   "speed": 77,
+   "total": 420
+  }
+ },
+ {
+  "dexNumber": 510,
+  "name": "Liepard",
+  "baseName": "Liepard",
+  "types": [
+   "Dark"
+  ],
+  "abilities": [
+   "Limber",
+   "Unburden",
+   "Prankster"
+  ],
+  "baseStats": {
+   "hp": 64,
+   "attack": 88,
+   "defense": 50,
+   "spAtk": 88,
+   "spDef": 50,
+   "speed": 106,
+   "total": 446
+  }
+ },
+ {
+  "dexNumber": 512,
+  "name": "Simisage",
+  "baseName": "Simisage",
+  "types": [
+   "Grass"
+  ],
+  "abilities": [
+   "Gluttony",
+   "Overgrow"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 98,
+   "defense": 63,
+   "spAtk": 98,
+   "spDef": 63,
+   "speed": 101,
+   "total": 498
+  }
+ },
+ {
+  "dexNumber": 514,
+  "name": "Simisear",
+  "baseName": "Simisear",
+  "types": [
+   "Fire"
+  ],
+  "abilities": [
+   "Gluttony",
+   "Blaze"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 98,
+   "defense": 63,
+   "spAtk": 98,
+   "spDef": 63,
+   "speed": 101,
+   "total": 498
+  }
+ },
+ {
+  "dexNumber": 516,
+  "name": "Simipour",
+  "baseName": "Simipour",
+  "types": [
+   "Water"
+  ],
+  "abilities": [
+   "Gluttony",
+   "Torrent"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 98,
+   "defense": 63,
+   "spAtk": 98,
+   "spDef": 63,
+   "speed": 101,
+   "total": 498
+  }
+ },
+ {
+  "dexNumber": 518,
+  "name": "Musharna",
+  "baseName": "Musharna",
+  "types": [
+   "Psychic"
+  ],
+  "abilities": [
+   "Forewarn",
+   "Synchronize",
+   "Telepathy"
+  ],
+  "baseStats": {
+   "hp": 116,
+   "attack": 55,
+   "defense": 85,
+   "spAtk": 107,
+   "spDef": 95,
+   "speed": 29,
+   "total": 487
+  }
+ },
+ {
+  "dexNumber": 530,
+  "name": "Excadrill",
+  "baseName": "Excadrill",
+  "types": [
+   "Ground",
+   "Steel"
+  ],
+  "abilities": [
+   "Sand Rush",
+   "Sand Force",
+   "Mold Breaker"
+  ],
+  "baseStats": {
+   "hp": 110,
+   "attack": 135,
+   "defense": 60,
+   "spAtk": 50,
+   "spDef": 65,
+   "speed": 88,
+   "total": 508
+  }
+ },
+ {
+  "dexNumber": 530,
+  "name": "Mega Excadrill",
+  "baseName": "Excadrill",
+  "types": [
+   "Ground",
+   "Steel"
+  ],
+  "abilities": [
+   "Piercing Drill"
+  ],
+  "baseStats": {
+   "hp": 110,
+   "attack": 165,
+   "defense": 100,
+   "spAtk": 65,
+   "spDef": 65,
+   "speed": 103,
+   "total": 608
+  }
+ },
+ {
+  "dexNumber": 531,
+  "name": "Audino",
+  "baseName": "Audino",
+  "types": [
+   "Normal"
+  ],
+  "abilities": [
+   "Healer",
+   "Regenerator",
+   "Klutz"
+  ],
+  "baseStats": {
+   "hp": 103,
+   "attack": 60,
+   "defense": 86,
+   "spAtk": 60,
+   "spDef": 86,
+   "speed": 50,
+   "total": 445
+  }
+ },
+ {
+  "dexNumber": 531,
+  "name": "Mega Audino",
+  "baseName": "Audino",
+  "types": [
+   "Normal",
+   "Fairy"
+  ],
+  "abilities": [
+   "Healer"
+  ],
+  "baseStats": {
+   "hp": 103,
+   "attack": 60,
+   "defense": 126,
+   "spAtk": 80,
+   "spDef": 126,
+   "speed": 50,
+   "total": 545
+  }
+ },
+ {
+  "dexNumber": 534,
+  "name": "Conkeldurr",
+  "baseName": "Conkeldurr",
+  "types": [
+   "Fighting"
+  ],
+  "abilities": [
+   "Guts",
+   "Sheer Force",
+   "Iron Fist"
+  ],
+  "baseStats": {
+   "hp": 105,
+   "attack": 140,
+   "defense": 95,
+   "spAtk": 55,
+   "spDef": 65,
+   "speed": 45,
+   "total": 505
+  }
+ },
+ {
+  "dexNumber": 545,
+  "name": "Scolipede",
+  "baseName": "Scolipede",
+  "types": [
+   "Bug",
+   "Poison"
+  ],
+  "abilities": [
+   "Poison Point",
+   "Swarm",
+   "Speed Boost"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 100,
+   "defense": 89,
+   "spAtk": 55,
+   "spDef": 69,
+   "speed": 112,
+   "total": 485
+  }
+ },
+ {
+  "dexNumber": 545,
+  "name": "Mega Scolipede",
+  "baseName": "Scolipede",
+  "types": [
+   "Bug",
+   "Poison"
+  ],
+  "abilities": [
+   "Shell Armor"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 140,
+   "defense": 149,
+   "spAtk": 75,
+   "spDef": 99,
+   "speed": 62,
+   "total": 585
+  }
+ },
+ {
+  "dexNumber": 547,
+  "name": "Whimsicott",
+  "baseName": "Whimsicott",
+  "types": [
+   "Grass",
+   "Fairy"
+  ],
+  "abilities": [
+   "Prankster",
+   "Infiltrator",
+   "Chlorophyll"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 67,
+   "defense": 85,
+   "spAtk": 77,
+   "spDef": 75,
+   "speed": 116,
+   "total": 480
+  }
+ },
+ {
+  "dexNumber": 553,
+  "name": "Krookodile",
+  "baseName": "Krookodile",
+  "types": [
+   "Ground",
+   "Dark"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Moxie",
+   "Anger Point"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 117,
+   "defense": 80,
+   "spAtk": 65,
+   "spDef": 70,
+   "speed": 92,
+   "total": 519
+  }
+ },
+ {
+  "dexNumber": 560,
+  "name": "Scrafty",
+  "baseName": "Scrafty",
+  "types": [
+   "Dark",
+   "Fighting"
+  ],
+  "abilities": [
+   "Shed Skin",
+   "Moxie",
+   "Intimidate"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 90,
+   "defense": 115,
+   "spAtk": 45,
+   "spDef": 115,
+   "speed": 58,
+   "total": 488
+  }
+ },
+ {
+  "dexNumber": 560,
+  "name": "Mega Scrafty",
+  "baseName": "Scrafty",
+  "types": [
+   "Dark",
+   "Fighting"
+  ],
+  "abilities": [
+   "Intimidate"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 130,
+   "defense": 135,
+   "spAtk": 55,
+   "spDef": 135,
+   "speed": 68,
+   "total": 588
+  }
+ },
+ {
+  "dexNumber": 563,
+  "name": "Cofagrigus",
+  "baseName": "Cofagrigus",
+  "types": [
+   "Ghost"
+  ],
+  "abilities": [
+   "Mummy"
+  ],
+  "baseStats": {
+   "hp": 58,
+   "attack": 50,
+   "defense": 145,
+   "spAtk": 95,
+   "spDef": 105,
+   "speed": 30,
+   "total": 483
+  }
+ },
+ {
+  "dexNumber": 569,
+  "name": "Garbodor",
+  "baseName": "Garbodor",
+  "types": [
+   "Poison"
+  ],
+  "abilities": [
+   "Stench",
+   "Weak Armor",
+   "Aftermath"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 95,
+   "defense": 82,
+   "spAtk": 60,
+   "spDef": 82,
+   "speed": 75,
+   "total": 474
+  }
+ },
+ {
+  "dexNumber": 571,
+  "name": "Zoroark",
+  "baseName": "Zoroark",
+  "types": [
+   "Dark"
+  ],
+  "abilities": [
+   "Illusion"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 105,
+   "defense": 60,
+   "spAtk": 120,
+   "spDef": 60,
+   "speed": 105,
+   "total": 510
+  }
+ },
+ {
+  "dexNumber": 571,
+  "name": "Zoroark (Hisuian)",
+  "baseName": "Zoroark",
+  "types": [
+   "Normal",
+   "Ghost"
+  ],
+  "abilities": [
+   "Illusion"
+  ],
+  "baseStats": {
+   "hp": 55,
+   "attack": 100,
+   "defense": 60,
+   "spAtk": 125,
+   "spDef": 60,
+   "speed": 110,
+   "total": 510
+  }
+ },
+ {
+  "dexNumber": 579,
+  "name": "Reuniclus",
+  "baseName": "Reuniclus",
+  "types": [
+   "Psychic"
+  ],
+  "abilities": [
+   "Overcoat",
+   "Magic Guard",
+   "Regenerator"
+  ],
+  "baseStats": {
+   "hp": 110,
+   "attack": 65,
+   "defense": 75,
+   "spAtk": 125,
+   "spDef": 85,
+   "speed": 30,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 584,
+  "name": "Vanilluxe",
+  "baseName": "Vanilluxe",
+  "types": [
+   "Ice"
+  ],
+  "abilities": [
+   "Ice Body",
+   "Snow Warning",
+   "Weak Armor"
+  ],
+  "baseStats": {
+   "hp": 71,
+   "attack": 95,
+   "defense": 85,
+   "spAtk": 110,
+   "spDef": 95,
+   "speed": 79,
+   "total": 535
+  }
+ },
+ {
+  "dexNumber": 587,
+  "name": "Emolga",
+  "baseName": "Emolga",
+  "types": [
+   "Electric",
+   "Flying"
+  ],
+  "abilities": [
+   "Static",
+   "Motor Drive"
+  ],
+  "baseStats": {
+   "hp": 55,
+   "attack": 75,
+   "defense": 60,
+   "spAtk": 75,
+   "spDef": 60,
+   "speed": 103,
+   "total": 428
+  }
+ },
+ {
+  "dexNumber": 604,
+  "name": "Eelektross",
+  "baseName": "Eelektross",
+  "types": [
+   "Electric"
+  ],
+  "abilities": [
+   "Levitate"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 115,
+   "defense": 80,
+   "spAtk": 105,
+   "spDef": 80,
+   "speed": 50,
+   "total": 515
+  }
+ },
+ {
+  "dexNumber": 604,
+  "name": "Mega Eelektross",
+  "baseName": "Eelektross",
+  "types": [
+   "Electric"
+  ],
+  "abilities": [
+   "Eelevate"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 145,
+   "defense": 80,
+   "spAtk": 135,
+   "spDef": 90,
+   "speed": 80,
+   "total": 615
+  }
+ },
+ {
+  "dexNumber": 609,
+  "name": "Chandelure",
+  "baseName": "Chandelure",
+  "types": [
+   "Ghost",
+   "Fire"
+  ],
+  "abilities": [
+   "Flash Fire",
+   "Flame Body",
+   "Infiltrator"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 55,
+   "defense": 90,
+   "spAtk": 145,
+   "spDef": 90,
+   "speed": 80,
+   "total": 520
+  }
+ },
+ {
+  "dexNumber": 609,
+  "name": "Mega Chandelure",
+  "baseName": "Chandelure",
+  "types": [
+   "Ghost",
+   "Fire"
+  ],
+  "abilities": [
+   "Infiltrator"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 75,
+   "defense": 110,
+   "spAtk": 175,
+   "spDef": 110,
+   "speed": 90,
+   "total": 620
+  }
+ },
+ {
+  "dexNumber": 614,
+  "name": "Beartic",
+  "baseName": "Beartic",
+  "types": [
+   "Ice"
+  ],
+  "abilities": [
+   "Snow Cloak",
+   "Slush Rush",
+   "Swift Swim"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 130,
+   "defense": 80,
+   "spAtk": 70,
+   "spDef": 80,
+   "speed": 50,
+   "total": 505
+  }
+ },
+ {
+  "dexNumber": 618,
+  "name": "Stunfisk",
+  "baseName": "Stunfisk",
+  "types": [
+   "Ground",
+   "Electric"
+  ],
+  "abilities": [
+   "Static",
+   "Limber",
+   "Sand Veil"
+  ],
+  "baseStats": {
+   "hp": 109,
+   "attack": 66,
+   "defense": 84,
+   "spAtk": 81,
+   "spDef": 99,
+   "speed": 32,
+   "total": 471
+  }
+ },
+ {
+  "dexNumber": 618,
+  "name": "Stunfisk (Galarian)",
+  "baseName": "Stunfisk",
+  "types": [
+   "Ground",
+   "Steel"
+  ],
+  "abilities": [
+   "Mimicry"
+  ],
+  "baseStats": {
+   "hp": 109,
+   "attack": 81,
+   "defense": 99,
+   "spAtk": 66,
+   "spDef": 84,
+   "speed": 32,
+   "total": 471
+  }
+ },
+ {
+  "dexNumber": 623,
+  "name": "Golurk",
+  "baseName": "Golurk",
+  "types": [
+   "Ground",
+   "Ghost"
+  ],
+  "abilities": [
+   "Iron Fist",
+   "Klutz",
+   "No Guard"
+  ],
+  "baseStats": {
+   "hp": 89,
+   "attack": 124,
+   "defense": 80,
+   "spAtk": 55,
+   "spDef": 80,
+   "speed": 55,
+   "total": 483
+  }
+ },
+ {
+  "dexNumber": 623,
+  "name": "Mega Golurk",
+  "baseName": "Golurk",
+  "types": [
+   "Ground",
+   "Ghost"
+  ],
+  "abilities": [
+   "Unseen Fist"
+  ],
+  "baseStats": {
+   "hp": 89,
+   "attack": 159,
+   "defense": 105,
+   "spAtk": 70,
+   "spDef": 105,
+   "speed": 55,
+   "total": 583
+  }
+ },
+ {
+  "dexNumber": 635,
+  "name": "Hydreigon",
+  "baseName": "Hydreigon",
+  "types": [
+   "Dark",
+   "Dragon"
+  ],
+  "abilities": [
+   "Levitate"
+  ],
+  "baseStats": {
+   "hp": 92,
+   "attack": 105,
+   "defense": 90,
+   "spAtk": 125,
+   "spDef": 90,
+   "speed": 98,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 637,
+  "name": "Volcarona",
+  "baseName": "Volcarona",
+  "types": [
+   "Bug",
+   "Fire"
+  ],
+  "abilities": [
+   "Flame Body",
+   "Swarm"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 60,
+   "defense": 65,
+   "spAtk": 135,
+   "spDef": 105,
+   "speed": 100,
+   "total": 550
+  }
+ },
+ {
+  "dexNumber": 652,
+  "name": "Chesnaught",
+  "baseName": "Chesnaught",
+  "types": [
+   "Grass",
+   "Fighting"
+  ],
+  "abilities": [
+   "Overgrow",
+   "Bulletproof"
+  ],
+  "baseStats": {
+   "hp": 88,
+   "attack": 107,
+   "defense": 122,
+   "spAtk": 74,
+   "spDef": 75,
+   "speed": 64,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 652,
+  "name": "Mega Chesnaught",
+  "baseName": "Chesnaught",
+  "types": [
+   "Grass",
+   "Fighting"
+  ],
+  "abilities": [
+   "Bulletproof"
+  ],
+  "baseStats": {
+   "hp": 88,
+   "attack": 137,
+   "defense": 172,
+   "spAtk": 74,
+   "spDef": 115,
+   "speed": 44,
+   "total": 630
+  }
+ },
+ {
+  "dexNumber": 655,
+  "name": "Delphox",
+  "baseName": "Delphox",
+  "types": [
+   "Fire",
+   "Psychic"
+  ],
+  "abilities": [
+   "Blaze",
+   "Magician"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 69,
+   "defense": 72,
+   "spAtk": 114,
+   "spDef": 100,
+   "speed": 104,
+   "total": 534
+  }
+ },
+ {
+  "dexNumber": 655,
+  "name": "Mega Delphox",
+  "baseName": "Delphox",
+  "types": [
+   "Fire",
+   "Psychic"
+  ],
+  "abilities": [
+   "Levitate"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 69,
+   "defense": 72,
+   "spAtk": 159,
+   "spDef": 125,
+   "speed": 134,
+   "total": 634
+  }
+ },
+ {
+  "dexNumber": 658,
+  "name": "Greninja",
+  "baseName": "Greninja",
+  "types": [
+   "Water",
+   "Dark"
+  ],
+  "abilities": [
+   "Torrent",
+   "Protean"
+  ],
+  "baseStats": {
+   "hp": 72,
+   "attack": 95,
+   "defense": 67,
+   "spAtk": 103,
+   "spDef": 71,
+   "speed": 122,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 658,
+  "name": "Mega Greninja",
+  "baseName": "Greninja",
+  "types": [
+   "Water",
+   "Dark"
+  ],
+  "abilities": [
+   "Protean"
+  ],
+  "baseStats": {
+   "hp": 72,
+   "attack": 125,
+   "defense": 77,
+   "spAtk": 133,
+   "spDef": 81,
+   "speed": 142,
+   "total": 630
+  }
+ },
+ {
+  "dexNumber": 660,
+  "name": "Diggersby",
+  "baseName": "Diggersby",
+  "types": [
+   "Normal",
+   "Ground"
+  ],
+  "abilities": [
+   "Pickup",
+   "Cheek Pouch",
+   "Huge Power"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 56,
+   "defense": 77,
+   "spAtk": 50,
+   "spDef": 77,
+   "speed": 78,
+   "total": 423
+  }
+ },
+ {
+  "dexNumber": 663,
+  "name": "Talonflame",
+  "baseName": "Talonflame",
+  "types": [
+   "Fire",
+   "Flying"
+  ],
+  "abilities": [
+   "Flame Body",
+   "Gale Wings"
+  ],
+  "baseStats": {
+   "hp": 78,
+   "attack": 81,
+   "defense": 71,
+   "spAtk": 74,
+   "spDef": 69,
+   "speed": 126,
+   "total": 499
+  }
+ },
+ {
+  "dexNumber": 666,
+  "name": "Vivillon",
+  "baseName": "Vivillon",
+  "types": [
+   "Bug",
+   "Flying"
+  ],
+  "abilities": [
+   "Shield Dust",
+   "Compound Eyes",
+   "Friend Guard"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 52,
+   "defense": 50,
+   "spAtk": 90,
+   "spDef": 50,
+   "speed": 89,
+   "total": 411
+  }
+ },
+ {
+  "dexNumber": 668,
+  "name": "Pyroar",
+  "baseName": "Pyroar",
+  "types": [
+   "Fire",
+   "Normal"
+  ],
+  "abilities": [
+   "Rivalry",
+   "Unnerve",
+   "Moxie"
+  ],
+  "baseStats": {
+   "hp": 86,
+   "attack": 68,
+   "defense": 72,
+   "spAtk": 109,
+   "spDef": 66,
+   "speed": 106,
+   "total": 507
+  }
+ },
+ {
+  "dexNumber": 668,
+  "name": "Mega Pyroar",
+  "baseName": "Pyroar",
+  "types": [
+   "Fire",
+   "Normal"
+  ],
+  "abilities": [
+   "Fire Mane"
+  ],
+  "baseStats": {
+   "hp": 86,
+   "attack": 88,
+   "defense": 92,
+   "spAtk": 129,
+   "spDef": 86,
+   "speed": 126,
+   "total": 607
+  }
+ },
+ {
+  "dexNumber": 670,
+  "name": "Floette",
+  "baseName": "Floette",
+  "types": [
+   "Fairy"
+  ],
+  "abilities": [
+   "Flower Veil",
+   "Symbiosis"
+  ],
+  "baseStats": {
+   "hp": 74,
+   "attack": 65,
+   "defense": 67,
+   "spAtk": 125,
+   "spDef": 128,
+   "speed": 92,
+   "total": 551
+  }
+ },
+ {
+  "dexNumber": 670,
+  "name": "Mega Floette",
+  "baseName": "Floette",
+  "types": [
+   "Fairy"
+  ],
+  "abilities": [
+   "Fairy Aura"
+  ],
+  "baseStats": {
+   "hp": 74,
+   "attack": 85,
+   "defense": 87,
+   "spAtk": 155,
+   "spDef": 148,
+   "speed": 102,
+   "total": 651
+  }
+ },
+ {
+  "dexNumber": 671,
+  "name": "Florges",
+  "baseName": "Florges",
+  "types": [
+   "Fairy"
+  ],
+  "abilities": [
+   "Flower Veil",
+   "Symbiosis"
+  ],
+  "baseStats": {
+   "hp": 78,
+   "attack": 65,
+   "defense": 68,
+   "spAtk": 112,
+   "spDef": 154,
+   "speed": 75,
+   "total": 552
+  }
+ },
+ {
+  "dexNumber": 673,
+  "name": "Gogoat",
+  "baseName": "Gogoat",
+  "types": [
+   "Grass"
+  ],
+  "abilities": [
+   "Sap Sipper",
+   "Grass Pelt"
+  ],
+  "baseStats": {
+   "hp": 123,
+   "attack": 100,
+   "defense": 62,
+   "spAtk": 97,
+   "spDef": 81,
+   "speed": 68,
+   "total": 531
+  }
+ },
+ {
+  "dexNumber": 675,
+  "name": "Pangoro",
+  "baseName": "Pangoro",
+  "types": [
+   "Fighting",
+   "Dark"
+  ],
+  "abilities": [
+   "Iron Fist",
+   "Mold Breaker",
+   "Scrappy"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 124,
+   "defense": 78,
+   "spAtk": 69,
+   "spDef": 71,
+   "speed": 58,
+   "total": 495
+  }
+ },
+ {
+  "dexNumber": 676,
+  "name": "Furfrou",
+  "baseName": "Furfrou",
+  "types": [
+   "Normal"
+  ],
+  "abilities": [
+   "Fur Coat"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 80,
+   "defense": 60,
+   "spAtk": 65,
+   "spDef": 90,
+   "speed": 102,
+   "total": 472
+  }
+ },
+ {
+  "dexNumber": 678,
+  "name": "Meowstic",
+  "baseName": "Meowstic",
+  "types": [
+   "Psychic"
+  ],
+  "abilities": [
+   "Keen Eye",
+   "Infiltrator",
+   "Prankster"
+  ],
+  "baseStats": {
+   "hp": 74,
+   "attack": 48,
+   "defense": 76,
+   "spAtk": 83,
+   "spDef": 81,
+   "speed": 104,
+   "total": 466
+  }
+ },
+ {
+  "dexNumber": 678,
+  "name": "Mega Meowstic",
+  "baseName": "Meowstic",
+  "types": [
+   "Psychic"
+  ],
+  "abilities": [
+   "Trace"
+  ],
+  "baseStats": {
+   "hp": 74,
+   "attack": 48,
+   "defense": 76,
+   "spAtk": 143,
+   "spDef": 101,
+   "speed": 124,
+   "total": 566
+  }
+ },
+ {
+  "dexNumber": 678,
+  "name": "Meowstic (Female)",
+  "baseName": "Meowstic",
+  "types": [
+   "Psychic"
+  ],
+  "abilities": [
+   "Keen Eye",
+   "Infiltrator",
+   "Competitive"
+  ],
+  "baseStats": {
+   "hp": 74,
+   "attack": 48,
+   "defense": 76,
+   "spAtk": 83,
+   "spDef": 81,
+   "speed": 104,
+   "total": 466
+  }
+ },
+ {
+  "dexNumber": 681,
+  "name": "Aegislash",
+  "baseName": "Aegislash",
+  "types": [
+   "Steel",
+   "Ghost"
+  ],
+  "abilities": [
+   "Stance Change"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 50,
+   "defense": 140,
+   "spAtk": 50,
+   "spDef": 140,
+   "speed": 60,
+   "total": 500
+  }
+ },
+ {
+  "dexNumber": 683,
+  "name": "Aromatisse",
+  "baseName": "Aromatisse",
+  "types": [
+   "Fairy"
+  ],
+  "abilities": [
+   "Healer",
+   "Aroma Veil"
+  ],
+  "baseStats": {
+   "hp": 101,
+   "attack": 72,
+   "defense": 72,
+   "spAtk": 99,
+   "spDef": 89,
+   "speed": 29,
+   "total": 462
+  }
+ },
+ {
+  "dexNumber": 685,
+  "name": "Slurpuff",
+  "baseName": "Slurpuff",
+  "types": [
+   "Fairy"
+  ],
+  "abilities": [
+   "Sweet Veil",
+   "Unburden"
+  ],
+  "baseStats": {
+   "hp": 82,
+   "attack": 80,
+   "defense": 86,
+   "spAtk": 85,
+   "spDef": 75,
+   "speed": 72,
+   "total": 480
+  }
+ },
+ {
+  "dexNumber": 687,
+  "name": "Malamar",
+  "baseName": "Malamar",
+  "types": [
+   "Dark",
+   "Psychic"
+  ],
+  "abilities": [
+   "Contrary",
+   "Suction Cups",
+   "Infiltrator"
+  ],
+  "baseStats": {
+   "hp": 86,
+   "attack": 92,
+   "defense": 88,
+   "spAtk": 68,
+   "spDef": 75,
+   "speed": 73,
+   "total": 482
+  }
+ },
+ {
+  "dexNumber": 687,
+  "name": "Mega Malamar",
+  "baseName": "Malamar",
+  "types": [
+   "Dark",
+   "Psychic"
+  ],
+  "abilities": [
+   "Contrary"
+  ],
+  "baseStats": {
+   "hp": 86,
+   "attack": 102,
+   "defense": 88,
+   "spAtk": 98,
+   "spDef": 120,
+   "speed": 88,
+   "total": 582
+  }
+ },
+ {
+  "dexNumber": 689,
+  "name": "Barbaracle",
+  "baseName": "Barbaracle",
+  "types": [
+   "Rock",
+   "Water"
+  ],
+  "abilities": [
+   "Tough Claws",
+   "Sniper",
+   "Pickpocket"
+  ],
+  "baseStats": {
+   "hp": 72,
+   "attack": 105,
+   "defense": 115,
+   "spAtk": 54,
+   "spDef": 86,
+   "speed": 68,
+   "total": 500
+  }
+ },
+ {
+  "dexNumber": 689,
+  "name": "Mega Barbaracle",
+  "baseName": "Barbaracle",
+  "types": [
+   "Rock",
+   "Fighting"
+  ],
+  "abilities": [
+   "Tough Claws"
+  ],
+  "baseStats": {
+   "hp": 72,
+   "attack": 140,
+   "defense": 130,
+   "spAtk": 64,
+   "spDef": 106,
+   "speed": 88,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 691,
+  "name": "Dragalge",
+  "baseName": "Dragalge",
+  "types": [
+   "Poison",
+   "Dragon"
+  ],
+  "abilities": [
+   "Poison Point",
+   "Poison Touch",
+   "Adaptability"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 75,
+   "defense": 90,
+   "spAtk": 97,
+   "spDef": 123,
+   "speed": 44,
+   "total": 494
+  }
+ },
+ {
+  "dexNumber": 691,
+  "name": "Mega Dragalge",
+  "baseName": "Dragalge",
+  "types": [
+   "Poison",
+   "Dragon"
+  ],
+  "abilities": [
+   "Regenerator"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 85,
+   "defense": 105,
+   "spAtk": 132,
+   "spDef": 163,
+   "speed": 44,
+   "total": 594
+  }
+ },
+ {
+  "dexNumber": 693,
+  "name": "Clawitzer",
+  "baseName": "Clawitzer",
+  "types": [
+   "Water"
+  ],
+  "abilities": [
+   "Mega Launcher"
+  ],
+  "baseStats": {
+   "hp": 71,
+   "attack": 73,
+   "defense": 88,
+   "spAtk": 120,
+   "spDef": 89,
+   "speed": 59,
+   "total": 500
+  }
+ },
+ {
+  "dexNumber": 695,
+  "name": "Heliolisk",
+  "baseName": "Heliolisk",
+  "types": [
+   "Electric",
+   "Normal"
+  ],
+  "abilities": [
+   "Dry Skin",
+   "Sand Veil",
+   "Solar Power"
+  ],
+  "baseStats": {
+   "hp": 62,
+   "attack": 55,
+   "defense": 52,
+   "spAtk": 109,
+   "spDef": 94,
+   "speed": 109,
+   "total": 481
+  }
+ },
+ {
+  "dexNumber": 697,
+  "name": "Tyrantrum",
+  "baseName": "Tyrantrum",
+  "types": [
+   "Rock",
+   "Dragon"
+  ],
+  "abilities": [
+   "Strong Jaw",
+   "Rock Head"
+  ],
+  "baseStats": {
+   "hp": 82,
+   "attack": 121,
+   "defense": 119,
+   "spAtk": 69,
+   "spDef": 59,
+   "speed": 71,
+   "total": 521
+  }
+ },
+ {
+  "dexNumber": 699,
+  "name": "Aurorus",
+  "baseName": "Aurorus",
+  "types": [
+   "Rock",
+   "Ice"
+  ],
+  "abilities": [
+   "Refrigerate",
+   "Snow Warning"
+  ],
+  "baseStats": {
+   "hp": 123,
+   "attack": 77,
+   "defense": 72,
+   "spAtk": 99,
+   "spDef": 92,
+   "speed": 58,
+   "total": 521
+  }
+ },
+ {
+  "dexNumber": 700,
+  "name": "Sylveon",
+  "baseName": "Sylveon",
+  "types": [
+   "Fairy"
+  ],
+  "abilities": [
+   "Cute Charm",
+   "Pixilate"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 65,
+   "defense": 65,
+   "spAtk": 110,
+   "spDef": 130,
+   "speed": 60,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 701,
+  "name": "Hawlucha",
+  "baseName": "Hawlucha",
+  "types": [
+   "Fighting",
+   "Flying"
+  ],
+  "abilities": [
+   "Limber",
+   "Unburden",
+   "Mold Breaker"
+  ],
+  "baseStats": {
+   "hp": 78,
+   "attack": 92,
+   "defense": 75,
+   "spAtk": 74,
+   "spDef": 63,
+   "speed": 118,
+   "total": 500
+  }
+ },
+ {
+  "dexNumber": 701,
+  "name": "Mega Hawlucha",
+  "baseName": "Hawlucha",
+  "types": [
+   "Fighting",
+   "Flying"
+  ],
+  "abilities": [
+   "No Guard"
+  ],
+  "baseStats": {
+   "hp": 78,
+   "attack": 137,
+   "defense": 100,
+   "spAtk": 74,
+   "spDef": 93,
+   "speed": 118,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 702,
+  "name": "Dedenne",
+  "baseName": "Dedenne",
+  "types": [
+   "Electric",
+   "Fairy"
+  ],
+  "abilities": [
+   "Cheek Pouch",
+   "Pickup",
+   "Plus"
+  ],
+  "baseStats": {
+   "hp": 67,
+   "attack": 58,
+   "defense": 57,
+   "spAtk": 81,
+   "spDef": 67,
+   "speed": 101,
+   "total": 431
+  }
+ },
+ {
+  "dexNumber": 706,
+  "name": "Goodra",
+  "baseName": "Goodra",
+  "types": [
+   "Dragon"
+  ],
+  "abilities": [
+   "Sap Sipper",
+   "Hydration",
+   "Gooey"
+  ],
+  "baseStats": {
+   "hp": 90,
+   "attack": 100,
+   "defense": 70,
+   "spAtk": 110,
+   "spDef": 150,
+   "speed": 80,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 706,
+  "name": "Goodra (Hisuian)",
+  "baseName": "Goodra",
+  "types": [
+   "Steel",
+   "Dragon"
+  ],
+  "abilities": [
+   "Sap Sipper",
+   "Shell Armor",
+   "Gooey"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 100,
+   "defense": 100,
+   "spAtk": 110,
+   "spDef": 150,
+   "speed": 60,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 707,
+  "name": "Klefki",
+  "baseName": "Klefki",
+  "types": [
+   "Steel",
+   "Fairy"
+  ],
+  "abilities": [
+   "Prankster",
+   "Magician"
+  ],
+  "baseStats": {
+   "hp": 57,
+   "attack": 80,
+   "defense": 91,
+   "spAtk": 80,
+   "spDef": 87,
+   "speed": 75,
+   "total": 470
+  }
+ },
+ {
+  "dexNumber": 709,
+  "name": "Trevenant",
+  "baseName": "Trevenant",
+  "types": [
+   "Ghost",
+   "Grass"
+  ],
+  "abilities": [
+   "Natural Cure",
+   "Frisk",
+   "Harvest"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 110,
+   "defense": 76,
+   "spAtk": 65,
+   "spDef": 82,
+   "speed": 56,
+   "total": 474
+  }
+ },
+ {
+  "dexNumber": 711,
+  "name": "Gourgeist",
+  "baseName": "Gourgeist",
+  "types": [
+   "Ghost",
+   "Grass"
+  ],
+  "abilities": [
+   "Pickup",
+   "Frisk",
+   "Insomnia"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 90,
+   "defense": 122,
+   "spAtk": 58,
+   "spDef": 75,
+   "speed": 84,
+   "total": 494
+  }
+ },
+ {
+  "dexNumber": 711,
+  "name": "Gourgeist (Small)",
+  "baseName": "Gourgeist",
+  "types": [
+   "Ghost",
+   "Grass"
+  ],
+  "abilities": [
+   "Pickup",
+   "Frisk",
+   "Insomnia"
+  ],
+  "baseStats": {
+   "hp": 55,
+   "attack": 85,
+   "defense": 122,
+   "spAtk": 58,
+   "spDef": 75,
+   "speed": 99,
+   "total": 494
+  }
+ },
+ {
+  "dexNumber": 711,
+  "name": "Gourgeist (Large)",
+  "baseName": "Gourgeist",
+  "types": [
+   "Ghost",
+   "Grass"
+  ],
+  "abilities": [
+   "Pickup",
+   "Frisk",
+   "Insomnia"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 95,
+   "defense": 122,
+   "spAtk": 58,
+   "spDef": 75,
+   "speed": 69,
+   "total": 494
+  }
+ },
+ {
+  "dexNumber": 711,
+  "name": "Gourgeist (Super)",
+  "baseName": "Gourgeist",
+  "types": [
+   "Ghost",
+   "Grass"
+  ],
+  "abilities": [
+   "Pickup",
+   "Frisk",
+   "Insomnia"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 100,
+   "defense": 122,
+   "spAtk": 58,
+   "spDef": 75,
+   "speed": 54,
+   "total": 494
+  }
+ },
+ {
+  "dexNumber": 713,
+  "name": "Avalugg",
+  "baseName": "Avalugg",
+  "types": [
+   "Ice"
+  ],
+  "abilities": [
+   "Own Tempo",
+   "Ice Body",
+   "Sturdy"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 117,
+   "defense": 184,
+   "spAtk": 44,
+   "spDef": 46,
+   "speed": 28,
+   "total": 514
+  }
+ },
+ {
+  "dexNumber": 713,
+  "name": "Avalugg (Hisuian)",
+  "baseName": "Avalugg",
+  "types": [
+   "Ice",
+   "Rock"
+  ],
+  "abilities": [
+   "Strong Jaw",
+   "Ice Body",
+   "Sturdy"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 127,
+   "defense": 184,
+   "spAtk": 34,
+   "spDef": 36,
+   "speed": 38,
+   "total": 514
+  }
+ },
+ {
+  "dexNumber": 715,
+  "name": "Noivern",
+  "baseName": "Noivern",
+  "types": [
+   "Flying",
+   "Dragon"
+  ],
+  "abilities": [
+   "Frisk",
+   "Infiltrator",
+   "Telepathy"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 70,
+   "defense": 80,
+   "spAtk": 97,
+   "spDef": 80,
+   "speed": 123,
+   "total": 535
+  }
+ },
+ {
+  "dexNumber": 724,
+  "name": "Decidueye",
+  "baseName": "Decidueye",
+  "types": [
+   "Grass",
+   "Ghost"
+  ],
+  "abilities": [
+   "Overgrow",
+   "Long Reach"
+  ],
+  "baseStats": {
+   "hp": 78,
+   "attack": 107,
+   "defense": 75,
+   "spAtk": 100,
+   "spDef": 100,
+   "speed": 70,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 724,
+  "name": "Decidueye (Hisuian)",
+  "baseName": "Decidueye",
+  "types": [
+   "Grass",
+   "Fighting"
+  ],
+  "abilities": [
+   "Overgrow",
+   "Scrappy"
+  ],
+  "baseStats": {
+   "hp": 88,
+   "attack": 112,
+   "defense": 80,
+   "spAtk": 95,
+   "spDef": 95,
+   "speed": 60,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 727,
+  "name": "Incineroar",
+  "baseName": "Incineroar",
+  "types": [
+   "Fire",
+   "Dark"
+  ],
+  "abilities": [
+   "Blaze",
+   "Intimidate"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 115,
+   "defense": 90,
+   "spAtk": 80,
+   "spDef": 90,
+   "speed": 60,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 730,
+  "name": "Primarina",
+  "baseName": "Primarina",
+  "types": [
+   "Water",
+   "Fairy"
+  ],
+  "abilities": [
+   "Torrent",
+   "Liquid Voice"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 74,
+   "defense": 74,
+   "spAtk": 126,
+   "spDef": 116,
+   "speed": 60,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 733,
+  "name": "Toucannon",
+  "baseName": "Toucannon",
+  "types": [
+   "Normal",
+   "Flying"
+  ],
+  "abilities": [
+   "Keen Eye",
+   "Skill Link",
+   "Sheer Force"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 120,
+   "defense": 75,
+   "spAtk": 75,
+   "spDef": 75,
+   "speed": 60,
+   "total": 485
+  }
+ },
+ {
+  "dexNumber": 740,
+  "name": "Crabominable",
+  "baseName": "Crabominable",
+  "types": [
+   "Fighting",
+   "Ice"
+  ],
+  "abilities": [
+   "Hyper Cutter",
+   "Iron Fist",
+   "Anger Point"
+  ],
+  "baseStats": {
+   "hp": 97,
+   "attack": 132,
+   "defense": 77,
+   "spAtk": 62,
+   "spDef": 67,
+   "speed": 43,
+   "total": 478
+  }
+ },
+ {
+  "dexNumber": 740,
+  "name": "Mega Crabominable",
+  "baseName": "Crabominable",
+  "types": [
+   "Fighting",
+   "Ice"
+  ],
+  "abilities": [
+   "Iron Fist"
+  ],
+  "baseStats": {
+   "hp": 97,
+   "attack": 157,
+   "defense": 122,
+   "spAtk": 62,
+   "spDef": 107,
+   "speed": 33,
+   "total": 578
+  }
+ },
+ {
+  "dexNumber": 745,
+  "name": "Lycanroc",
+  "baseName": "Lycanroc",
+  "types": [
+   "Rock"
+  ],
+  "abilities": [
+   "Keen Eye",
+   "Sand Rush",
+   "Steadfast"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 115,
+   "defense": 65,
+   "spAtk": 55,
+   "spDef": 65,
+   "speed": 112,
+   "total": 487
+  }
+ },
+ {
+  "dexNumber": 745,
+  "name": "Lycanroc (Midnight)",
+  "baseName": "Lycanroc",
+  "types": [
+   "Rock"
+  ],
+  "abilities": [
+   "Keen Eye",
+   "Vital Spirit",
+   "No Guard"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 115,
+   "defense": 75,
+   "spAtk": 55,
+   "spDef": 75,
+   "speed": 82,
+   "total": 487
+  }
+ },
+ {
+  "dexNumber": 745,
+  "name": "Lycanroc (Dusk)",
+  "baseName": "Lycanroc",
+  "types": [
+   "Rock"
+  ],
+  "abilities": [
+   "Tough Claws"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 117,
+   "defense": 65,
+   "spAtk": 55,
+   "spDef": 65,
+   "speed": 110,
+   "total": 487
+  }
+ },
+ {
+  "dexNumber": 748,
+  "name": "Toxapex",
+  "baseName": "Toxapex",
+  "types": [
+   "Poison",
+   "Water"
+  ],
+  "abilities": [
+   "Merciless",
+   "Limber",
+   "Regenerator"
+  ],
+  "baseStats": {
+   "hp": 50,
+   "attack": 63,
+   "defense": 152,
+   "spAtk": 53,
+   "spDef": 142,
+   "speed": 35,
+   "total": 495
+  }
+ },
+ {
+  "dexNumber": 750,
+  "name": "Mudsdale",
+  "baseName": "Mudsdale",
+  "types": [
+   "Ground"
+  ],
+  "abilities": [
+   "Own Tempo",
+   "Stamina",
+   "Inner Focus"
+  ],
+  "baseStats": {
+   "hp": 100,
+   "attack": 125,
+   "defense": 100,
+   "spAtk": 55,
+   "spDef": 85,
+   "speed": 35,
+   "total": 500
+  }
+ },
+ {
+  "dexNumber": 752,
+  "name": "Araquanid",
+  "baseName": "Araquanid",
+  "types": [
+   "Water",
+   "Bug"
+  ],
+  "abilities": [
+   "Water Bubble",
+   "Water Absorb"
+  ],
+  "baseStats": {
+   "hp": 68,
+   "attack": 70,
+   "defense": 92,
+   "spAtk": 50,
+   "spDef": 132,
+   "speed": 42,
+   "total": 454
+  }
+ },
+ {
+  "dexNumber": 758,
+  "name": "Salazzle",
+  "baseName": "Salazzle",
+  "types": [
+   "Poison",
+   "Fire"
+  ],
+  "abilities": [
+   "Corrosion",
+   "Oblivious"
+  ],
+  "baseStats": {
+   "hp": 68,
+   "attack": 64,
+   "defense": 60,
+   "spAtk": 111,
+   "spDef": 60,
+   "speed": 117,
+   "total": 480
+  }
+ },
+ {
+  "dexNumber": 763,
+  "name": "Tsareena",
+  "baseName": "Tsareena",
+  "types": [
+   "Grass"
+  ],
+  "abilities": [
+   "Leaf Guard",
+   "Queenly Majesty",
+   "Sweet Veil"
+  ],
+  "baseStats": {
+   "hp": 72,
+   "attack": 120,
+   "defense": 98,
+   "spAtk": 50,
+   "spDef": 98,
+   "speed": 72,
+   "total": 510
+  }
+ },
+ {
+  "dexNumber": 765,
+  "name": "Oranguru",
+  "baseName": "Oranguru",
+  "types": [
+   "Normal",
+   "Psychic"
+  ],
+  "abilities": [
+   "Inner Focus",
+   "Telepathy",
+   "Symbiosis"
+  ],
+  "baseStats": {
+   "hp": 90,
+   "attack": 60,
+   "defense": 80,
+   "spAtk": 90,
+   "spDef": 110,
+   "speed": 60,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 766,
+  "name": "Passimian",
+  "baseName": "Passimian",
+  "types": [
+   "Fighting"
+  ],
+  "abilities": [
+   "Receiver",
+   "Defiant"
+  ],
+  "baseStats": {
+   "hp": 100,
+   "attack": 120,
+   "defense": 90,
+   "spAtk": 40,
+   "spDef": 60,
+   "speed": 80,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 768,
+  "name": "Golisopod",
+  "baseName": "Golisopod",
+  "types": [
+   "Bug",
+   "Water"
+  ],
+  "abilities": [
+   "Emergency Exit"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 125,
+   "defense": 140,
+   "spAtk": 60,
+   "spDef": 90,
+   "speed": 40,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 768,
+  "name": "Mega Golisopod",
+  "baseName": "Golisopod",
+  "types": [
+   "Bug",
+   "Steel"
+  ],
+  "abilities": [
+   "Tough Claws"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 150,
+   "defense": 175,
+   "spAtk": 70,
+   "spDef": 120,
+   "speed": 40,
+   "total": 630
+  }
+ },
+ {
+  "dexNumber": 778,
+  "name": "Mimikyu",
+  "baseName": "Mimikyu",
+  "types": [
+   "Ghost",
+   "Fairy"
+  ],
+  "abilities": [
+   "Disguise"
+  ],
+  "baseStats": {
+   "hp": 55,
+   "attack": 90,
+   "defense": 80,
+   "spAtk": 50,
+   "spDef": 105,
+   "speed": 96,
+   "total": 476
+  }
+ },
+ {
+  "dexNumber": 780,
+  "name": "Drampa",
+  "baseName": "Drampa",
+  "types": [
+   "Normal",
+   "Dragon"
+  ],
+  "abilities": [
+   "Berserk",
+   "Sap Sipper",
+   "Cloud Nine"
+  ],
+  "baseStats": {
+   "hp": 78,
+   "attack": 60,
+   "defense": 85,
+   "spAtk": 135,
+   "spDef": 91,
+   "speed": 36,
+   "total": 485
+  }
+ },
+ {
+  "dexNumber": 780,
+  "name": "Mega Drampa",
+  "baseName": "Drampa",
+  "types": [
+   "Normal",
+   "Dragon"
+  ],
+  "abilities": [
+   "Berserk"
+  ],
+  "baseStats": {
+   "hp": 78,
+   "attack": 85,
+   "defense": 110,
+   "spAtk": 160,
+   "spDef": 116,
+   "speed": 36,
+   "total": 585
+  }
+ },
+ {
+  "dexNumber": 784,
+  "name": "Kommo-o",
+  "baseName": "Kommo-o",
+  "types": [
+   "Dragon",
+   "Fighting"
+  ],
+  "abilities": [
+   "Bulletproof",
+   "Soundproof",
+   "Overcoat"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 110,
+   "defense": 125,
+   "spAtk": 100,
+   "spDef": 105,
+   "speed": 85,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 812,
+  "name": "Rillaboom",
+  "baseName": "Rillaboom",
+  "types": [
+   "Grass"
+  ],
+  "abilities": [
+   "Overgrow",
+   "Grassy Surge"
+  ],
+  "baseStats": {
+   "hp": 100,
+   "attack": 125,
+   "defense": 90,
+   "spAtk": 60,
+   "spDef": 70,
+   "speed": 85,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 815,
+  "name": "Cinderace",
+  "baseName": "Cinderace",
+  "types": [
+   "Fire"
+  ],
+  "abilities": [
+   "Blaze",
+   "Libero"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 116,
+   "defense": 75,
+   "spAtk": 65,
+   "spDef": 75,
+   "speed": 119,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 818,
+  "name": "Inteleon",
+  "baseName": "Inteleon",
+  "types": [
+   "Water"
+  ],
+  "abilities": [
+   "Torrent",
+   "Sniper"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 85,
+   "defense": 65,
+   "spAtk": 125,
+   "spDef": 65,
+   "speed": 120,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 823,
+  "name": "Corviknight",
+  "baseName": "Corviknight",
+  "types": [
+   "Flying",
+   "Steel"
+  ],
+  "abilities": [
+   "Pressure",
+   "Unnerve",
+   "Mirror Armor"
+  ],
+  "baseStats": {
+   "hp": 98,
+   "attack": 87,
+   "defense": 105,
+   "spAtk": 53,
+   "spDef": 85,
+   "speed": 67,
+   "total": 495
+  }
+ },
+ {
+  "dexNumber": 828,
+  "name": "Thievul",
+  "baseName": "Thievul",
+  "types": [
+   "Dark"
+  ],
+  "abilities": [
+   "Run Away",
+   "Unburden",
+   "Stakeout"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 58,
+   "defense": 58,
+   "spAtk": 87,
+   "spDef": 92,
+   "speed": 90,
+   "total": 455
+  }
+ },
+ {
+  "dexNumber": 841,
+  "name": "Flapple",
+  "baseName": "Flapple",
+  "types": [
+   "Grass",
+   "Dragon"
+  ],
+  "abilities": [
+   "Ripen",
+   "Gluttony",
+   "Hustle"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 110,
+   "defense": 80,
+   "spAtk": 95,
+   "spDef": 60,
+   "speed": 70,
+   "total": 485
+  }
+ },
+ {
+  "dexNumber": 842,
+  "name": "Appletun",
+  "baseName": "Appletun",
+  "types": [
+   "Grass",
+   "Dragon"
+  ],
+  "abilities": [
+   "Ripen",
+   "Gluttony",
+   "Thick Fat"
+  ],
+  "baseStats": {
+   "hp": 110,
+   "attack": 85,
+   "defense": 80,
+   "spAtk": 100,
+   "spDef": 80,
+   "speed": 30,
+   "total": 485
+  }
+ },
+ {
+  "dexNumber": 844,
+  "name": "Sandaconda",
+  "baseName": "Sandaconda",
+  "types": [
+   "Ground"
+  ],
+  "abilities": [
+   "Sand Spit",
+   "Shed Skin",
+   "Sand Veil"
+  ],
+  "baseStats": {
+   "hp": 72,
+   "attack": 107,
+   "defense": 125,
+   "spAtk": 65,
+   "spDef": 70,
+   "speed": 71,
+   "total": 510
+  }
+ },
+ {
+  "dexNumber": 849,
+  "name": "Toxtricity (Amped)",
+  "baseName": "Toxtricity",
+  "types": [
+   "Electric",
+   "Poison"
+  ],
+  "abilities": [
+   "Punk Rock",
+   "Plus",
+   "Technician"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 98,
+   "defense": 70,
+   "spAtk": 114,
+   "spDef": 70,
+   "speed": 75,
+   "total": 502
+  }
+ },
+ {
+  "dexNumber": 849,
+  "name": "Toxtricity (Low Key)",
+  "baseName": "Toxtricity",
+  "types": [
+   "Electric",
+   "Poison"
+  ],
+  "abilities": [
+   "Punk Rock",
+   "Minus",
+   "Technician"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 98,
+   "defense": 70,
+   "spAtk": 114,
+   "spDef": 70,
+   "speed": 75,
+   "total": 502
+  }
+ },
+ {
+  "dexNumber": 853,
+  "name": "Grapploct",
+  "baseName": "Grapploct",
+  "types": [
+   "Fighting"
+  ],
+  "abilities": [
+   "Limber",
+   "Technician"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 118,
+   "defense": 90,
+   "spAtk": 70,
+   "spDef": 80,
+   "speed": 42,
+   "total": 480
+  }
+ },
+ {
+  "dexNumber": 855,
+  "name": "Polteageist",
+  "baseName": "Polteageist",
+  "types": [
+   "Ghost"
+  ],
+  "abilities": [
+   "Weak Armor",
+   "Cursed Body"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 65,
+   "defense": 65,
+   "spAtk": 134,
+   "spDef": 114,
+   "speed": 70,
+   "total": 508
+  }
+ },
+ {
+  "dexNumber": 858,
+  "name": "Hatterene",
+  "baseName": "Hatterene",
+  "types": [
+   "Psychic",
+   "Fairy"
+  ],
+  "abilities": [
+   "Healer",
+   "Anticipation",
+   "Magic Bounce"
+  ],
+  "baseStats": {
+   "hp": 57,
+   "attack": 90,
+   "defense": 95,
+   "spAtk": 136,
+   "spDef": 103,
+   "speed": 29,
+   "total": 510
+  }
+ },
+ {
+  "dexNumber": 861,
+  "name": "Grimmsnarl",
+  "baseName": "Grimmsnarl",
+  "types": [
+   "Dark",
+   "Fairy"
+  ],
+  "abilities": [
+   "Prankster",
+   "Frisk",
+   "Pickpocket"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 120,
+   "defense": 65,
+   "spAtk": 95,
+   "spDef": 75,
+   "speed": 60,
+   "total": 510
+  }
+ },
+ {
+  "dexNumber": 863,
+  "name": "Perrserker",
+  "baseName": "Perrserker",
+  "types": [
+   "Steel"
+  ],
+  "abilities": [
+   "Battle Armor",
+   "Tough Claws",
+   "Steely Spirit"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 110,
+   "defense": 100,
+   "spAtk": 50,
+   "spDef": 60,
+   "speed": 50,
+   "total": 440
+  }
+ },
+ {
+  "dexNumber": 865,
+  "name": "Sirfetch'd",
+  "baseName": "Sirfetch'd",
+  "types": [
+   "Fighting"
+  ],
+  "abilities": [
+   "Steadfast",
+   "Scrappy"
+  ],
+  "baseStats": {
+   "hp": 62,
+   "attack": 135,
+   "defense": 95,
+   "spAtk": 68,
+   "spDef": 82,
+   "speed": 65,
+   "total": 507
+  }
+ },
+ {
+  "dexNumber": 866,
+  "name": "Mr. Rime",
+  "baseName": "Mr. Rime",
+  "types": [
+   "Ice",
+   "Psychic"
+  ],
+  "abilities": [
+   "Tangled Feet",
+   "Screen Cleaner",
+   "Ice Body"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 85,
+   "defense": 75,
+   "spAtk": 110,
+   "spDef": 100,
+   "speed": 70,
+   "total": 520
+  }
+ },
+ {
+  "dexNumber": 867,
+  "name": "Runerigus",
+  "baseName": "Runerigus",
+  "types": [
+   "Ground",
+   "Ghost"
+  ],
+  "abilities": [
+   "Wandering Spirit"
+  ],
+  "baseStats": {
+   "hp": 58,
+   "attack": 95,
+   "defense": 145,
+   "spAtk": 50,
+   "spDef": 105,
+   "speed": 30,
+   "total": 483
+  }
+ },
+ {
+  "dexNumber": 869,
+  "name": "Alcremie",
+  "baseName": "Alcremie",
+  "types": [
+   "Fairy"
+  ],
+  "abilities": [
+   "Sweet Veil",
+   "Aroma Veil"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 60,
+   "defense": 75,
+   "spAtk": 110,
+   "spDef": 121,
+   "speed": 64,
+   "total": 495
+  }
+ },
+ {
+  "dexNumber": 870,
+  "name": "Falinks",
+  "baseName": "Falinks",
+  "types": [
+   "Fighting"
+  ],
+  "abilities": [
+   "Battle Armor",
+   "Defiant"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 100,
+   "defense": 100,
+   "spAtk": 70,
+   "spDef": 60,
+   "speed": 75,
+   "total": 470
+  }
+ },
+ {
+  "dexNumber": 870,
+  "name": "Mega Falinks",
+  "baseName": "Falinks",
+  "types": [
+   "Fighting"
+  ],
+  "abilities": [
+   "Defiant"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 135,
+   "defense": 135,
+   "spAtk": 70,
+   "spDef": 65,
+   "speed": 100,
+   "total": 570
+  }
+ },
+ {
+  "dexNumber": 871,
+  "name": "Pincurchin",
+  "baseName": "Pincurchin",
+  "types": [
+   "Electric"
+  ],
+  "abilities": [
+   "Lightning Rod",
+   "Electric Surge"
+  ],
+  "baseStats": {
+   "hp": 48,
+   "attack": 101,
+   "defense": 95,
+   "spAtk": 91,
+   "spDef": 85,
+   "speed": 15,
+   "total": 435
+  }
+ },
+ {
+  "dexNumber": 876,
+  "name": "Indeedee (Male)",
+  "baseName": "Indeedee",
+  "types": [
+   "Psychic",
+   "Normal"
+  ],
+  "abilities": [
+   "Inner Focus",
+   "Synchronize",
+   "Psychic Surge"
+  ],
+  "baseStats": {
+   "hp": 60,
+   "attack": 65,
+   "defense": 55,
+   "spAtk": 105,
+   "spDef": 95,
+   "speed": 95,
+   "total": 475
+  }
+ },
+ {
+  "dexNumber": 876,
+  "name": "Indeedee (Female)",
+  "baseName": "Indeedee",
+  "types": [
+   "Psychic",
+   "Normal"
+  ],
+  "abilities": [
+   "Own Tempo",
+   "Synchronize",
+   "Psychic Surge"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 55,
+   "defense": 65,
+   "spAtk": 95,
+   "spDef": 105,
+   "speed": 85,
+   "total": 475
+  }
+ },
+ {
+  "dexNumber": 877,
+  "name": "Morpeko",
+  "baseName": "Morpeko",
+  "types": [
+   "Electric",
+   "Dark"
+  ],
+  "abilities": [
+   "Hunger Switch"
+  ],
+  "baseStats": {
+   "hp": 58,
+   "attack": 95,
+   "defense": 58,
+   "spAtk": 70,
+   "spDef": 58,
+   "speed": 97,
+   "total": 436
+  }
+ },
+ {
+  "dexNumber": 887,
+  "name": "Dragapult",
+  "baseName": "Dragapult",
+  "types": [
+   "Dragon",
+   "Ghost"
+  ],
+  "abilities": [
+   "Clear Body",
+   "Infiltrator",
+   "Cursed Body"
+  ],
+  "baseStats": {
+   "hp": 88,
+   "attack": 120,
+   "defense": 75,
+   "spAtk": 100,
+   "spDef": 75,
+   "speed": 142,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 899,
+  "name": "Wyrdeer",
+  "baseName": "Wyrdeer",
+  "types": [
+   "Normal",
+   "Psychic"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Frisk",
+   "Sap Sipper"
+  ],
+  "baseStats": {
+   "hp": 103,
+   "attack": 105,
+   "defense": 72,
+   "spAtk": 105,
+   "spDef": 75,
+   "speed": 65,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 900,
+  "name": "Kleavor",
+  "baseName": "Kleavor",
+  "types": [
+   "Bug",
+   "Rock"
+  ],
+  "abilities": [
+   "Swarm",
+   "Sheer Force",
+   "Sharpness"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 135,
+   "defense": 95,
+   "spAtk": 45,
+   "spDef": 70,
+   "speed": 85,
+   "total": 500
+  }
+ },
+ {
+  "dexNumber": 902,
+  "name": "Basculegion",
+  "baseName": "Basculegion",
+  "types": [
+   "Water",
+   "Ghost"
+  ],
+  "abilities": [
+   "Swift Swim",
+   "Adaptability",
+   "Mold Breaker"
+  ],
+  "baseStats": {
+   "hp": 120,
+   "attack": 112,
+   "defense": 65,
+   "spAtk": 80,
+   "spDef": 75,
+   "speed": 78,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 902,
+  "name": "Basculegion (Female)",
+  "baseName": "Basculegion",
+  "types": [
+   "Water",
+   "Ghost"
+  ],
+  "abilities": [
+   "Swift Swim",
+   "Adaptability",
+   "Mold Breaker"
+  ],
+  "baseStats": {
+   "hp": 120,
+   "attack": 92,
+   "defense": 65,
+   "spAtk": 100,
+   "spDef": 75,
+   "speed": 78,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 903,
+  "name": "Sneasler",
+  "baseName": "Sneasler",
+  "types": [
+   "Fighting",
+   "Poison"
+  ],
+  "abilities": [
+   "Pressure",
+   "Unburden",
+   "Poison Touch"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 130,
+   "defense": 60,
+   "spAtk": 40,
+   "spDef": 80,
+   "speed": 120,
+   "total": 510
+  }
+ },
+ {
+  "dexNumber": 904,
+  "name": "Overqwil",
+  "baseName": "Overqwil",
+  "types": [
+   "Dark",
+   "Poison"
+  ],
+  "abilities": [
+   "Poison Point",
+   "Swift Swim",
+   "Intimidate"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 115,
+   "defense": 95,
+   "spAtk": 65,
+   "spDef": 65,
+   "speed": 85,
+   "total": 510
+  }
+ },
+ {
+  "dexNumber": 908,
+  "name": "Meowscarada",
+  "baseName": "Meowscarada",
+  "types": [
+   "Grass",
+   "Dark"
+  ],
+  "abilities": [
+   "Overgrow",
+   "Protean"
+  ],
+  "baseStats": {
+   "hp": 76,
+   "attack": 110,
+   "defense": 70,
+   "spAtk": 81,
+   "spDef": 70,
+   "speed": 123,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 911,
+  "name": "Skeledirge",
+  "baseName": "Skeledirge",
+  "types": [
+   "Fire",
+   "Ghost"
+  ],
+  "abilities": [
+   "Blaze",
+   "Unaware"
+  ],
+  "baseStats": {
+   "hp": 104,
+   "attack": 75,
+   "defense": 100,
+   "spAtk": 110,
+   "spDef": 75,
+   "speed": 66,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 914,
+  "name": "Quaquaval",
+  "baseName": "Quaquaval",
+  "types": [
+   "Water",
+   "Fighting"
+  ],
+  "abilities": [
+   "Torrent",
+   "Moxie"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 120,
+   "defense": 80,
+   "spAtk": 85,
+   "spDef": 75,
+   "speed": 85,
+   "total": 530
+  }
+ },
+ {
+  "dexNumber": 923,
+  "name": "Pawmot",
+  "baseName": "Pawmot",
+  "types": [
+   "Electric",
+   "Fighting"
+  ],
+  "abilities": [
+   "Volt Absorb",
+   "Natural Cure",
+   "Iron Fist"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 115,
+   "defense": 70,
+   "spAtk": 70,
+   "spDef": 60,
+   "speed": 105,
+   "total": 490
+  }
+ },
+ {
+  "dexNumber": 925,
+  "name": "Maushold",
+  "baseName": "Maushold",
+  "types": [
+   "Normal"
+  ],
+  "abilities": [
+   "Friend Guard",
+   "Cheek Pouch",
+   "Technician"
+  ],
+  "baseStats": {
+   "hp": 74,
+   "attack": 75,
+   "defense": 70,
+   "spAtk": 65,
+   "spDef": 75,
+   "speed": 111,
+   "total": 470
+  }
+ },
+ {
+  "dexNumber": 930,
+  "name": "Arboliva",
+  "baseName": "Arboliva",
+  "types": [
+   "Grass",
+   "Normal"
+  ],
+  "abilities": [
+   "Seed Sower",
+   "Harvest"
+  ],
+  "baseStats": {
+   "hp": 78,
+   "attack": 69,
+   "defense": 90,
+   "spAtk": 125,
+   "spDef": 109,
+   "speed": 39,
+   "total": 510
+  }
+ },
+ {
+  "dexNumber": 931,
+  "name": "Squawkabilly",
+  "baseName": "Squawkabilly",
+  "types": [
+   "Normal",
+   "Flying"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Hustle",
+   "Guts"
+  ],
+  "baseStats": {
+   "hp": 82,
+   "attack": 96,
+   "defense": 51,
+   "spAtk": 45,
+   "spDef": 51,
+   "speed": 92,
+   "total": 417
+  }
+ },
+ {
+  "dexNumber": 931,
+  "name": "Squawkabilly (White Plumage)",
+  "baseName": "Squawkabilly",
+  "types": [
+   "Normal",
+   "Flying"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Hustle",
+   "Sheer Force"
+  ],
+  "baseStats": {
+   "hp": 82,
+   "attack": 96,
+   "defense": 51,
+   "spAtk": 45,
+   "spDef": 51,
+   "speed": 92,
+   "total": 417
+  }
+ },
+ {
+  "dexNumber": 931,
+  "name": "Squawkabilly (Yellow Plumage)",
+  "baseName": "Squawkabilly",
+  "types": [
+   "Normal",
+   "Flying"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Hustle",
+   "Sheer Force"
+  ],
+  "baseStats": {
+   "hp": 82,
+   "attack": 96,
+   "defense": 51,
+   "spAtk": 45,
+   "spDef": 51,
+   "speed": 92,
+   "total": 417
+  }
+ },
+ {
+  "dexNumber": 934,
+  "name": "Garganacl",
+  "baseName": "Garganacl",
+  "types": [
+   "Rock"
+  ],
+  "abilities": [
+   "Purifying Salt",
+   "Sturdy",
+   "Clear Body"
+  ],
+  "baseStats": {
+   "hp": 100,
+   "attack": 100,
+   "defense": 130,
+   "spAtk": 45,
+   "spDef": 90,
+   "speed": 35,
+   "total": 500
+  }
+ },
+ {
+  "dexNumber": 936,
+  "name": "Armarouge",
+  "baseName": "Armarouge",
+  "types": [
+   "Fire",
+   "Psychic"
+  ],
+  "abilities": [
+   "Flash Fire",
+   "Weak Armor"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 60,
+   "defense": 100,
+   "spAtk": 125,
+   "spDef": 80,
+   "speed": 75,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 937,
+  "name": "Ceruledge",
+  "baseName": "Ceruledge",
+  "types": [
+   "Fire",
+   "Ghost"
+  ],
+  "abilities": [
+   "Flash Fire",
+   "Weak Armor"
+  ],
+  "baseStats": {
+   "hp": 75,
+   "attack": 125,
+   "defense": 80,
+   "spAtk": 60,
+   "spDef": 100,
+   "speed": 85,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 939,
+  "name": "Bellibolt",
+  "baseName": "Bellibolt",
+  "types": [
+   "Electric"
+  ],
+  "abilities": [
+   "Electromorphosis",
+   "Static",
+   "Damp"
+  ],
+  "baseStats": {
+   "hp": 109,
+   "attack": 64,
+   "defense": 91,
+   "spAtk": 103,
+   "spDef": 83,
+   "speed": 45,
+   "total": 495
+  }
+ },
+ {
+  "dexNumber": 943,
+  "name": "Mabosstiff",
+  "baseName": "Mabosstiff",
+  "types": [
+   "Dark"
+  ],
+  "abilities": [
+   "Intimidate",
+   "Guard Dog",
+   "Stakeout"
+  ],
+  "baseStats": {
+   "hp": 80,
+   "attack": 120,
+   "defense": 90,
+   "spAtk": 60,
+   "spDef": 70,
+   "speed": 85,
+   "total": 505
+  }
+ },
+ {
+  "dexNumber": 952,
+  "name": "Scovillain",
+  "baseName": "Scovillain",
+  "types": [
+   "Grass",
+   "Fire"
+  ],
+  "abilities": [
+   "Chlorophyll",
+   "Insomnia",
+   "Moody"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 108,
+   "defense": 65,
+   "spAtk": 108,
+   "spDef": 65,
+   "speed": 75,
+   "total": 486
+  }
+ },
+ {
+  "dexNumber": 952,
+  "name": "Mega Scovillain",
+  "baseName": "Scovillain",
+  "types": [
+   "Grass",
+   "Fire"
+  ],
+  "abilities": [
+   "Spicy Spray"
+  ],
+  "baseStats": {
+   "hp": 65,
+   "attack": 138,
+   "defense": 85,
+   "spAtk": 138,
+   "spDef": 85,
+   "speed": 75,
+   "total": 586
+  }
+ },
+ {
+  "dexNumber": 956,
+  "name": "Espathra",
+  "baseName": "Espathra",
+  "types": [
+   "Psychic"
+  ],
+  "abilities": [
+   "Opportunist",
+   "Frisk",
+   "Speed Boost"
+  ],
+  "baseStats": {
+   "hp": 95,
+   "attack": 60,
+   "defense": 60,
+   "spAtk": 101,
+   "spDef": 60,
+   "speed": 105,
+   "total": 481
+  }
+ },
+ {
+  "dexNumber": 959,
+  "name": "Tinkaton",
+  "baseName": "Tinkaton",
+  "types": [
+   "Fairy",
+   "Steel"
+  ],
+  "abilities": [
+   "Mold Breaker",
+   "Own Tempo",
+   "Pickpocket"
+  ],
+  "baseStats": {
+   "hp": 85,
+   "attack": 75,
+   "defense": 77,
+   "spAtk": 70,
+   "spDef": 105,
+   "speed": 94,
+   "total": 506
+  }
+ },
+ {
+  "dexNumber": 964,
+  "name": "Palafin",
+  "baseName": "Palafin",
+  "types": [
+   "Water"
+  ],
+  "abilities": [
+   "Zero to Hero"
+  ],
+  "baseStats": {
+   "hp": 100,
+   "attack": 70,
+   "defense": 72,
+   "spAtk": 53,
+   "spDef": 62,
+   "speed": 100,
+   "total": 457
+  }
+ },
+ {
+  "dexNumber": 964,
+  "name": "Palafin (Hero)",
+  "baseName": "Palafin",
+  "types": [
+   "Water"
+  ],
+  "abilities": [
+   "Zero to Hero"
+  ],
+  "baseStats": {
+   "hp": 100,
+   "attack": 160,
+   "defense": 97,
+   "spAtk": 106,
+   "spDef": 87,
+   "speed": 100,
+   "total": 650
+  }
+ },
+ {
+  "dexNumber": 968,
+  "name": "Orthworm",
+  "baseName": "Orthworm",
+  "types": [
+   "Steel"
+  ],
+  "abilities": [
+   "Earth Eater",
+   "Sand Veil"
+  ],
+  "baseStats": {
+   "hp": 70,
+   "attack": 85,
+   "defense": 145,
+   "spAtk": 60,
+   "spDef": 55,
+   "speed": 65,
+   "total": 480
+  }
+ },
+ {
+  "dexNumber": 970,
+  "name": "Glimmora",
+  "baseName": "Glimmora",
+  "types": [
+   "Rock",
+   "Poison"
+  ],
+  "abilities": [
+   "Toxic Debris",
+   "Corrosion"
+  ],
+  "baseStats": {
+   "hp": 83,
+   "attack": 55,
+   "defense": 90,
+   "spAtk": 130,
+   "spDef": 81,
+   "speed": 86,
+   "total": 525
+  }
+ },
+ {
+  "dexNumber": 970,
+  "name": "Mega Glimmora",
+  "baseName": "Glimmora",
+  "types": [
+   "Rock",
+   "Poison"
+  ],
+  "abilities": [
+   "Adaptability"
+  ],
+  "baseStats": {
+   "hp": 83,
+   "attack": 90,
+   "defense": 105,
+   "spAtk": 150,
+   "spDef": 96,
+   "speed": 101,
+   "total": 625
+  }
+ },
+ {
+  "dexNumber": 972,
+  "name": "Houndstone",
+  "baseName": "Houndstone",
+  "types": [
+   "Ghost"
+  ],
+  "abilities": [
+   "Sand Rush",
+   "Fluffy"
+  ],
+  "baseStats": {
+   "hp": 72,
+   "attack": 101,
+   "defense": 100,
+   "spAtk": 50,
+   "spDef": 97,
+   "speed": 68,
+   "total": 488
+  }
+ },
+ {
+  "dexNumber": 979,
+  "name": "Annihilape",
+  "baseName": "Annihilape",
+  "types": [
+   "Fighting",
+   "Ghost"
+  ],
+  "abilities": [
+   "Vital Spirit",
+   "Inner Focus",
+   "Defiant"
+  ],
+  "baseStats": {
+   "hp": 110,
+   "attack": 115,
+   "defense": 80,
+   "spAtk": 50,
+   "spDef": 90,
+   "speed": 90,
+   "total": 535
+  }
+ },
+ {
+  "dexNumber": 981,
+  "name": "Farigiraf",
+  "baseName": "Farigiraf",
+  "types": [
+   "Normal",
+   "Psychic"
+  ],
+  "abilities": [
+   "Cud Chew",
+   "Armor Tail",
+   "Sap Sipper"
+  ],
+  "baseStats": {
+   "hp": 120,
+   "attack": 90,
+   "defense": 70,
+   "spAtk": 110,
+   "spDef": 70,
+   "speed": 60,
+   "total": 520
+  }
+ },
+ {
+  "dexNumber": 983,
+  "name": "Kingambit",
+  "baseName": "Kingambit",
+  "types": [
+   "Dark",
+   "Steel"
+  ],
+  "abilities": [
+   "Defiant",
+   "Supreme Overlord",
+   "Pressure"
+  ],
+  "baseStats": {
+   "hp": 100,
+   "attack": 135,
+   "defense": 120,
+   "spAtk": 60,
+   "spDef": 85,
+   "speed": 50,
+   "total": 550
+  }
+ },
+ {
+  "dexNumber": 998,
+  "name": "Baxcalibur",
+  "baseName": "Baxcalibur",
+  "types": [
+   "Dragon",
+   "Ice"
+  ],
+  "abilities": [
+   "Thermal Exchange",
+   "Ice Body"
+  ],
+  "baseStats": {
+   "hp": 115,
+   "attack": 145,
+   "defense": 92,
+   "spAtk": 75,
+   "spDef": 86,
+   "speed": 87,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 998,
+  "name": "Mega Baxcalibur",
+  "baseName": "Baxcalibur",
+  "types": [
+   "Dragon",
+   "Ice"
+  ],
+  "abilities": [
+   "Thermal Exchange"
+  ],
+  "baseStats": {
+   "hp": 115,
+   "attack": 145,
+   "defense": 92,
+   "spAtk": 75,
+   "spDef": 86,
+   "speed": 87,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 1000,
+  "name": "Gholdengo",
+  "baseName": "Gholdengo",
+  "types": [
+   "Steel",
+   "Ghost"
+  ],
+  "abilities": [
+   "Good as Gold"
+  ],
+  "baseStats": {
+   "hp": 87,
+   "attack": 60,
+   "defense": 95,
+   "spAtk": 133,
+   "spDef": 91,
+   "speed": 84,
+   "total": 550
+  }
+ },
+ {
+  "dexNumber": 1013,
+  "name": "Sinistcha",
+  "baseName": "Sinistcha",
+  "types": [
+   "Grass",
+   "Ghost"
+  ],
+  "abilities": [
+   "Hospitality",
+   "Heatproof"
+  ],
+  "baseStats": {
+   "hp": 71,
+   "attack": 60,
+   "defense": 106,
+   "spAtk": 121,
+   "spDef": 80,
+   "speed": 70,
+   "total": 508
+  }
+ },
+ {
+  "dexNumber": 1018,
+  "name": "Archaludon",
+  "baseName": "Archaludon",
+  "types": [
+   "Steel",
+   "Dragon"
+  ],
+  "abilities": [
+   "Stamina",
+   "Sturdy",
+   "Stalwart"
+  ],
+  "baseStats": {
+   "hp": 90,
+   "attack": 105,
+   "defense": 130,
+   "spAtk": 125,
+   "spDef": 65,
+   "speed": 85,
+   "total": 600
+  }
+ },
+ {
+  "dexNumber": 1019,
+  "name": "Hydrapple",
+  "baseName": "Hydrapple",
+  "types": [
+   "Grass",
+   "Dragon"
+  ],
+  "abilities": [
+   "Supersweet Syrup",
+   "Regenerator",
+   "Sticky Hold"
+  ],
+  "baseStats": {
+   "hp": 106,
+   "attack": 80,
+   "defense": 110,
+   "spAtk": 120,
+   "spDef": 80,
+   "speed": 44,
+   "total": 540
+  }
+ }
+]

@@ -1,9 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pokedex_flutter/core/utils/name_forms.dart';
 import 'package:pokedex_flutter/core/utils/pokemon_helpers.dart';
 import 'package:pokedex_flutter/core/utils/type_chart.dart';
 import 'package:pokedex_flutter/features/pokemon_detail/pokemon_detail_screen.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  setUpAll(() async {
+    // The name/cry rules load from assets; tests resolve against real data.
+    await NameForms.load();
+  });
+
   group('TypeChart.getEffectiveness', () {
     test('returns an entry for all 18 types', () {
       final result = TypeChart.getEffectiveness(['grass']);
@@ -54,15 +61,19 @@ void main() {
       expect(PokemonHelpers.formatName('', ), '');
     });
 
-    test('handles hardcoded edge cases', () {
+    test('handles punctuation edge cases', () {
       expect(PokemonHelpers.formatName('mr-mime'), 'Mr. Mime');
+      expect(PokemonHelpers.formatName('mr. mime'), 'Mr. Mime');
       expect(PokemonHelpers.formatName('mime-jr'), 'Mime Jr.');
       expect(PokemonHelpers.formatName('nidoran-f'), 'Nidoran F');
       expect(PokemonHelpers.formatName('nidoran-m'), 'Nidoran M');
       expect(PokemonHelpers.formatName('type-null'), 'Type: Null');
+      expect(PokemonHelpers.formatName('type: null'), 'Type: Null');
       expect(PokemonHelpers.formatName('ho-oh'), 'Ho-Oh');
       expect(PokemonHelpers.formatName('porygon-z'), 'Porygon-Z');
       expect(PokemonHelpers.formatName('tapu-koko'), 'Tapu Koko');
+      expect(PokemonHelpers.formatName('farfetchd'), "Farfetch'd");
+      expect(PokemonHelpers.formatName('kommo-o'), 'Kommo-o');
     });
 
     test('expands form suffixes', () {
@@ -73,6 +84,95 @@ void main() {
       expect(PokemonHelpers.formatName('exeggutor-alola'), 'Alolan Exeggutor');
       expect(PokemonHelpers.formatName('growlithe-hisui'), 'Hisuian Growlithe');
       expect(PokemonHelpers.formatName('kyogre-primal'), 'Primal Kyogre');
+    });
+
+    test('resolves forms the old hardcode missed', () {
+      expect(PokemonHelpers.formatName('lycanroc-midnight'), 'Midnight Lycanroc');
+      expect(PokemonHelpers.formatName('indeedee-m'), 'Male Indeedee');
+      expect(PokemonHelpers.formatName('indeedee-f'), 'Female Indeedee');
+      expect(PokemonHelpers.formatName('calyrex-ice'), 'Ice Rider Calyrex');
+      expect(PokemonHelpers.formatName('pikachu-rock-star'), 'Pikachu Rock Star');
+      expect(PokemonHelpers.formatName('mr-mime-galar'), 'Galarian Mr. Mime');
+      expect(PokemonHelpers.formatName('deoxys-attack'), 'Attack Deoxys');
+      expect(PokemonHelpers.formatName('maushold-family-of-three'),
+          'Family Of Three Maushold');
+    });
+
+    test('passes display-style names through unchanged', () {
+      expect(PokemonHelpers.formatName('Mega Delphox'), 'Mega Delphox');
+      expect(PokemonHelpers.formatName('Ice Rider Calyrex'), 'Ice Rider Calyrex');
+    });
+  });
+
+  group('NameForms.toCryId', () {
+    test('megas use the verified {base}-mega files', () {
+      expect(NameForms.toCryId('Mega Delphox'), 'delphox-mega');
+      expect(NameForms.toCryId('Mega Venusaur'), 'venusaur-mega');
+      expect(NameForms.toCryId('Mega Magearna'), 'magearna-mega');
+    });
+
+    test('lettered megas join without a hyphen', () {
+      expect(NameForms.toCryId('Mega Charizard X'), 'charizard-megax');
+      expect(NameForms.toCryId('Mega Mewtwo Y'), 'mewtwo-megay');
+      expect(NameForms.toCryId('Mega Garchomp Z'), 'garchomp-megaz');
+      expect(NameForms.toCryId('charizard-mega-x'), 'charizard-megax');
+    });
+
+    test('compound megas resolve to the base mega cry', () {
+      expect(NameForms.toCryId('Mega Meowstic Male'), 'meowstic-mega');
+      expect(NameForms.toCryId('Mega Tatsugiri Droopy'), 'tatsugiri-mega');
+      expect(NameForms.toCryId('Mega Magearna Original'), 'magearna-mega');
+    });
+
+    test('forms without cry files drop to the base cry', () {
+      expect(NameForms.toCryId('Gigantamax Venusaur'), 'venusaur');
+      expect(NameForms.toCryId('Alolan Rattata'), 'rattata');
+      expect(NameForms.toCryId('Attack Deoxys'), 'deoxys');
+      expect(NameForms.toCryId('Heat Rotom'), 'rotom');
+      expect(NameForms.toCryId('Average Gourgeist'), 'gourgeist');
+      expect(NameForms.toCryId('Mega Zygarde'), 'zygarde');
+    });
+
+    test('verified form files are used exactly', () {
+      expect(NameForms.toCryId('Midnight Lycanroc'), 'lycanroc-midnight');
+      expect(NameForms.toCryId('Dusk Lycanroc'), 'lycanroc-dusk');
+      expect(NameForms.toCryId('Galarian Slowpoke'), 'slowpoke-galar');
+      expect(NameForms.toCryId('Super Gourgeist'), 'gourgeist-super');
+      expect(NameForms.toCryId('Female Indeedee'), 'indeedee-f');
+      expect(NameForms.toCryId('Male Indeedee'), 'indeedee');
+      expect(NameForms.toCryId('Ice Rider Calyrex'), 'calyrex-ice');
+      expect(NameForms.toCryId('Noice Eiscue'), 'eiscue-noice');
+      expect(NameForms.toCryId('Roaming Gimmighoul'), 'gimmighoul-roaming');
+      expect(NameForms.toCryId('Starter Eevee'), 'eevee-starter');
+      expect(NameForms.toCryId('10 Zygarde'), 'zygarde-10');
+      expect(NameForms.toCryId('Complete Zygarde'), 'zygarde-complete');
+    });
+
+    test('pikachu cosmetics play the base cry (except Starter)', () {
+      expect(NameForms.toCryId('Pikachu Rock Star'), 'pikachu');
+      expect(NameForms.toCryId('Pikachu Original Cap'), 'pikachu');
+      expect(NameForms.toCryId('Pikachu Starter'), 'pikachu-starter');
+    });
+
+    test('punctuation names sanitize to concatenated cry ids', () {
+      expect(NameForms.toCryId('Mr. Mime'), 'mrmime');
+      expect(NameForms.toCryId('Kommo-o'), 'kommoo');
+      expect(NameForms.toCryId('Ho-Oh'), 'hooh');
+      expect(NameForms.toCryId("Farfetch'd"), 'farfetchd');
+      expect(NameForms.toCryId('Flabébé'), 'flabebe');
+    });
+
+    test('slug inputs resolve like display names', () {
+      expect(NameForms.toCryId('slowpoke-galar'), 'slowpoke-galar');
+      expect(NameForms.toCryId('lycanroc-dusk'), 'lycanroc-dusk');
+      expect(NameForms.toCryId('toxtricity-amped-gmax'), 'toxtricity');
+      expect(NameForms.toCryId('zygarde-10-power-construct'), 'zygarde-10');
+      expect(NameForms.toCryId('urshifu-single-strike-gmax'), 'urshifu');
+    });
+
+    test('lastResortCryId mirrors the legacy retry behavior', () {
+      expect(NameForms.lastResortCryId('Mega Delphox'), 'delphox');
+      expect(NameForms.lastResortCryId('Mr. Mime'), 'mime');
     });
   });
 

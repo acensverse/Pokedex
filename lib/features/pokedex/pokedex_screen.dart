@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme/app_colors.dart';
+import '../../core/champions.dart';
+import '../../core/remote_data.dart';
+import '../tools/widgets/tool_widgets.dart';
 import 'widgets/search_bar.dart';
 import 'widgets/pokemon_grid.dart';
 import 'widgets/filter_sheet.dart';
@@ -22,6 +25,17 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
   bool _isSearching = false;
   bool _showFilters = false;
   final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Refresh the Champions data from the pipeline at most every 6 h
+    // (throttled inside the controller); silent when offline.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(remoteDataControllerProvider.notifier).maybeAutoCheck();
+    });
+  }
 
   String _genLabel(int gen) => gen == 0 ? 'All Gens' : 'Gen $gen';
 
@@ -43,6 +57,8 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
     final moveFilter = ref.watch(toolMoveFilterProvider);
     final activeTypes = ref.watch(selectedTypesProvider);
     final activeGen = ref.watch(genFilterProvider);
+    final championsMode = ref.watch(championsModeProvider);
+    final shinyMode = ref.watch(shinyModeProvider);
 
     ref.listen(searchClearTriggerProvider, (_, _) {
       if (_isSearching) {
@@ -54,6 +70,17 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
         if (_scrollController.hasClients) {
           _scrollController.jumpTo(0);
         }
+      }
+    });
+
+    ref.listen<RemoteDataStatus>(remoteDataControllerProvider, (_, next) {
+      if (next == RemoteDataStatus.updated) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Champions data updated.'),
+            backgroundColor: AppColors.primary,
+          ),
+        );
       }
     });
 
@@ -80,33 +107,40 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                   builder: (context) => const ToolsSheet(),
                 );
               },
-              child: Row(
-                children: [
-                  Text(
-                    'Pok\u00e9dex',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 0.5,
-                      color: Colors.red,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    width: 22,
-                    height: 22,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.keyboard_arrow_down,
-                        color: Colors.white,
-                        size: 16,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  children: [
+                    Text(
+                      championsMode
+                          ? 'Champions Pok\u00e9dex'
+                          : 'Pok\u00e9dex',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                        fontSize: championsMode ? 20 : null,
+                        color: championsMode ? championsPurple : Colors.red,
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 22,
+                      height: 22,
+                      decoration: BoxDecoration(
+                        color:
+                            championsMode ? championsPurple : AppColors.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -143,6 +177,25 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                 setState(() {
                   _showFilters = !_showFilters;
                 });
+              },
+            ),
+            IconButton(
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+              tooltip: 'Shiny mode',
+              icon: Icon(
+                LucideIcons.sparkles,
+                size: 24,
+                color: shinyMode
+                    ? Colors.amber
+                    : Theme.of(context)
+                        .iconTheme
+                        .color
+                        ?.withValues(alpha: 0.7),
+              ),
+              onPressed: () {
+                ref.read(shinyModeProvider.notifier).state =
+                    !ref.read(shinyModeProvider);
               },
             ),
             IconButton(
@@ -221,20 +274,42 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                             },
                           ),
                           _FilterPill(
-                            label: 'Shiny',
-                            isActive: ref.watch(shinyModeProvider),
-                            activeColor: Colors.amber,
-                            onTap: () {
-                              ref.read(shinyModeProvider.notifier).state = !ref
-                                  .read(shinyModeProvider);
-                            },
-                          ),
-                          _FilterPill(
                             label: 'Favorites',
                             isActive: ref.watch(favoritesOnlyProvider),
                             onTap: () {
                               ref.read(favoritesOnlyProvider.notifier).state =
                                   !ref.read(favoritesOnlyProvider);
+                            },
+                          ),
+                          _FilterPill(
+                            label: 'Champions',
+                            isActive: championsMode,
+                            activeColor: const Color(0xFF8E24AA),
+                            onTap: () {
+                              final next = !ref.read(championsModeProvider);
+                              ref.read(championsModeProvider.notifier).state =
+                                  next;
+                              if (next) {
+                                // Entering champions mode starts clean
+                                ref.read(selectedTypesProvider.notifier).state =
+                                    [];
+                                ref.read(genFilterProvider.notifier).state = 0;
+                                ref.read(searchQueryProvider.notifier).state =
+                                    '';
+                                ref
+                                    .read(debouncedSearchQueryProvider
+                                        .notifier)
+                                    .state = '';
+                                ref
+                                    .read(toolLearnerFilterProvider.notifier)
+                                    .state = null;
+                                ref
+                                    .read(toolAbilityFilterProvider.notifier)
+                                    .state = null;
+                                ref
+                                    .read(toolMoveFilterProvider.notifier)
+                                    .state = null;
+                              }
                             },
                           ),
                         ],

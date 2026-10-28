@@ -6,8 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_spacing.dart';
+import '../../core/champions.dart';
 import '../../core/utils/pokemon_helpers.dart';
 import '../pokedex/widgets/tools_sheet.dart';
+import 'widgets/tool_widgets.dart';
 
 
 class ItemEntry {
@@ -151,14 +153,27 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
         ),
         data: (items) {
           final q = _query.toLowerCase();
+          final championsMode = ref.watch(championsModeProvider);
+          final championItemSlugs =
+              ref.watch(championsDataProvider).value?.itemSlugs;
           final filtered = items.where((i) {
             final matchesQuery = q.isEmpty || i.name.replaceAll('-', ' ').contains(q);
             final matchesCat = _catFilter == null || i.cat == _catFilter;
-            return matchesQuery && matchesCat;
+            // Champions mode: the item seed has no Pokemon relation, so
+            // legality comes from the Champions legal held-item name set.
+            final matchesChampions = !championsMode ||
+                (championItemSlugs != null &&
+                    championItemSlugs.contains(normalizeItemName(i.name)));
+            return matchesQuery && matchesCat && matchesChampions;
           }).toList()
             ..sort((a, b) => a.name.compareTo(b.name)); // A-Z
           return Column(
             children: [
+              if (championsMode)
+                const ChampionsModeBanner(
+                  message:
+                      'Champions Pok\u00e9dex \u2014 only legal held items are shown',
+                ),
               AnimatedSize(
                 duration: const Duration(milliseconds: 250),
                 curve: Curves.easeInOut,

@@ -6,6 +6,7 @@ import '../../tools/moves_screen.dart' show MoveEntry, movesSeedProvider;
 import 'section_header.dart';
 import 'package:go_router/go_router.dart';
 import '../../pokedex/pokedex_provider.dart';
+import '../../../core/utils/pokemon_helpers.dart';
 
 class MovesTab extends ConsumerStatefulWidget {
   final Pokemon pokemon;
@@ -315,11 +316,7 @@ class _LocalMoveRow extends ConsumerWidget {
 
   _LocalMoveRow({required this.move, required this.methodText});
 
-  String _formatName(String name) => name
-      .replaceAll('-', ' ')
-      .split(' ')
-      .map((w) => w.isNotEmpty ? '${w[0].toUpperCase()}${w.substring(1)}' : '')
-      .join(' ');
+  String _formatName(String name) => PokemonHelpers.formatName(name);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

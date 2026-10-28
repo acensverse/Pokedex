@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/theme_provider.dart';
 import '../../core/providers.dart';
+import '../../core/remote_data.dart';
 import '../../data/database/app_database.dart';
 
 const String _devModePrefKey = 'dev_mode_unlocked_flag';
@@ -368,10 +369,50 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
+  /// Manual "Check for updates" for the Champions data; reports via snackbar.
+  Future<void> _checkChampionsData() async {
+    final status = await ref
+        .read(remoteDataControllerProvider.notifier)
+        .checkForUpdates();
+    if (!mounted) return;
+    final (message, isError) = switch (status) {
+      RemoteDataStatus.updated => ('Champions data updated!', false),
+      RemoteDataStatus.upToDate => ('Champions data is up to date.', false),
+      RemoteDataStatus.failed => (
+        'Update check failed — check your connection.',
+        true,
+      ),
+      _ => (null, false),
+    };
+    if (message == null) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.redAccent : AppColors.primary,
+      ),
+    );
+  }
+
+  /// Drops the downloaded override so the baked assets serve again.
+  Future<void> _revertChampionsData() async {
+    await ref
+        .read(remoteDataControllerProvider.notifier)
+        .revertToBaked();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Reverted to the app-baked Champions data.'),
+        backgroundColor: AppColors.primary,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final activeThemeMode = ref.watch(themeModeProvider);
     final activeLayoutMode = ref.watch(pokedexLayoutProvider);
+    final remoteDataStatus = ref.watch(remoteDataControllerProvider);
+    final championsDataInfo = ref.watch(activeChampionsDataProvider).value;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -564,6 +605,134 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                             label: const Text('Restore Backup'),
                           ),
                         ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            // -----------------------------------------------------------------
+            // SECTION: CHAMPIONS DATA (auto-updates from GitHub)
+            // -----------------------------------------------------------------
+            _buildSectionHeader(
+              'Champions Data',
+              Icons.cloud_download_outlined,
+            ),
+            const SizedBox(height: 8),
+            Card(
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(
+                  color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          switch (remoteDataStatus) {
+                            RemoteDataStatus.failed =>
+                              Icons.cloud_off_outlined,
+                            RemoteDataStatus.updated =>
+                              Icons.cloud_done_outlined,
+                            _ => Icons.cloud_outlined,
+                          },
+                          color: remoteDataStatus == RemoteDataStatus.failed
+                              ? Colors.redAccent
+                              : AppColors.primary,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            switch (remoteDataStatus) {
+                              RemoteDataStatus.checking =>
+                                'Checking for updates…',
+                              RemoteDataStatus.updated =>
+                                'Updated — Champions data is fresh.',
+                              RemoteDataStatus.upToDate =>
+                                'Up to date with the latest game data.',
+                              RemoteDataStatus.failed =>
+                                'Last update check failed.',
+                              _ => championsDataInfo?.fromOverride ?? false
+                                  ? 'Using downloaded data.'
+                                  : 'Using the built-in data.',
+                            },
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        if (remoteDataStatus == RemoteDataStatus.checking)
+                          const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'The Champions Pokédex and Speed Tiers refresh automatically '
+                      'when the game adds Pokémon, moves or items.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        height: 1.4,
+                        color: isDark
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade700,
+                      ),
+                    ),
+                    if (championsDataInfo?.source case final source?)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          'Data version: $source',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey.shade500,
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: remoteDataStatus ==
+                                    RemoteDataStatus.checking
+                                ? null
+                                : _checkChampionsData,
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              side: const BorderSide(color: AppColors.primary),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            icon: const Icon(Icons.refresh_rounded, size: 18),
+                            label: const Text('Check for Updates'),
+                          ),
+                        ),
+                        if (championsDataInfo?.fromOverride ?? false) ...[
+                          const SizedBox(width: 12),
+                          TextButton(
+                            onPressed: remoteDataStatus ==
+                                    RemoteDataStatus.checking
+                                ? null
+                                : _revertChampionsData,
+                            child: const Text('Revert'),
+                          ),
+                        ],
                       ],
                     ),
                   ],
