@@ -366,7 +366,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 14, 12, 0),
+                            padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
                             child: Row(
                               children: [
                                 Container(
@@ -386,23 +386,6 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                                       fontSize: 13,
                                       letterSpacing: 0.5,
                                     ),
-                                  ),
-                                ),
-                                const Spacer(),
-                                GestureDetector(
-                                  onTap: () {
-                                    ref
-                                            .read(
-                                              toolAbilityFilterProvider
-                                                  .notifier,
-                                            )
-                                            .state =
-                                        null;
-                                  },
-                                  child: const Icon(
-                                    Icons.close,
-                                    size: 18,
-                                    color: Colors.black45,
                                   ),
                                 ),
                               ],
@@ -462,78 +445,24 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surface,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Theme.of(context).dividerColor),
-                      ),
-                      padding: const EdgeInsets.all(4),
-                      child: Row(
-                        children: [
-                          _AbilityModeButton(
-                            label: 'All',
-                            isActive: abilityFilter.mode == 'all',
-                            onTap: () {
-                              final c = ref.read(toolAbilityFilterProvider);
-                              if (c != null && c.mode != 'all') {
-                                ref
-                                    .read(toolAbilityFilterProvider.notifier)
-                                    .state = (
-                                  name: c.name,
-                                  mode: 'all',
-                                  allIds: c.allIds,
-                                  normalIds: c.normalIds,
-                                  hiddenIds: c.hiddenIds,
-                                  flavor: c.flavor,
-                                  eff: c.eff,
-                                );
-                              }
-                            },
-                          ),
-                          _AbilityModeButton(
-                            label: 'Normal',
-                            isActive: abilityFilter.mode == 'normal',
-                            onTap: () {
-                              final c = ref.read(toolAbilityFilterProvider);
-                              if (c != null && c.mode != 'normal') {
-                                ref
-                                    .read(toolAbilityFilterProvider.notifier)
-                                    .state = (
-                                  name: c.name,
-                                  mode: 'normal',
-                                  allIds: c.allIds,
-                                  normalIds: c.normalIds,
-                                  hiddenIds: c.hiddenIds,
-                                  flavor: c.flavor,
-                                  eff: c.eff,
-                                );
-                              }
-                            },
-                          ),
-                          _AbilityModeButton(
-                            label: 'Hidden',
-                            isActive: abilityFilter.mode == 'hidden',
-                            onTap: () {
-                              final c = ref.read(toolAbilityFilterProvider);
-                              if (c != null && c.mode != 'hidden') {
-                                ref
-                                    .read(toolAbilityFilterProvider.notifier)
-                                    .state = (
-                                  name: c.name,
-                                  mode: 'hidden',
-                                  allIds: c.allIds,
-                                  normalIds: c.normalIds,
-                                  hiddenIds: c.hiddenIds,
-                                  flavor: c.flavor,
-                                  eff: c.eff,
-                                );
-                              }
-                            },
-                          ),
-                        ],
-                      ),
+                    _AbilityModeSegmentedSwitch(
+                      activeMode: abilityFilter.mode,
+                      onModeChanged: (newMode) {
+                        final c = ref.read(toolAbilityFilterProvider);
+                        if (c != null) {
+                          ref
+                              .read(toolAbilityFilterProvider.notifier)
+                              .state = (
+                            name: c.name,
+                            mode: newMode,
+                            allIds: c.allIds,
+                            normalIds: c.normalIds,
+                            hiddenIds: c.hiddenIds,
+                            flavor: c.flavor,
+                            eff: c.eff,
+                          );
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -758,38 +687,114 @@ class _MoveStatItemPill extends StatelessWidget {
   }
 }
 
-class _AbilityModeButton extends StatelessWidget {
-  final String label;
-  final bool isActive;
-  final VoidCallback onTap;
+class _AbilityModeSegmentedSwitch extends StatelessWidget {
+  final String activeMode;
+  final ValueChanged<String> onModeChanged;
 
-  const _AbilityModeButton({
-    required this.label,
-    required this.isActive,
-    required this.onTap,
+  const _AbilityModeSegmentedSwitch({
+    required this.activeMode,
+    required this.onModeChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: isActive ? AppColors.primary : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final int activeIndex = switch (activeMode) {
+      'normal' => 1,
+      'hidden' => 2,
+      _ => 0,
+    };
+
+    final Alignment indicatorAlignment = switch (activeIndex) {
+      1 => Alignment.center,
+      2 => Alignment.centerRight,
+      _ => Alignment.centerLeft,
+    };
+
+    return Container(
+      height: 42,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: Theme.of(context).dividerColor,
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
-          child: Center(
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: isActive ? Colors.white : Colors.grey.shade600,
+        ],
+      ),
+      padding: const EdgeInsets.all(4),
+      child: Stack(
+        children: [
+          AnimatedAlign(
+            alignment: indicatorAlignment,
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeInOutCubic,
+            child: FractionallySizedBox(
+              widthFactor: 1 / 3,
+              heightFactor: 1.0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.35),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
               ),
             ),
+          ),
+          Row(
+            children: [
+              _buildTab(context, 'All', 'all', 0, activeIndex, isDark),
+              _buildTab(context, 'Normal', 'normal', 1, activeIndex, isDark),
+              _buildTab(context, 'Hidden', 'hidden', 2, activeIndex, isDark),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTab(
+    BuildContext context,
+    String label,
+    String mode,
+    int index,
+    int activeIndex,
+    bool isDark,
+  ) {
+    final isSelected = activeIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          if (!isSelected) {
+            onModeChanged(mode);
+          }
+        },
+        child: Center(
+          child: AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            style: TextStyle(
+              fontSize: 12.5,
+              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+              color: isSelected
+                  ? Colors.white
+                  : (isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+            ),
+            child: Text(label),
           ),
         ),
       ),
