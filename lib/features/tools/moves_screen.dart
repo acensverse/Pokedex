@@ -622,7 +622,6 @@ class MoveDetailSheet extends ConsumerWidget {
   const MoveDetailSheet({super.key, required this.move});
 
   static const _accent = Color(0xFF43A047);
-  static const _sheetBg = Color(0xFFF1F4F8);
 
   void _openLearnersInPokedex(BuildContext context, WidgetRef ref) {
     ref.read(searchQueryProvider.notifier).state = '';

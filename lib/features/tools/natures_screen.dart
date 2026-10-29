@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import '../../app/theme/app_colors.dart';
 import '../pokedex/widgets/tools_sheet.dart';
 import '../../core/utils/pokemon_helpers.dart';
 

@@ -390,7 +390,6 @@ class AbilityDetailSheet extends ConsumerWidget {
   const AbilityDetailSheet({super.key, required this.ability});
 
   static const _accent = Color(0xFF43A047);
-  static const _sheetBg = Color(0xFFF1F4F8);
 
   void _openHoldersInPokedex(BuildContext context, WidgetRef ref) {
     if (ability.pokemon.isEmpty) return;
