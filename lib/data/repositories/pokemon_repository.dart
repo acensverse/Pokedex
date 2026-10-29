@@ -59,7 +59,7 @@ class PokemonRepository {
   /// Lets a healthy-looking database (rows pass the sniff test below) still
   /// be recognized as pre-rebake, forcing exactly one re-seed.
   static const _seedAssetRev =
-      7; // 7 = filled missing Z-A mega abilities from base species
+      9; // 9 = champout ability corrections (5 megas) + Z-mega learnsets
 
   // Seed SQLite from local JSON asset once per install/seed-version
   Future<void> checkAndSeedDatabase() async {

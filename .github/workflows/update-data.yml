@@ -1,0 +1,66 @@
+# Regenerates the Champions data assets from the projectpokemon/champout
+# datamine and commits any changes. The app downloads the committed files at
+# runtime (see lib/core/remote_data.dart), so data stays current without a new
+# app release.
+#
+# Runs nightly and on demand (Actions tab -> Run workflow). Fails loudly when
+# champout adds forms the pokedex seed doesn't know yet — add those seed rows
+# once, and the pipeline flows again.
+
+name: update-data
+
+on:
+  schedule:
+    # 03:37 UTC daily — off-peak, avoids the on-the-hour cron rush.
+    - cron: '37 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Rebuild champions data from champout
+        run: node tool/build_champions_from_champout.js
+
+      - name: Commit regenerated assets (if changed)
+        id: commit
+        run: |
+          if git diff --quiet -- assets/champions_seed.json assets/speed_tiers.json assets/moves_seed.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No data changes since the last run."
+          else
+            SOURCE=$(node -p "require('./assets/champions_seed.json').source")
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add assets/champions_seed.json assets/speed_tiers.json assets/moves_seed.json
+            git commit -m "chore(data): champions update from ${SOURCE}"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Summary
+        run: |
+          {
+            echo "## Champions data"
+            echo ""
+            if [ "${{ steps.commit.outputs.changed }}" = "true" ]; then
+              echo "**Updated** — new data committed; the app picks it up on its next update check."
+            else
+              echo "No changes — already in sync with upstream."
+            fi
+            echo ""
+            echo "Roster: $(node -p "require('./assets/champions_seed.json').pokemon.length") forms · Items: $(node -p "require('./assets/champions_seed.json').items.length") · Tiers: $(node -p "require('./assets/speed_tiers.json').tiers.length")"
+          } >> "$GITHUB_STEP_SUMMARY"

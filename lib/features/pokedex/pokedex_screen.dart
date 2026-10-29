@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme/app_colors.dart';
+import '../../core/remote_data.dart';
 import 'widgets/search_bar.dart';
 import 'widgets/pokemon_grid.dart';
 import 'widgets/filter_sheet.dart';
@@ -22,6 +23,17 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
   bool _isSearching = false;
   bool _showFilters = false;
   final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Refresh the Champions data from the pipeline at most every 6 h
+    // (throttled inside the controller); silent when offline.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(remoteDataControllerProvider.notifier).maybeAutoCheck();
+    });
+  }
 
   String _genLabel(int gen) => gen == 0 ? 'All Gens' : 'Gen $gen';
 
@@ -54,6 +66,17 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
         if (_scrollController.hasClients) {
           _scrollController.jumpTo(0);
         }
+      }
+    });
+
+    ref.listen<RemoteDataStatus>(remoteDataControllerProvider, (_, next) {
+      if (next == RemoteDataStatus.updated) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Champions data updated.'),
+            backgroundColor: AppColors.primary,
+          ),
+        );
       }
     });
 
