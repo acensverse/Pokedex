@@ -59,6 +59,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
     final activeGen = ref.watch(genFilterProvider);
     final championsMode = ref.watch(championsModeProvider);
     final shinyMode = ref.watch(shinyModeProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     ref.listen(searchClearTriggerProvider, (_, _) {
       if (_isSearching) {
@@ -410,7 +411,9 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                                 abilityFilter.flavor,
                                 style: TextStyle(
                                   fontSize: 12.5,
-                                  color: Colors.grey.shade700,
+                                  color: isDark
+                                      ? Colors.grey.shade300
+                                      : Colors.grey.shade700,
                                   height: 1.4,
                                 ),
                               ),
@@ -435,7 +438,9 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                                 abilityFilter.eff,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey.shade600,
+                                  color: isDark
+                                      ? Colors.grey.shade400
+                                      : Colors.grey.shade600,
                                   height: 1.4,
                                 ),
                               ),
@@ -490,7 +495,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 14, 12, 0),
+                            padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
                             child: Row(
                               children: [
                                 Container(
@@ -514,19 +519,6 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                                     ),
                                   ),
                                 ),
-                                const Spacer(),
-                                GestureDetector(
-                                  onTap: () {
-                                    ref
-                                        .read(toolMoveFilterProvider.notifier)
-                                        .state = null;
-                                  },
-                                  child: const Icon(
-                                    Icons.close,
-                                    size: 18,
-                                    color: Colors.black45,
-                                  ),
-                                ),
                               ],
                             ),
                           ),
@@ -544,22 +536,72 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                              padding: EdgeInsets.fromLTRB(
+                                16,
+                                0,
+                                16,
+                                (moveFilter.eff != null && moveFilter.eff!.isNotEmpty)
+                                    ? 4
+                                    : 12,
+                              ),
                               child: Text(
                                 moveFilter.flavor,
                                 style: TextStyle(
                                   fontSize: 12.5,
-                                  color: Colors.grey.shade700,
+                                  color: isDark
+                                      ? Colors.grey.shade300
+                                      : Colors.grey.shade700,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          ],
+                          if (moveFilter.eff != null && moveFilter.eff!.isNotEmpty) ...[
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 4, 16, 2),
+                              child: Text(
+                                'Effect',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.grey.shade500,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                              child: Text(
+                                moveFilter.eff!,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: isDark
+                                      ? Colors.grey.shade400
+                                      : Colors.grey.shade600,
                                   height: 1.4,
                                 ),
                               ),
                             ),
                           ],
                           Container(
-                            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8,
+                              horizontal: 16,
+                            ),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).scaffoldBackgroundColor,
-                              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16)),
+                              color: isDark
+                                  ? const Color(0xFF1E1E1E)
+                                  : Colors.grey.shade100,
+                              borderRadius: const BorderRadius.vertical(
+                                bottom: Radius.circular(16),
+                              ),
+                              border: Border(
+                                top: BorderSide(
+                                  color: Theme.of(context)
+                                      .dividerColor
+                                      .withValues(alpha: 0.5),
+                                ),
+                              ),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,

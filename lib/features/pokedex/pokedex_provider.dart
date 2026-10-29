@@ -58,12 +58,13 @@ final toolAbilityFilterProvider =
       })?
     >((ref) => null);
 
-/// Move filter from Pokemon detail page: shows only Pokemon that learn [name]
+/// Move filter: shows only Pokemon that learn [name]
 final toolMoveFilterProvider =
     StateProvider<
       ({
         String name,
         String flavor,
+        String? eff,
         String? type,
         String? category,
         int? power,

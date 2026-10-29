@@ -334,7 +334,8 @@ class _LocalMoveRow extends ConsumerWidget {
 
         ref.read(toolMoveFilterProvider.notifier).state = (
           name: _formatName(m.name),
-          flavor: m.flavor ?? m.eff ?? '',
+          flavor: m.flavor ?? '',
+          eff: m.eff,
           type: m.type,
           category: m.cls,
           power: m.power,

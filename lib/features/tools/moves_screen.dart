@@ -630,10 +630,16 @@ class MoveDetailSheet extends ConsumerWidget {
     ref.read(genFilterProvider.notifier).state = 0;
     ref.read(favoritesOnlyProvider.notifier).state = false;
     ref.read(toolAbilityFilterProvider.notifier).state = null;
-    ref.read(toolMoveFilterProvider.notifier).state = null;
-    ref.read(toolLearnerFilterProvider.notifier).state = (
-      kind: 'Move',
+    ref.read(toolLearnerFilterProvider.notifier).state = null;
+    ref.read(toolMoveFilterProvider.notifier).state = (
       name: PokemonHelpers.formatName(move.name),
+      flavor: move.flavor ?? '',
+      eff: move.eff,
+      type: move.type,
+      category: move.cls,
+      power: move.power,
+      accuracy: move.acc,
+      pp: move.pp,
       ids: {
         ...move.learn,
         ...move.learnDetails.map((ld) => ld[0]),
@@ -641,6 +647,7 @@ class MoveDetailSheet extends ConsumerWidget {
     );
     Navigator.of(context).pop(); // close the sheet
     // push (not go) so system-back from the filtered home returns here.
+    FocusManager.instance.primaryFocus?.unfocus();
     GoRouter.of(context).push('/');
   }
 
