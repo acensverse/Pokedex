@@ -304,7 +304,7 @@ class _AbilityCard extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(14),
@@ -318,61 +318,43 @@ class _AbilityCard extends StatelessWidget {
               ),
             ],
           ),
-          child: Row(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: Colors.purple.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(Icons.diamond,
-                    size: 24, color: Color(0xFF8E24AA)),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      PokemonHelpers.formatName(ability.name),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 15,
-                        color: Theme.of(context).textTheme.bodyLarge?.color,
-                      ),
-                    ),
-                    SizedBox(height: 2),
-                    Text(
-                      [
-                        if (ability.gen.isNotEmpty) _genLabel(ability.gen),
-                        '${ability.pokemon.length} Pok\u00e9mon',
-                      ].join('  \u00b7  '),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).textTheme.bodyMedium?.color,
-                      ),
-                    ),
-                    if (ability.description != null) ...[
-                      SizedBox(height: 4),
-                      Text(
-                        ability.description!,
-                        style: TextStyle(
-                          fontSize: 12,
-                          height: 1.3,
-                          color: Theme.of(context).textTheme.bodyMedium?.color,
-                        ),
-                      ),
-                    ],
-                  ],
+              Text(
+                PokemonHelpers.formatName(ability.name),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 15,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
               ),
+              const SizedBox(height: 2),
+              Text(
+                [
+                  if (ability.gen.isNotEmpty) _genLabel(ability.gen),
+                  '${ability.pokemon.length} Pok\u00e9mon',
+                ].join('  \u00b7  '),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                ),
+              ),
+              if (ability.description != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  ability.description!,
+                  style: TextStyle(
+                    fontSize: 12,
+                    height: 1.3,
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
+                ),
+              ],
             ],
           ),
         ),
