@@ -55,6 +55,18 @@ void main() {
       }
     });
 
+    test('roster entries contain valid abilities lists', () {
+      final roster = (champions['pokemon'] as List<dynamic>)
+          .cast<Map<String, dynamic>>();
+      for (final p in roster) {
+        expect(p['abilities'], isA<List<dynamic>>(),
+            reason: 'pokemon ${p['name']} (#${p['id']}) must have abilities list');
+        final abilities = p['abilities'] as List<dynamic>;
+        expect(abilities, isNotEmpty,
+            reason: 'pokemon ${p['name']} (#${p['id']}) has empty abilities');
+      }
+    });
+
     test('no duplicate roster ids and names are display-style', () {
       final seenIds = <int>{};
       for (final p in (champions['pokemon'] as List<dynamic>)

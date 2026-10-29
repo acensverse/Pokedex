@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_spacing.dart';
 import '../../core/champions.dart';
+import '../../core/remote_data.dart';
 import '../../core/utils/pokemon_helpers.dart';
 import '../../core/utils/type_chart.dart';
 import '../pokedex/pokedex_provider.dart';
@@ -85,10 +86,13 @@ class MoveEntry {
 }
 
 
-/// All moves baked from assets/moves_seed.json (offline-first).
+/// All moves baked from assets/moves_seed.json (offline-first),
+/// with runtime overrides supported when Champions data is updated.
 final movesSeedProvider = FutureProvider<List<MoveEntry>>((ref) async {
-
-  final raw = await rootBundle.loadString('assets/moves_seed.json');
+  ref.watch(remoteDataVersionProvider);
+  final store = ref.read(remoteDataStoreProvider);
+  final override = await store.read(kRemoteMovesFile);
+  final raw = override ?? await rootBundle.loadString(kMovesAssetPath);
   final list = jsonDecode(raw) as List<dynamic>;
   return list
       .map((e) => MoveEntry.fromJson(e as Map<String, dynamic>))
@@ -139,11 +143,6 @@ class _MovesScreenState extends ConsumerState<MovesScreen> {
         _query = '';
       }
     });
-  }
-
-  void _clearSearch() {
-    _searchController.clear();
-    setState(() => _query = '');
   }
 
   @override
@@ -279,19 +278,7 @@ class _MovesScreenState extends ConsumerState<MovesScreen> {
                               LucideIcons.search,
                               color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.6),
                             ),
-                            suffixIcon: _query.isNotEmpty
-                                ? IconButton(
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(
-                                        minWidth: 36, minHeight: 36),
-                                    icon: Icon(
-                                      Icons.close,
-                                      color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.6),
-                                      size: 20,
-                                    ),
-                                    onPressed: _clearSearch,
-                                  )
-                                : null,
+                            suffixIcon: null,
                             isDense: true,
                             filled: true,
                             fillColor: Theme.of(context).cardColor,

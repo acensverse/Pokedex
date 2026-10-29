@@ -75,16 +75,39 @@ void main() {
       );
     });
 
-    test('accepts a minimal valid payload', () {
+    test('accepts a minimal valid payload with abilities', () {
       expect(
         validateChampionsPayload({
           'source': 'projectpokemon/champout@abc123',
           'pokemon': [
-            {'id': 3, 'name': 'Venusaur', 'dex': 3},
+            {
+              'id': 3,
+              'name': 'Venusaur',
+              'dex': 3,
+              'abilities': ['overgrow', 'chlorophyll'],
+            },
           ],
           'items': ['Leftovers'],
         }),
         isNull,
+      );
+    });
+
+    test('rejects non-list abilities', () {
+      expect(
+        validateChampionsPayload({
+          'source': 'projectpokemon/champout@abc123',
+          'pokemon': [
+            {
+              'id': 3,
+              'name': 'Venusaur',
+              'dex': 3,
+              'abilities': 'overgrow',
+            },
+          ],
+          'items': ['Leftovers'],
+        }),
+        isNotNull,
       );
     });
   });

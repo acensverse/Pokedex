@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import '../../core/champions.dart';
 import '../../core/providers.dart';
+import '../../core/remote_data.dart';
 import '../../models/pokemon.dart';
 
 // Search Query Provider (immediate, drives the TextField)
@@ -170,6 +171,7 @@ class PokedexNotifier extends StateNotifier<PokedexState> {
 final pokedexProvider = StateNotifierProvider<PokedexNotifier, PokedexState>((
   ref,
 ) {
+  ref.watch(remoteDataVersionProvider);
   return PokedexNotifier(ref);
 });
 

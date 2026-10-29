@@ -5,1767 +5,3208 @@
   {
    "id": 3,
    "name": "Venusaur",
-   "dex": 3
+   "dex": 3,
+   "abilities": [
+    "overgrow",
+    "chlorophyll"
+   ]
   },
   {
    "id": 10033,
    "name": "Mega Venusaur",
-   "dex": 3
+   "dex": 3,
+   "abilities": [
+    "thick-fat"
+   ]
   },
   {
    "id": 6,
    "name": "Charizard",
-   "dex": 6
+   "dex": 6,
+   "abilities": [
+    "blaze",
+    "solar-power"
+   ]
   },
   {
    "id": 10034,
    "name": "Mega Charizard X",
-   "dex": 6
+   "dex": 6,
+   "abilities": [
+    "tough-claws"
+   ]
   },
   {
    "id": 10035,
    "name": "Mega Charizard Y",
-   "dex": 6
+   "dex": 6,
+   "abilities": [
+    "drought"
+   ]
   },
   {
    "id": 9,
    "name": "Blastoise",
-   "dex": 9
+   "dex": 9,
+   "abilities": [
+    "torrent",
+    "rain-dish"
+   ]
   },
   {
    "id": 10036,
    "name": "Mega Blastoise",
-   "dex": 9
+   "dex": 9,
+   "abilities": [
+    "mega-launcher"
+   ]
   },
   {
    "id": 15,
    "name": "Beedrill",
-   "dex": 15
+   "dex": 15,
+   "abilities": [
+    "swarm",
+    "sniper"
+   ]
   },
   {
    "id": 10090,
    "name": "Mega Beedrill",
-   "dex": 15
+   "dex": 15,
+   "abilities": [
+    "adaptability"
+   ]
   },
   {
    "id": 18,
    "name": "Pidgeot",
-   "dex": 18
+   "dex": 18,
+   "abilities": [
+    "keen-eye",
+    "tangled-feet",
+    "big-pecks"
+   ]
   },
   {
    "id": 10073,
    "name": "Mega Pidgeot",
-   "dex": 18
+   "dex": 18,
+   "abilities": [
+    "no-guard"
+   ]
   },
   {
    "id": 24,
    "name": "Arbok",
-   "dex": 24
+   "dex": 24,
+   "abilities": [
+    "intimidate",
+    "shed-skin",
+    "unnerve"
+   ]
   },
   {
    "id": 25,
    "name": "Pikachu",
-   "dex": 25
+   "dex": 25,
+   "abilities": [
+    "static",
+    "lightning-rod"
+   ]
   },
   {
    "id": 26,
    "name": "Raichu",
-   "dex": 26
+   "dex": 26,
+   "abilities": [
+    "static",
+    "lightning-rod"
+   ]
   },
   {
    "id": 10100,
    "name": "Alolan Raichu",
-   "dex": 26
+   "dex": 26,
+   "abilities": [
+    "surge-surfer"
+   ]
   },
   {
    "id": 10304,
    "name": "Mega Raichu X",
-   "dex": 26
+   "dex": 26,
+   "abilities": [
+    "electric-surge"
+   ]
   },
   {
    "id": 10305,
    "name": "Mega Raichu Y",
-   "dex": 26
+   "dex": 26,
+   "abilities": [
+    "no-guard"
+   ]
   },
   {
    "id": 36,
    "name": "Clefable",
-   "dex": 36
+   "dex": 36,
+   "abilities": [
+    "cute-charm",
+    "magic-guard",
+    "unaware"
+   ]
   },
   {
    "id": 10278,
    "name": "Mega Clefable",
-   "dex": 36
+   "dex": 36,
+   "abilities": [
+    "magic-bounce"
+   ]
   },
   {
    "id": 38,
    "name": "Ninetales",
-   "dex": 38
+   "dex": 38,
+   "abilities": [
+    "flash-fire",
+    "drought"
+   ]
   },
   {
    "id": 10104,
    "name": "Alolan Ninetales",
-   "dex": 38
+   "dex": 38,
+   "abilities": [
+    "snow-cloak",
+    "snow-warning"
+   ]
   },
   {
    "id": 40,
    "name": "Wigglytuff",
-   "dex": 40
+   "dex": 40,
+   "abilities": [
+    "cute-charm",
+    "competitive",
+    "frisk"
+   ]
   },
   {
    "id": 45,
    "name": "Vileplume",
-   "dex": 45
+   "dex": 45,
+   "abilities": [
+    "chlorophyll",
+    "effect-spore"
+   ]
   },
   {
    "id": 53,
    "name": "Persian",
-   "dex": 53
+   "dex": 53,
+   "abilities": [
+    "limber",
+    "technician",
+    "unnerve"
+   ]
   },
   {
    "id": 10108,
    "name": "Alolan Persian",
-   "dex": 53
+   "dex": 53,
+   "abilities": [
+    "fur-coat",
+    "technician",
+    "rattled"
+   ]
   },
   {
    "id": 59,
    "name": "Arcanine",
-   "dex": 59
+   "dex": 59,
+   "abilities": [
+    "intimidate",
+    "flash-fire",
+    "justified"
+   ]
   },
   {
    "id": 10230,
    "name": "Hisuian Arcanine",
-   "dex": 59
+   "dex": 59,
+   "abilities": [
+    "intimidate",
+    "flash-fire",
+    "rock-head"
+   ]
   },
   {
    "id": 65,
    "name": "Alakazam",
-   "dex": 65
+   "dex": 65,
+   "abilities": [
+    "synchronize",
+    "inner-focus",
+    "magic-guard"
+   ]
   },
   {
    "id": 10037,
    "name": "Mega Alakazam",
-   "dex": 65
+   "dex": 65,
+   "abilities": [
+    "trace"
+   ]
   },
   {
    "id": 68,
    "name": "Machamp",
-   "dex": 68
+   "dex": 68,
+   "abilities": [
+    "guts",
+    "no-guard",
+    "steadfast"
+   ]
   },
   {
    "id": 71,
    "name": "Victreebel",
-   "dex": 71
+   "dex": 71,
+   "abilities": [
+    "chlorophyll",
+    "gluttony"
+   ]
   },
   {
    "id": 10279,
    "name": "Mega Victreebel",
-   "dex": 71
+   "dex": 71,
+   "abilities": [
+    "innards-out"
+   ]
   },
   {
    "id": 80,
    "name": "Slowbro",
-   "dex": 80
+   "dex": 80,
+   "abilities": [
+    "oblivious",
+    "own-tempo",
+    "regenerator"
+   ]
   },
   {
    "id": 10071,
    "name": "Mega Slowbro",
-   "dex": 80
+   "dex": 80,
+   "abilities": [
+    "shell-armor"
+   ]
   },
   {
    "id": 10165,
    "name": "Galarian Slowbro",
-   "dex": 80
+   "dex": 80,
+   "abilities": [
+    "quick-draw",
+    "own-tempo",
+    "regenerator"
+   ]
   },
   {
    "id": 83,
    "name": "Farfetch'd",
-   "dex": 83
+   "dex": 83,
+   "abilities": [
+    "keen-eye",
+    "inner-focus",
+    "defiant"
+   ]
   },
   {
    "id": 94,
    "name": "Gengar",
-   "dex": 94
+   "dex": 94,
+   "abilities": [
+    "cursed-body"
+   ]
   },
   {
    "id": 10038,
    "name": "Mega Gengar",
-   "dex": 94
+   "dex": 94,
+   "abilities": [
+    "shadow-tag"
+   ]
   },
   {
    "id": 115,
    "name": "Kangaskhan",
-   "dex": 115
+   "dex": 115,
+   "abilities": [
+    "early-bird",
+    "scrappy",
+    "inner-focus"
+   ]
   },
   {
    "id": 10039,
    "name": "Mega Kangaskhan",
-   "dex": 115
+   "dex": 115,
+   "abilities": [
+    "parental-bond"
+   ]
   },
   {
    "id": 121,
    "name": "Starmie",
-   "dex": 121
+   "dex": 121,
+   "abilities": [
+    "illuminate",
+    "natural-cure",
+    "analytic"
+   ]
   },
   {
    "id": 10280,
    "name": "Mega Starmie",
-   "dex": 121
+   "dex": 121,
+   "abilities": [
+    "huge-power"
+   ]
   },
   {
    "id": 122,
    "name": "Mr. Mime",
-   "dex": 122
+   "dex": 122,
+   "abilities": [
+    "soundproof",
+    "filter",
+    "technician"
+   ]
   },
   {
    "id": 127,
    "name": "Pinsir",
-   "dex": 127
+   "dex": 127,
+   "abilities": [
+    "hyper-cutter",
+    "mold-breaker",
+    "moxie"
+   ]
   },
   {
    "id": 10040,
    "name": "Mega Pinsir",
-   "dex": 127
+   "dex": 127,
+   "abilities": [
+    "aerilate"
+   ]
   },
   {
    "id": 128,
    "name": "Tauros",
-   "dex": 128
+   "dex": 128,
+   "abilities": [
+    "intimidate",
+    "anger-point",
+    "sheer-force"
+   ]
   },
   {
    "id": 10250,
    "name": "Combat Breed Paldean Tauros",
-   "dex": 128
+   "dex": 128,
+   "abilities": [
+    "intimidate",
+    "anger-point",
+    "cud-chew"
+   ]
   },
   {
    "id": 10251,
    "name": "Blaze Breed Paldean Tauros",
-   "dex": 128
+   "dex": 128,
+   "abilities": [
+    "intimidate",
+    "anger-point",
+    "cud-chew"
+   ]
   },
   {
    "id": 10252,
    "name": "Aqua Breed Paldean Tauros",
-   "dex": 128
+   "dex": 128,
+   "abilities": [
+    "intimidate",
+    "anger-point",
+    "cud-chew"
+   ]
   },
   {
    "id": 130,
    "name": "Gyarados",
-   "dex": 130
+   "dex": 130,
+   "abilities": [
+    "intimidate",
+    "moxie"
+   ]
   },
   {
    "id": 10041,
    "name": "Mega Gyarados",
-   "dex": 130
+   "dex": 130,
+   "abilities": [
+    "mold-breaker"
+   ]
   },
   {
    "id": 132,
    "name": "Ditto",
-   "dex": 132
+   "dex": 132,
+   "abilities": [
+    "limber",
+    "imposter"
+   ]
   },
   {
    "id": 134,
    "name": "Vaporeon",
-   "dex": 134
+   "dex": 134,
+   "abilities": [
+    "water-absorb",
+    "hydration"
+   ]
   },
   {
    "id": 135,
    "name": "Jolteon",
-   "dex": 135
+   "dex": 135,
+   "abilities": [
+    "volt-absorb",
+    "quick-feet"
+   ]
   },
   {
    "id": 136,
    "name": "Flareon",
-   "dex": 136
+   "dex": 136,
+   "abilities": [
+    "flash-fire",
+    "guts"
+   ]
   },
   {
    "id": 142,
    "name": "Aerodactyl",
-   "dex": 142
+   "dex": 142,
+   "abilities": [
+    "rock-head",
+    "pressure",
+    "unnerve"
+   ]
   },
   {
    "id": 10042,
    "name": "Mega Aerodactyl",
-   "dex": 142
+   "dex": 142,
+   "abilities": [
+    "tough-claws"
+   ]
   },
   {
    "id": 143,
    "name": "Snorlax",
-   "dex": 143
+   "dex": 143,
+   "abilities": [
+    "immunity",
+    "thick-fat",
+    "gluttony"
+   ]
   },
   {
    "id": 149,
    "name": "Dragonite",
-   "dex": 149
+   "dex": 149,
+   "abilities": [
+    "inner-focus",
+    "multiscale"
+   ]
   },
   {
    "id": 10281,
    "name": "Mega Dragonite",
-   "dex": 149
+   "dex": 149,
+   "abilities": [
+    "multiscale"
+   ]
   },
   {
    "id": 154,
    "name": "Meganium",
-   "dex": 154
+   "dex": 154,
+   "abilities": [
+    "overgrow",
+    "leaf-guard"
+   ]
   },
   {
    "id": 10282,
    "name": "Mega Meganium",
-   "dex": 154
+   "dex": 154,
+   "abilities": [
+    "mega-sol"
+   ]
   },
   {
    "id": 157,
    "name": "Typhlosion",
-   "dex": 157
+   "dex": 157,
+   "abilities": [
+    "blaze",
+    "flash-fire"
+   ]
   },
   {
    "id": 10233,
    "name": "Hisuian Typhlosion",
-   "dex": 157
+   "dex": 157,
+   "abilities": [
+    "blaze",
+    "frisk"
+   ]
   },
   {
    "id": 160,
    "name": "Feraligatr",
-   "dex": 160
+   "dex": 160,
+   "abilities": [
+    "torrent",
+    "sheer-force"
+   ]
   },
   {
    "id": 10283,
    "name": "Mega Feraligatr",
-   "dex": 160
+   "dex": 160,
+   "abilities": [
+    "dragonize"
+   ]
   },
   {
    "id": 168,
    "name": "Ariados",
-   "dex": 168
+   "dex": 168,
+   "abilities": [
+    "swarm",
+    "insomnia",
+    "sniper"
+   ]
   },
   {
    "id": 181,
    "name": "Ampharos",
-   "dex": 181
+   "dex": 181,
+   "abilities": [
+    "static",
+    "plus"
+   ]
   },
   {
    "id": 10045,
    "name": "Mega Ampharos",
-   "dex": 181
+   "dex": 181,
+   "abilities": [
+    "mold-breaker"
+   ]
   },
   {
    "id": 184,
    "name": "Azumarill",
-   "dex": 184
+   "dex": 184,
+   "abilities": [
+    "thick-fat",
+    "huge-power",
+    "sap-sipper"
+   ]
   },
   {
    "id": 186,
    "name": "Politoed",
-   "dex": 186
+   "dex": 186,
+   "abilities": [
+    "water-absorb",
+    "damp",
+    "drizzle"
+   ]
   },
   {
    "id": 196,
    "name": "Espeon",
-   "dex": 196
+   "dex": 196,
+   "abilities": [
+    "synchronize",
+    "magic-bounce"
+   ]
   },
   {
    "id": 197,
    "name": "Umbreon",
-   "dex": 197
+   "dex": 197,
+   "abilities": [
+    "synchronize",
+    "inner-focus"
+   ]
   },
   {
    "id": 199,
    "name": "Slowking",
-   "dex": 199
+   "dex": 199,
+   "abilities": [
+    "oblivious",
+    "own-tempo",
+    "regenerator"
+   ]
   },
   {
    "id": 10172,
    "name": "Galarian Slowking",
-   "dex": 199
+   "dex": 199,
+   "abilities": [
+    "curious-medicine",
+    "own-tempo",
+    "regenerator"
+   ]
   },
   {
    "id": 205,
    "name": "Forretress",
-   "dex": 205
+   "dex": 205,
+   "abilities": [
+    "sturdy",
+    "overcoat"
+   ]
   },
   {
    "id": 208,
    "name": "Steelix",
-   "dex": 208
+   "dex": 208,
+   "abilities": [
+    "rock-head",
+    "sturdy",
+    "sheer-force"
+   ]
   },
   {
    "id": 10072,
    "name": "Mega Steelix",
-   "dex": 208
+   "dex": 208,
+   "abilities": [
+    "sand-force"
+   ]
   },
   {
    "id": 211,
    "name": "Qwilfish",
-   "dex": 211
+   "dex": 211,
+   "abilities": [
+    "poison-point",
+    "swift-swim",
+    "intimidate"
+   ]
   },
   {
    "id": 212,
    "name": "Scizor",
-   "dex": 212
+   "dex": 212,
+   "abilities": [
+    "swarm",
+    "technician",
+    "light-metal"
+   ]
   },
   {
    "id": 10046,
    "name": "Mega Scizor",
-   "dex": 212
+   "dex": 212,
+   "abilities": [
+    "technician"
+   ]
   },
   {
    "id": 214,
    "name": "Heracross",
-   "dex": 214
+   "dex": 214,
+   "abilities": [
+    "swarm",
+    "guts",
+    "moxie"
+   ]
   },
   {
    "id": 10047,
    "name": "Mega Heracross",
-   "dex": 214
+   "dex": 214,
+   "abilities": [
+    "skill-link"
+   ]
   },
   {
    "id": 227,
    "name": "Skarmory",
-   "dex": 227
+   "dex": 227,
+   "abilities": [
+    "keen-eye",
+    "sturdy",
+    "weak-armor"
+   ]
   },
   {
    "id": 10284,
    "name": "Mega Skarmory",
-   "dex": 227
+   "dex": 227,
+   "abilities": [
+    "stalwart"
+   ]
   },
   {
    "id": 229,
    "name": "Houndoom",
-   "dex": 229
+   "dex": 229,
+   "abilities": [
+    "early-bird",
+    "flash-fire",
+    "unnerve"
+   ]
   },
   {
    "id": 10048,
    "name": "Mega Houndoom",
-   "dex": 229
+   "dex": 229,
+   "abilities": [
+    "solar-power"
+   ]
   },
   {
    "id": 248,
    "name": "Tyranitar",
-   "dex": 248
+   "dex": 248,
+   "abilities": [
+    "sand-stream",
+    "unnerve"
+   ]
   },
   {
    "id": 10049,
    "name": "Mega Tyranitar",
-   "dex": 248
+   "dex": 248,
+   "abilities": [
+    "sand-stream"
+   ]
   },
   {
    "id": 254,
    "name": "Sceptile",
-   "dex": 254
+   "dex": 254,
+   "abilities": [
+    "overgrow",
+    "unburden"
+   ]
   },
   {
    "id": 10065,
    "name": "Mega Sceptile",
-   "dex": 254
+   "dex": 254,
+   "abilities": [
+    "lightning-rod"
+   ]
   },
   {
    "id": 257,
    "name": "Blaziken",
-   "dex": 257
+   "dex": 257,
+   "abilities": [
+    "blaze",
+    "speed-boost"
+   ]
   },
   {
    "id": 10050,
    "name": "Mega Blaziken",
-   "dex": 257
+   "dex": 257,
+   "abilities": [
+    "speed-boost"
+   ]
   },
   {
    "id": 260,
    "name": "Swampert",
-   "dex": 260
+   "dex": 260,
+   "abilities": [
+    "torrent",
+    "damp"
+   ]
   },
   {
    "id": 10064,
    "name": "Mega Swampert",
-   "dex": 260
+   "dex": 260,
+   "abilities": [
+    "swift-swim"
+   ]
   },
   {
    "id": 279,
    "name": "Pelipper",
-   "dex": 279
+   "dex": 279,
+   "abilities": [
+    "keen-eye",
+    "drizzle",
+    "rain-dish"
+   ]
   },
   {
    "id": 282,
    "name": "Gardevoir",
-   "dex": 282
+   "dex": 282,
+   "abilities": [
+    "synchronize",
+    "trace",
+    "telepathy"
+   ]
   },
   {
    "id": 10051,
    "name": "Mega Gardevoir",
-   "dex": 282
+   "dex": 282,
+   "abilities": [
+    "pixilate"
+   ]
   },
   {
    "id": 302,
    "name": "Sableye",
-   "dex": 302
+   "dex": 302,
+   "abilities": [
+    "keen-eye",
+    "stall",
+    "prankster"
+   ]
   },
   {
    "id": 10066,
    "name": "Mega Sableye",
-   "dex": 302
+   "dex": 302,
+   "abilities": [
+    "magic-bounce"
+   ]
   },
   {
    "id": 303,
    "name": "Mawile",
-   "dex": 303
+   "dex": 303,
+   "abilities": [
+    "hyper-cutter",
+    "intimidate",
+    "sheer-force"
+   ]
   },
   {
    "id": 10052,
    "name": "Mega Mawile",
-   "dex": 303
+   "dex": 303,
+   "abilities": [
+    "huge-power"
+   ]
   },
   {
    "id": 306,
    "name": "Aggron",
-   "dex": 306
+   "dex": 306,
+   "abilities": [
+    "sturdy",
+    "rock-head",
+    "heavy-metal"
+   ]
   },
   {
    "id": 10053,
    "name": "Mega Aggron",
-   "dex": 306
+   "dex": 306,
+   "abilities": [
+    "filter"
+   ]
   },
   {
    "id": 308,
    "name": "Medicham",
-   "dex": 308
+   "dex": 308,
+   "abilities": [
+    "pure-power",
+    "telepathy"
+   ]
   },
   {
    "id": 10054,
    "name": "Mega Medicham",
-   "dex": 308
+   "dex": 308,
+   "abilities": [
+    "pure-power"
+   ]
   },
   {
    "id": 310,
    "name": "Manectric",
-   "dex": 310
+   "dex": 310,
+   "abilities": [
+    "static",
+    "lightning-rod",
+    "minus"
+   ]
   },
   {
    "id": 10055,
    "name": "Mega Manectric",
-   "dex": 310
+   "dex": 310,
+   "abilities": [
+    "intimidate"
+   ]
   },
   {
    "id": 317,
    "name": "Swalot",
-   "dex": 317
+   "dex": 317,
+   "abilities": [
+    "liquid-ooze",
+    "sticky-hold",
+    "gluttony"
+   ]
   },
   {
    "id": 319,
    "name": "Sharpedo",
-   "dex": 319
+   "dex": 319,
+   "abilities": [
+    "rough-skin",
+    "speed-boost"
+   ]
   },
   {
    "id": 10070,
    "name": "Mega Sharpedo",
-   "dex": 319
+   "dex": 319,
+   "abilities": [
+    "strong-jaw"
+   ]
   },
   {
    "id": 323,
    "name": "Camerupt",
-   "dex": 323
+   "dex": 323,
+   "abilities": [
+    "magma-armor",
+    "solid-rock",
+    "anger-point"
+   ]
   },
   {
    "id": 10087,
    "name": "Mega Camerupt",
-   "dex": 323
+   "dex": 323,
+   "abilities": [
+    "sheer-force"
+   ]
   },
   {
    "id": 324,
    "name": "Torkoal",
-   "dex": 324
+   "dex": 324,
+   "abilities": [
+    "white-smoke",
+    "drought",
+    "shell-armor"
+   ]
   },
   {
    "id": 334,
    "name": "Altaria",
-   "dex": 334
+   "dex": 334,
+   "abilities": [
+    "natural-cure",
+    "cloud-nine"
+   ]
   },
   {
    "id": 10067,
    "name": "Mega Altaria",
-   "dex": 334
+   "dex": 334,
+   "abilities": [
+    "pixilate"
+   ]
   },
   {
    "id": 350,
    "name": "Milotic",
-   "dex": 350
+   "dex": 350,
+   "abilities": [
+    "marvel-scale",
+    "competitive",
+    "cute-charm"
+   ]
   },
   {
    "id": 351,
    "name": "Castform",
-   "dex": 351
+   "dex": 351,
+   "abilities": [
+    "forecast"
+   ]
   },
   {
    "id": 10013,
    "name": "Sunny Castform",
-   "dex": 351
+   "dex": 351,
+   "abilities": [
+    "forecast"
+   ]
   },
   {
    "id": 10014,
    "name": "Rainy Castform",
-   "dex": 351
+   "dex": 351,
+   "abilities": [
+    "forecast"
+   ]
   },
   {
    "id": 10015,
    "name": "Snowy Castform",
-   "dex": 351
+   "dex": 351,
+   "abilities": [
+    "forecast"
+   ]
   },
   {
    "id": 354,
    "name": "Banette",
-   "dex": 354
+   "dex": 354,
+   "abilities": [
+    "insomnia",
+    "frisk",
+    "cursed-body"
+   ]
   },
   {
    "id": 10056,
    "name": "Mega Banette",
-   "dex": 354
+   "dex": 354,
+   "abilities": [
+    "prankster"
+   ]
   },
   {
    "id": 358,
    "name": "Chimecho",
-   "dex": 358
+   "dex": 358,
+   "abilities": [
+    "levitate"
+   ]
   },
   {
    "id": 10306,
    "name": "Mega Chimecho",
-   "dex": 358
+   "dex": 358,
+   "abilities": [
+    "levitate"
+   ]
   },
   {
    "id": 359,
    "name": "Absol",
-   "dex": 359
+   "dex": 359,
+   "abilities": [
+    "pressure",
+    "super-luck",
+    "justified"
+   ]
   },
   {
    "id": 10057,
    "name": "Mega Absol",
-   "dex": 359
+   "dex": 359,
+   "abilities": [
+    "magic-bounce"
+   ]
   },
   {
    "id": 10307,
    "name": "Mega Absol Z",
-   "dex": 359
+   "dex": 359,
+   "abilities": [
+    "sharpness"
+   ]
   },
   {
    "id": 362,
    "name": "Glalie",
-   "dex": 362
+   "dex": 362,
+   "abilities": [
+    "inner-focus",
+    "ice-body",
+    "moody"
+   ]
   },
   {
    "id": 10074,
    "name": "Mega Glalie",
-   "dex": 362
+   "dex": 362,
+   "abilities": [
+    "refrigerate"
+   ]
   },
   {
    "id": 373,
    "name": "Salamence",
-   "dex": 373
+   "dex": 373,
+   "abilities": [
+    "intimidate",
+    "moxie"
+   ]
   },
   {
    "id": 10089,
    "name": "Mega Salamence",
-   "dex": 373
+   "dex": 373,
+   "abilities": [
+    "aerilate"
+   ]
   },
   {
    "id": 376,
    "name": "Metagross",
-   "dex": 376
+   "dex": 376,
+   "abilities": [
+    "clear-body",
+    "light-metal"
+   ]
   },
   {
    "id": 10076,
    "name": "Mega Metagross",
-   "dex": 376
+   "dex": 376,
+   "abilities": [
+    "tough-claws"
+   ]
   },
   {
    "id": 389,
    "name": "Torterra",
-   "dex": 389
+   "dex": 389,
+   "abilities": [
+    "overgrow",
+    "shell-armor"
+   ]
   },
   {
    "id": 392,
    "name": "Infernape",
-   "dex": 392
+   "dex": 392,
+   "abilities": [
+    "blaze",
+    "iron-fist"
+   ]
   },
   {
    "id": 395,
    "name": "Empoleon",
-   "dex": 395
+   "dex": 395,
+   "abilities": [
+    "torrent",
+    "competitive"
+   ]
   },
   {
    "id": 398,
    "name": "Staraptor",
-   "dex": 398
+   "dex": 398,
+   "abilities": [
+    "intimidate",
+    "reckless"
+   ]
   },
   {
    "id": 10308,
    "name": "Mega Staraptor",
-   "dex": 398
+   "dex": 398,
+   "abilities": [
+    "contrary"
+   ]
   },
   {
    "id": 405,
    "name": "Luxray",
-   "dex": 405
+   "dex": 405,
+   "abilities": [
+    "rivalry",
+    "intimidate",
+    "guts"
+   ]
   },
   {
    "id": 407,
    "name": "Roserade",
-   "dex": 407
+   "dex": 407,
+   "abilities": [
+    "natural-cure",
+    "poison-point",
+    "technician"
+   ]
   },
   {
    "id": 409,
    "name": "Rampardos",
-   "dex": 409
+   "dex": 409,
+   "abilities": [
+    "mold-breaker",
+    "sheer-force"
+   ]
   },
   {
    "id": 411,
    "name": "Bastiodon",
-   "dex": 411
+   "dex": 411,
+   "abilities": [
+    "sturdy",
+    "soundproof"
+   ]
   },
   {
    "id": 428,
    "name": "Lopunny",
-   "dex": 428
+   "dex": 428,
+   "abilities": [
+    "cute-charm",
+    "klutz",
+    "limber"
+   ]
   },
   {
    "id": 10088,
    "name": "Mega Lopunny",
-   "dex": 428
+   "dex": 428,
+   "abilities": [
+    "scrappy"
+   ]
   },
   {
    "id": 442,
    "name": "Spiritomb",
-   "dex": 442
+   "dex": 442,
+   "abilities": [
+    "pressure",
+    "infiltrator"
+   ]
   },
   {
    "id": 445,
    "name": "Garchomp",
-   "dex": 445
+   "dex": 445,
+   "abilities": [
+    "sand-veil",
+    "rough-skin"
+   ]
   },
   {
    "id": 10058,
    "name": "Mega Garchomp",
-   "dex": 445
+   "dex": 445,
+   "abilities": [
+    "sand-force"
+   ]
   },
   {
    "id": 10309,
    "name": "Mega Garchomp Z",
-   "dex": 445
+   "dex": 445,
+   "abilities": [
+    "levitate"
+   ]
   },
   {
    "id": 448,
    "name": "Lucario",
-   "dex": 448
+   "dex": 448,
+   "abilities": [
+    "steadfast",
+    "inner-focus",
+    "justified"
+   ]
   },
   {
    "id": 10059,
    "name": "Mega Lucario",
-   "dex": 448
+   "dex": 448,
+   "abilities": [
+    "adaptability"
+   ]
   },
   {
    "id": 10310,
    "name": "Mega Lucario Z",
-   "dex": 448
+   "dex": 448,
+   "abilities": [
+    "aura-guard"
+   ]
   },
   {
    "id": 450,
    "name": "Hippowdon",
-   "dex": 450
+   "dex": 450,
+   "abilities": [
+    "sand-stream",
+    "sand-force"
+   ]
   },
   {
    "id": 454,
    "name": "Toxicroak",
-   "dex": 454
+   "dex": 454,
+   "abilities": [
+    "anticipation",
+    "dry-skin",
+    "poison-touch"
+   ]
   },
   {
    "id": 460,
    "name": "Abomasnow",
-   "dex": 460
+   "dex": 460,
+   "abilities": [
+    "snow-warning",
+    "soundproof"
+   ]
   },
   {
    "id": 10060,
    "name": "Mega Abomasnow",
-   "dex": 460
+   "dex": 460,
+   "abilities": [
+    "snow-warning"
+   ]
   },
   {
    "id": 461,
    "name": "Weavile",
-   "dex": 461
+   "dex": 461,
+   "abilities": [
+    "pressure",
+    "pickpocket"
+   ]
   },
   {
    "id": 464,
    "name": "Rhyperior",
-   "dex": 464
+   "dex": 464,
+   "abilities": [
+    "lightning-rod",
+    "solid-rock",
+    "reckless"
+   ]
   },
   {
    "id": 470,
    "name": "Leafeon",
-   "dex": 470
+   "dex": 470,
+   "abilities": [
+    "leaf-guard",
+    "chlorophyll"
+   ]
   },
   {
    "id": 471,
    "name": "Glaceon",
-   "dex": 471
+   "dex": 471,
+   "abilities": [
+    "snow-cloak",
+    "ice-body"
+   ]
   },
   {
    "id": 472,
    "name": "Gliscor",
-   "dex": 472
+   "dex": 472,
+   "abilities": [
+    "hyper-cutter",
+    "sand-veil",
+    "poison-heal"
+   ]
   },
   {
    "id": 473,
    "name": "Mamoswine",
-   "dex": 473
+   "dex": 473,
+   "abilities": [
+    "oblivious",
+    "snow-cloak",
+    "thick-fat"
+   ]
   },
   {
    "id": 475,
    "name": "Gallade",
-   "dex": 475
+   "dex": 475,
+   "abilities": [
+    "steadfast",
+    "sharpness",
+    "justified"
+   ]
   },
   {
    "id": 10068,
    "name": "Mega Gallade",
-   "dex": 475
+   "dex": 475,
+   "abilities": [
+    "inner-focus"
+   ]
   },
   {
    "id": 478,
    "name": "Froslass",
-   "dex": 478
+   "dex": 478,
+   "abilities": [
+    "snow-cloak",
+    "cursed-body"
+   ]
   },
   {
    "id": 10285,
    "name": "Mega Froslass",
-   "dex": 478
+   "dex": 478,
+   "abilities": [
+    "snow-warning"
+   ]
   },
   {
    "id": 479,
    "name": "Rotom",
-   "dex": 479
+   "dex": 479,
+   "abilities": [
+    "levitate"
+   ]
   },
   {
    "id": 10008,
    "name": "Heat Rotom",
-   "dex": 479
+   "dex": 479,
+   "abilities": [
+    "levitate"
+   ]
   },
   {
    "id": 10009,
    "name": "Wash Rotom",
-   "dex": 479
+   "dex": 479,
+   "abilities": [
+    "levitate"
+   ]
   },
   {
    "id": 10010,
    "name": "Frost Rotom",
-   "dex": 479
+   "dex": 479,
+   "abilities": [
+    "levitate"
+   ]
   },
   {
    "id": 10011,
    "name": "Fan Rotom",
-   "dex": 479
+   "dex": 479,
+   "abilities": [
+    "levitate"
+   ]
   },
   {
    "id": 10012,
    "name": "Mow Rotom",
-   "dex": 479
+   "dex": 479,
+   "abilities": [
+    "levitate"
+   ]
   },
   {
    "id": 497,
    "name": "Serperior",
-   "dex": 497
+   "dex": 497,
+   "abilities": [
+    "overgrow",
+    "contrary"
+   ]
   },
   {
    "id": 500,
    "name": "Emboar",
-   "dex": 500
+   "dex": 500,
+   "abilities": [
+    "blaze",
+    "reckless"
+   ]
   },
   {
    "id": 10286,
    "name": "Mega Emboar",
-   "dex": 500
+   "dex": 500,
+   "abilities": [
+    "mold-breaker"
+   ]
   },
   {
    "id": 503,
    "name": "Samurott",
-   "dex": 503
+   "dex": 503,
+   "abilities": [
+    "torrent",
+    "shell-armor"
+   ]
   },
   {
    "id": 10236,
    "name": "Hisuian Samurott",
-   "dex": 503
+   "dex": 503,
+   "abilities": [
+    "torrent",
+    "sharpness"
+   ]
   },
   {
    "id": 505,
    "name": "Watchog",
-   "dex": 505
+   "dex": 505,
+   "abilities": [
+    "illuminate",
+    "keen-eye",
+    "analytic"
+   ]
   },
   {
    "id": 510,
    "name": "Liepard",
-   "dex": 510
+   "dex": 510,
+   "abilities": [
+    "limber",
+    "unburden",
+    "prankster"
+   ]
   },
   {
    "id": 512,
    "name": "Simisage",
-   "dex": 512
+   "dex": 512,
+   "abilities": [
+    "gluttony",
+    "overgrow"
+   ]
   },
   {
    "id": 514,
    "name": "Simisear",
-   "dex": 514
+   "dex": 514,
+   "abilities": [
+    "gluttony",
+    "blaze"
+   ]
   },
   {
    "id": 516,
    "name": "Simipour",
-   "dex": 516
+   "dex": 516,
+   "abilities": [
+    "gluttony",
+    "torrent"
+   ]
   },
   {
    "id": 518,
    "name": "Musharna",
-   "dex": 518
+   "dex": 518,
+   "abilities": [
+    "forewarn",
+    "synchronize",
+    "telepathy"
+   ]
   },
   {
    "id": 530,
    "name": "Excadrill",
-   "dex": 530
+   "dex": 530,
+   "abilities": [
+    "sand-rush",
+    "sand-force",
+    "mold-breaker"
+   ]
   },
   {
    "id": 10287,
    "name": "Mega Excadrill",
-   "dex": 530
+   "dex": 530,
+   "abilities": [
+    "piercing-drill"
+   ]
   },
   {
    "id": 531,
    "name": "Audino",
-   "dex": 531
+   "dex": 531,
+   "abilities": [
+    "healer",
+    "regenerator",
+    "klutz"
+   ]
   },
   {
    "id": 10069,
    "name": "Mega Audino",
-   "dex": 531
+   "dex": 531,
+   "abilities": [
+    "healer"
+   ]
   },
   {
    "id": 534,
    "name": "Conkeldurr",
-   "dex": 534
+   "dex": 534,
+   "abilities": [
+    "guts",
+    "sheer-force",
+    "iron-fist"
+   ]
   },
   {
    "id": 545,
    "name": "Scolipede",
-   "dex": 545
+   "dex": 545,
+   "abilities": [
+    "poison-point",
+    "swarm",
+    "speed-boost"
+   ]
   },
   {
    "id": 10288,
    "name": "Mega Scolipede",
-   "dex": 545
+   "dex": 545,
+   "abilities": [
+    "shell-armor"
+   ]
   },
   {
    "id": 547,
    "name": "Whimsicott",
-   "dex": 547
+   "dex": 547,
+   "abilities": [
+    "prankster",
+    "infiltrator",
+    "chlorophyll"
+   ]
   },
   {
    "id": 553,
    "name": "Krookodile",
-   "dex": 553
+   "dex": 553,
+   "abilities": [
+    "intimidate",
+    "moxie",
+    "anger-point"
+   ]
   },
   {
    "id": 560,
    "name": "Scrafty",
-   "dex": 560
+   "dex": 560,
+   "abilities": [
+    "shed-skin",
+    "moxie",
+    "intimidate"
+   ]
   },
   {
    "id": 10289,
    "name": "Mega Scrafty",
-   "dex": 560
+   "dex": 560,
+   "abilities": [
+    "intimidate"
+   ]
   },
   {
    "id": 563,
    "name": "Cofagrigus",
-   "dex": 563
+   "dex": 563,
+   "abilities": [
+    "mummy"
+   ]
   },
   {
    "id": 569,
    "name": "Garbodor",
-   "dex": 569
+   "dex": 569,
+   "abilities": [
+    "stench",
+    "weak-armor",
+    "aftermath"
+   ]
   },
   {
    "id": 571,
    "name": "Zoroark",
-   "dex": 571
+   "dex": 571,
+   "abilities": [
+    "illusion"
+   ]
   },
   {
    "id": 10239,
    "name": "Hisuian Zoroark",
-   "dex": 571
+   "dex": 571,
+   "abilities": [
+    "illusion"
+   ]
   },
   {
    "id": 579,
    "name": "Reuniclus",
-   "dex": 579
+   "dex": 579,
+   "abilities": [
+    "overcoat",
+    "magic-guard",
+    "regenerator"
+   ]
   },
   {
    "id": 584,
    "name": "Vanilluxe",
-   "dex": 584
+   "dex": 584,
+   "abilities": [
+    "ice-body",
+    "snow-warning",
+    "weak-armor"
+   ]
   },
   {
    "id": 587,
    "name": "Emolga",
-   "dex": 587
+   "dex": 587,
+   "abilities": [
+    "static",
+    "motor-drive"
+   ]
   },
   {
    "id": 604,
    "name": "Eelektross",
-   "dex": 604
+   "dex": 604,
+   "abilities": [
+    "levitate"
+   ]
   },
   {
    "id": 10290,
    "name": "Mega Eelektross",
-   "dex": 604
+   "dex": 604,
+   "abilities": [
+    "eelevate"
+   ]
   },
   {
    "id": 609,
    "name": "Chandelure",
-   "dex": 609
+   "dex": 609,
+   "abilities": [
+    "flash-fire",
+    "flame-body",
+    "infiltrator"
+   ]
   },
   {
    "id": 10291,
    "name": "Mega Chandelure",
-   "dex": 609
+   "dex": 609,
+   "abilities": [
+    "infiltrator"
+   ]
   },
   {
    "id": 614,
    "name": "Beartic",
-   "dex": 614
+   "dex": 614,
+   "abilities": [
+    "snow-cloak",
+    "slush-rush",
+    "swift-swim"
+   ]
   },
   {
    "id": 618,
    "name": "Stunfisk",
-   "dex": 618
+   "dex": 618,
+   "abilities": [
+    "static",
+    "limber",
+    "sand-veil"
+   ]
   },
   {
    "id": 10180,
    "name": "Galarian Stunfisk",
-   "dex": 618
+   "dex": 618,
+   "abilities": [
+    "mimicry"
+   ]
   },
   {
    "id": 623,
    "name": "Golurk",
-   "dex": 623
+   "dex": 623,
+   "abilities": [
+    "iron-fist",
+    "klutz",
+    "no-guard"
+   ]
   },
   {
    "id": 10313,
    "name": "Mega Golurk",
-   "dex": 623
+   "dex": 623,
+   "abilities": [
+    "unseen-fist"
+   ]
   },
   {
    "id": 635,
    "name": "Hydreigon",
-   "dex": 635
+   "dex": 635,
+   "abilities": [
+    "levitate"
+   ]
   },
   {
    "id": 637,
    "name": "Volcarona",
-   "dex": 637
+   "dex": 637,
+   "abilities": [
+    "flame-body",
+    "swarm"
+   ]
   },
   {
    "id": 652,
    "name": "Chesnaught",
-   "dex": 652
+   "dex": 652,
+   "abilities": [
+    "overgrow",
+    "bulletproof"
+   ]
   },
   {
    "id": 10292,
    "name": "Mega Chesnaught",
-   "dex": 652
+   "dex": 652,
+   "abilities": [
+    "bulletproof"
+   ]
   },
   {
    "id": 655,
    "name": "Delphox",
-   "dex": 655
+   "dex": 655,
+   "abilities": [
+    "blaze",
+    "magician"
+   ]
   },
   {
    "id": 10293,
    "name": "Mega Delphox",
-   "dex": 655
+   "dex": 655,
+   "abilities": [
+    "levitate"
+   ]
   },
   {
    "id": 658,
    "name": "Greninja",
-   "dex": 658
+   "dex": 658,
+   "abilities": [
+    "torrent",
+    "protean"
+   ]
   },
   {
    "id": 10294,
    "name": "Mega Greninja",
-   "dex": 658
+   "dex": 658,
+   "abilities": [
+    "protean"
+   ]
   },
   {
    "id": 660,
    "name": "Diggersby",
-   "dex": 660
+   "dex": 660,
+   "abilities": [
+    "pickup",
+    "cheek-pouch",
+    "huge-power"
+   ]
   },
   {
    "id": 663,
    "name": "Talonflame",
-   "dex": 663
+   "dex": 663,
+   "abilities": [
+    "flame-body",
+    "gale-wings"
+   ]
   },
   {
    "id": 666,
    "name": "Vivillon",
-   "dex": 666
+   "dex": 666,
+   "abilities": [
+    "shield-dust",
+    "compound-eyes",
+    "friend-guard"
+   ]
   },
   {
    "id": 668,
    "name": "Pyroar",
-   "dex": 668
+   "dex": 668,
+   "abilities": [
+    "rivalry",
+    "unnerve",
+    "moxie"
+   ]
   },
   {
    "id": 10295,
    "name": "Mega Pyroar",
-   "dex": 668
+   "dex": 668,
+   "abilities": [
+    "fire-mane"
+   ]
   },
   {
    "id": 10061,
    "name": "Eternal Floette",
-   "dex": 670
+   "dex": 670,
+   "abilities": [
+    "flower-veil",
+    "symbiosis"
+   ]
   },
   {
    "id": 10296,
    "name": "Mega Floette",
-   "dex": 670
+   "dex": 670,
+   "abilities": [
+    "fairy-aura"
+   ]
   },
   {
    "id": 671,
    "name": "Florges",
-   "dex": 671
+   "dex": 671,
+   "abilities": [
+    "flower-veil",
+    "symbiosis"
+   ]
   },
   {
    "id": 673,
    "name": "Gogoat",
-   "dex": 673
+   "dex": 673,
+   "abilities": [
+    "sap-sipper",
+    "grass-pelt"
+   ]
   },
   {
    "id": 675,
    "name": "Pangoro",
-   "dex": 675
+   "dex": 675,
+   "abilities": [
+    "iron-fist",
+    "mold-breaker",
+    "scrappy"
+   ]
   },
   {
    "id": 676,
    "name": "Furfrou",
-   "dex": 676
+   "dex": 676,
+   "abilities": [
+    "fur-coat"
+   ]
   },
   {
    "id": 678,
    "name": "Male Meowstic",
-   "dex": 678
+   "dex": 678,
+   "abilities": [
+    "keen-eye",
+    "infiltrator",
+    "prankster"
+   ]
   },
   {
    "id": 10025,
    "name": "Female Meowstic",
-   "dex": 678
+   "dex": 678,
+   "abilities": [
+    "keen-eye",
+    "infiltrator",
+    "competitive"
+   ]
   },
   {
    "id": 10314,
    "name": "Mega Meowstic Male",
-   "dex": 678
+   "dex": 678,
+   "abilities": [
+    "trace"
+   ]
   },
   {
    "id": 10326,
    "name": "Mega Meowstic Female",
-   "dex": 678
+   "dex": 678,
+   "abilities": [
+    "trace"
+   ]
   },
   {
    "id": 681,
    "name": "Shield Aegislash",
-   "dex": 681
+   "dex": 681,
+   "abilities": [
+    "stance-change"
+   ]
   },
   {
    "id": 10026,
    "name": "Blade Aegislash",
-   "dex": 681
+   "dex": 681,
+   "abilities": [
+    "stance-change"
+   ]
   },
   {
    "id": 683,
    "name": "Aromatisse",
-   "dex": 683
+   "dex": 683,
+   "abilities": [
+    "healer",
+    "aroma-veil"
+   ]
   },
   {
    "id": 685,
    "name": "Slurpuff",
-   "dex": 685
+   "dex": 685,
+   "abilities": [
+    "sweet-veil",
+    "unburden"
+   ]
   },
   {
    "id": 687,
    "name": "Malamar",
-   "dex": 687
+   "dex": 687,
+   "abilities": [
+    "contrary",
+    "suction-cups",
+    "infiltrator"
+   ]
   },
   {
    "id": 10297,
    "name": "Mega Malamar",
-   "dex": 687
+   "dex": 687,
+   "abilities": [
+    "contrary"
+   ]
   },
   {
    "id": 689,
    "name": "Barbaracle",
-   "dex": 689
+   "dex": 689,
+   "abilities": [
+    "tough-claws",
+    "sniper",
+    "pickpocket"
+   ]
   },
   {
    "id": 10298,
    "name": "Mega Barbaracle",
-   "dex": 689
+   "dex": 689,
+   "abilities": [
+    "tough-claws"
+   ]
   },
   {
    "id": 691,
    "name": "Dragalge",
-   "dex": 691
+   "dex": 691,
+   "abilities": [
+    "poison-point",
+    "poison-touch",
+    "adaptability"
+   ]
   },
   {
    "id": 10299,
    "name": "Mega Dragalge",
-   "dex": 691
+   "dex": 691,
+   "abilities": [
+    "regenerator"
+   ]
   },
   {
    "id": 693,
    "name": "Clawitzer",
-   "dex": 693
+   "dex": 693,
+   "abilities": [
+    "mega-launcher"
+   ]
   },
   {
    "id": 695,
    "name": "Heliolisk",
-   "dex": 695
+   "dex": 695,
+   "abilities": [
+    "dry-skin",
+    "sand-veil",
+    "solar-power"
+   ]
   },
   {
    "id": 697,
    "name": "Tyrantrum",
-   "dex": 697
+   "dex": 697,
+   "abilities": [
+    "strong-jaw",
+    "rock-head"
+   ]
   },
   {
    "id": 699,
    "name": "Aurorus",
-   "dex": 699
+   "dex": 699,
+   "abilities": [
+    "refrigerate",
+    "snow-warning"
+   ]
   },
   {
    "id": 700,
    "name": "Sylveon",
-   "dex": 700
+   "dex": 700,
+   "abilities": [
+    "cute-charm",
+    "pixilate"
+   ]
   },
   {
    "id": 701,
    "name": "Hawlucha",
-   "dex": 701
+   "dex": 701,
+   "abilities": [
+    "limber",
+    "unburden",
+    "mold-breaker"
+   ]
   },
   {
    "id": 10300,
    "name": "Mega Hawlucha",
-   "dex": 701
+   "dex": 701,
+   "abilities": [
+    "no-guard"
+   ]
   },
   {
    "id": 702,
    "name": "Dedenne",
-   "dex": 702
+   "dex": 702,
+   "abilities": [
+    "cheek-pouch",
+    "pickup",
+    "plus"
+   ]
   },
   {
    "id": 706,
    "name": "Goodra",
-   "dex": 706
+   "dex": 706,
+   "abilities": [
+    "sap-sipper",
+    "hydration",
+    "gooey"
+   ]
   },
   {
    "id": 10242,
    "name": "Hisuian Goodra",
-   "dex": 706
+   "dex": 706,
+   "abilities": [
+    "sap-sipper",
+    "shell-armor",
+    "gooey"
+   ]
   },
   {
    "id": 707,
    "name": "Klefki",
-   "dex": 707
+   "dex": 707,
+   "abilities": [
+    "prankster",
+    "magician"
+   ]
   },
   {
    "id": 709,
    "name": "Trevenant",
-   "dex": 709
+   "dex": 709,
+   "abilities": [
+    "natural-cure",
+    "frisk",
+    "harvest"
+   ]
   },
   {
    "id": 711,
    "name": "Average Gourgeist",
-   "dex": 711
+   "dex": 711,
+   "abilities": [
+    "pickup",
+    "frisk",
+    "insomnia"
+   ]
   },
   {
    "id": 10030,
    "name": "Small Gourgeist",
-   "dex": 711
+   "dex": 711,
+   "abilities": [
+    "pickup",
+    "frisk",
+    "insomnia"
+   ]
   },
   {
    "id": 10031,
    "name": "Large Gourgeist",
-   "dex": 711
+   "dex": 711,
+   "abilities": [
+    "pickup",
+    "frisk",
+    "insomnia"
+   ]
   },
   {
    "id": 10032,
    "name": "Super Gourgeist",
-   "dex": 711
+   "dex": 711,
+   "abilities": [
+    "pickup",
+    "frisk",
+    "insomnia"
+   ]
   },
   {
    "id": 713,
    "name": "Avalugg",
-   "dex": 713
+   "dex": 713,
+   "abilities": [
+    "own-tempo",
+    "ice-body",
+    "sturdy"
+   ]
   },
   {
    "id": 10243,
    "name": "Hisuian Avalugg",
-   "dex": 713
+   "dex": 713,
+   "abilities": [
+    "strong-jaw",
+    "ice-body",
+    "sturdy"
+   ]
   },
   {
    "id": 715,
    "name": "Noivern",
-   "dex": 715
+   "dex": 715,
+   "abilities": [
+    "frisk",
+    "infiltrator",
+    "telepathy"
+   ]
   },
   {
    "id": 724,
    "name": "Decidueye",
-   "dex": 724
+   "dex": 724,
+   "abilities": [
+    "overgrow",
+    "long-reach"
+   ]
   },
   {
    "id": 10244,
    "name": "Hisuian Decidueye",
-   "dex": 724
+   "dex": 724,
+   "abilities": [
+    "overgrow",
+    "scrappy"
+   ]
   },
   {
    "id": 727,
    "name": "Incineroar",
-   "dex": 727
+   "dex": 727,
+   "abilities": [
+    "blaze",
+    "intimidate"
+   ]
   },
   {
    "id": 730,
    "name": "Primarina",
-   "dex": 730
+   "dex": 730,
+   "abilities": [
+    "torrent",
+    "liquid-voice"
+   ]
   },
   {
    "id": 733,
    "name": "Toucannon",
-   "dex": 733
+   "dex": 733,
+   "abilities": [
+    "keen-eye",
+    "skill-link",
+    "sheer-force"
+   ]
   },
   {
    "id": 740,
    "name": "Crabominable",
-   "dex": 740
+   "dex": 740,
+   "abilities": [
+    "hyper-cutter",
+    "iron-fist",
+    "anger-point"
+   ]
   },
   {
    "id": 10315,
    "name": "Mega Crabominable",
-   "dex": 740
+   "dex": 740,
+   "abilities": [
+    "iron-fist"
+   ]
   },
   {
    "id": 745,
    "name": "Midday Lycanroc",
-   "dex": 745
+   "dex": 745,
+   "abilities": [
+    "keen-eye",
+    "sand-rush",
+    "steadfast"
+   ]
   },
   {
    "id": 10126,
    "name": "Midnight Lycanroc",
-   "dex": 745
+   "dex": 745,
+   "abilities": [
+    "keen-eye",
+    "vital-spirit",
+    "no-guard"
+   ]
   },
   {
    "id": 10152,
    "name": "Dusk Lycanroc",
-   "dex": 745
+   "dex": 745,
+   "abilities": [
+    "tough-claws"
+   ]
   },
   {
    "id": 748,
    "name": "Toxapex",
-   "dex": 748
+   "dex": 748,
+   "abilities": [
+    "merciless",
+    "limber",
+    "regenerator"
+   ]
   },
   {
    "id": 750,
    "name": "Mudsdale",
-   "dex": 750
+   "dex": 750,
+   "abilities": [
+    "own-tempo",
+    "stamina",
+    "inner-focus"
+   ]
   },
   {
    "id": 752,
    "name": "Araquanid",
-   "dex": 752
+   "dex": 752,
+   "abilities": [
+    "water-bubble",
+    "water-absorb"
+   ]
   },
   {
    "id": 758,
    "name": "Salazzle",
-   "dex": 758
+   "dex": 758,
+   "abilities": [
+    "corrosion",
+    "oblivious"
+   ]
   },
   {
    "id": 763,
    "name": "Tsareena",
-   "dex": 763
+   "dex": 763,
+   "abilities": [
+    "leaf-guard",
+    "queenly-majesty",
+    "sweet-veil"
+   ]
   },
   {
    "id": 765,
    "name": "Oranguru",
-   "dex": 765
+   "dex": 765,
+   "abilities": [
+    "inner-focus",
+    "telepathy",
+    "symbiosis"
+   ]
   },
   {
    "id": 766,
    "name": "Passimian",
-   "dex": 766
+   "dex": 766,
+   "abilities": [
+    "receiver",
+    "defiant"
+   ]
   },
   {
    "id": 768,
    "name": "Golisopod",
-   "dex": 768
+   "dex": 768,
+   "abilities": [
+    "emergency-exit"
+   ]
   },
   {
    "id": 10316,
    "name": "Mega Golisopod",
-   "dex": 768
+   "dex": 768,
+   "abilities": [
+    "tough-claws"
+   ]
   },
   {
    "id": 778,
    "name": "Disguised Mimikyu",
-   "dex": 778
+   "dex": 778,
+   "abilities": [
+    "disguise"
+   ]
   },
   {
    "id": 780,
    "name": "Drampa",
-   "dex": 780
+   "dex": 780,
+   "abilities": [
+    "berserk",
+    "sap-sipper",
+    "cloud-nine"
+   ]
   },
   {
    "id": 10302,
    "name": "Mega Drampa",
-   "dex": 780
+   "dex": 780,
+   "abilities": [
+    "berserk"
+   ]
   },
   {
    "id": 784,
    "name": "Kommo-o",
-   "dex": 784
+   "dex": 784,
+   "abilities": [
+    "bulletproof",
+    "soundproof",
+    "overcoat"
+   ]
   },
   {
    "id": 812,
    "name": "Rillaboom",
-   "dex": 812
+   "dex": 812,
+   "abilities": [
+    "overgrow",
+    "grassy-surge"
+   ]
   },
   {
    "id": 815,
    "name": "Cinderace",
-   "dex": 815
+   "dex": 815,
+   "abilities": [
+    "blaze",
+    "libero"
+   ]
   },
   {
    "id": 818,
    "name": "Inteleon",
-   "dex": 818
+   "dex": 818,
+   "abilities": [
+    "torrent",
+    "sniper"
+   ]
   },
   {
    "id": 823,
    "name": "Corviknight",
-   "dex": 823
+   "dex": 823,
+   "abilities": [
+    "pressure",
+    "unnerve",
+    "mirror-armor"
+   ]
   },
   {
    "id": 828,
    "name": "Thievul",
-   "dex": 828
+   "dex": 828,
+   "abilities": [
+    "run-away",
+    "unburden",
+    "stakeout"
+   ]
   },
   {
    "id": 841,
    "name": "Flapple",
-   "dex": 841
+   "dex": 841,
+   "abilities": [
+    "ripen",
+    "gluttony",
+    "hustle"
+   ]
   },
   {
    "id": 842,
    "name": "Appletun",
-   "dex": 842
+   "dex": 842,
+   "abilities": [
+    "ripen",
+    "gluttony",
+    "thick-fat"
+   ]
   },
   {
    "id": 844,
    "name": "Sandaconda",
-   "dex": 844
+   "dex": 844,
+   "abilities": [
+    "sand-spit",
+    "shed-skin",
+    "sand-veil"
+   ]
   },
   {
    "id": 849,
    "name": "Amped Toxtricity",
-   "dex": 849
+   "dex": 849,
+   "abilities": [
+    "punk-rock",
+    "plus",
+    "technician"
+   ]
   },
   {
    "id": 10184,
    "name": "Low Key Toxtricity",
-   "dex": 849
+   "dex": 849,
+   "abilities": [
+    "punk-rock",
+    "minus",
+    "technician"
+   ]
   },
   {
    "id": 853,
    "name": "Grapploct",
-   "dex": 853
+   "dex": 853,
+   "abilities": [
+    "limber",
+    "technician"
+   ]
   },
   {
    "id": 855,
    "name": "Polteageist",
-   "dex": 855
+   "dex": 855,
+   "abilities": [
+    "weak-armor",
+    "cursed-body"
+   ]
   },
   {
    "id": 858,
    "name": "Hatterene",
-   "dex": 858
+   "dex": 858,
+   "abilities": [
+    "healer",
+    "anticipation",
+    "magic-bounce"
+   ]
   },
   {
    "id": 861,
    "name": "Grimmsnarl",
-   "dex": 861
+   "dex": 861,
+   "abilities": [
+    "prankster",
+    "frisk",
+    "pickpocket"
+   ]
   },
   {
    "id": 863,
    "name": "Perrserker",
-   "dex": 863
+   "dex": 863,
+   "abilities": [
+    "battle-armor",
+    "tough-claws",
+    "steely-spirit"
+   ]
   },
   {
    "id": 865,
    "name": "Sirfetch'd",
-   "dex": 865
+   "dex": 865,
+   "abilities": [
+    "steadfast",
+    "scrappy"
+   ]
   },
   {
    "id": 866,
    "name": "Mr. Rime",
-   "dex": 866
+   "dex": 866,
+   "abilities": [
+    "tangled-feet",
+    "screen-cleaner",
+    "ice-body"
+   ]
   },
   {
    "id": 867,
    "name": "Runerigus",
-   "dex": 867
+   "dex": 867,
+   "abilities": [
+    "wandering-spirit"
+   ]
   },
   {
    "id": 869,
    "name": "Alcremie",
-   "dex": 869
+   "dex": 869,
+   "abilities": [
+    "sweet-veil",
+    "aroma-veil"
+   ]
   },
   {
    "id": 870,
    "name": "Falinks",
-   "dex": 870
+   "dex": 870,
+   "abilities": [
+    "battle-armor",
+    "defiant"
+   ]
   },
   {
    "id": 10303,
    "name": "Mega Falinks",
-   "dex": 870
+   "dex": 870,
+   "abilities": [
+    "defiant"
+   ]
   },
   {
    "id": 871,
    "name": "Pincurchin",
-   "dex": 871
+   "dex": 871,
+   "abilities": [
+    "lightning-rod",
+    "electric-surge"
+   ]
   },
   {
    "id": 876,
    "name": "Male Indeedee",
-   "dex": 876
+   "dex": 876,
+   "abilities": [
+    "inner-focus",
+    "synchronize",
+    "psychic-surge"
+   ]
   },
   {
    "id": 10186,
    "name": "Female Indeedee",
-   "dex": 876
+   "dex": 876,
+   "abilities": [
+    "own-tempo",
+    "synchronize",
+    "psychic-surge"
+   ]
   },
   {
    "id": 877,
    "name": "Full Belly Morpeko",
-   "dex": 877
+   "dex": 877,
+   "abilities": [
+    "hunger-switch"
+   ]
   },
   {
    "id": 10187,
    "name": "Hangry Morpeko",
-   "dex": 877
+   "dex": 877,
+   "abilities": [
+    "hunger-switch"
+   ]
   },
   {
    "id": 887,
    "name": "Dragapult",
-   "dex": 887
+   "dex": 887,
+   "abilities": [
+    "clear-body",
+    "infiltrator",
+    "cursed-body"
+   ]
   },
   {
    "id": 899,
    "name": "Wyrdeer",
-   "dex": 899
+   "dex": 899,
+   "abilities": [
+    "intimidate",
+    "frisk",
+    "sap-sipper"
+   ]
   },
   {
    "id": 900,
    "name": "Kleavor",
-   "dex": 900
+   "dex": 900,
+   "abilities": [
+    "swarm",
+    "sheer-force",
+    "sharpness"
+   ]
   },
   {
    "id": 902,
    "name": "Male Basculegion",
-   "dex": 902
+   "dex": 902,
+   "abilities": [
+    "swift-swim",
+    "adaptability",
+    "mold-breaker"
+   ]
   },
   {
    "id": 10248,
    "name": "Female Basculegion",
-   "dex": 902
+   "dex": 902,
+   "abilities": [
+    "swift-swim",
+    "adaptability",
+    "mold-breaker"
+   ]
   },
   {
    "id": 903,
    "name": "Sneasler",
-   "dex": 903
+   "dex": 903,
+   "abilities": [
+    "pressure",
+    "unburden",
+    "poison-touch"
+   ]
   },
   {
    "id": 904,
    "name": "Overqwil",
-   "dex": 904
+   "dex": 904,
+   "abilities": [
+    "poison-point",
+    "swift-swim",
+    "intimidate"
+   ]
   },
   {
    "id": 908,
    "name": "Meowscarada",
-   "dex": 908
+   "dex": 908,
+   "abilities": [
+    "overgrow",
+    "protean"
+   ]
   },
   {
    "id": 911,
    "name": "Skeledirge",
-   "dex": 911
+   "dex": 911,
+   "abilities": [
+    "blaze",
+    "unaware"
+   ]
   },
   {
    "id": 914,
    "name": "Quaquaval",
-   "dex": 914
+   "dex": 914,
+   "abilities": [
+    "torrent",
+    "moxie"
+   ]
   },
   {
    "id": 923,
    "name": "Pawmot",
-   "dex": 923
+   "dex": 923,
+   "abilities": [
+    "volt-absorb",
+    "natural-cure",
+    "iron-fist"
+   ]
   },
   {
    "id": 925,
    "name": "Family Of Four Maushold",
-   "dex": 925
+   "dex": 925,
+   "abilities": [
+    "friend-guard",
+    "cheek-pouch",
+    "technician"
+   ]
   },
   {
    "id": 10257,
    "name": "Family Of Three Maushold",
-   "dex": 925
+   "dex": 925,
+   "abilities": [
+    "friend-guard",
+    "cheek-pouch",
+    "technician"
+   ]
   },
   {
    "id": 930,
    "name": "Arboliva",
-   "dex": 930
+   "dex": 930,
+   "abilities": [
+    "seed-sower",
+    "harvest"
+   ]
   },
   {
    "id": 931,
    "name": "Green Plumage Squawkabilly",
-   "dex": 931
+   "dex": 931,
+   "abilities": [
+    "intimidate",
+    "hustle",
+    "guts"
+   ]
   },
   {
    "id": 10260,
    "name": "Blue Plumage Squawkabilly",
-   "dex": 931
+   "dex": 931,
+   "abilities": [
+    "intimidate",
+    "hustle",
+    "guts"
+   ]
   },
   {
    "id": 10261,
    "name": "Yellow Plumage Squawkabilly",
-   "dex": 931
+   "dex": 931,
+   "abilities": [
+    "intimidate",
+    "hustle",
+    "sheer-force"
+   ]
   },
   {
    "id": 10262,
    "name": "White Plumage Squawkabilly",
-   "dex": 931
+   "dex": 931,
+   "abilities": [
+    "intimidate",
+    "hustle",
+    "sheer-force"
+   ]
   },
   {
    "id": 934,
    "name": "Garganacl",
-   "dex": 934
+   "dex": 934,
+   "abilities": [
+    "purifying-salt",
+    "sturdy",
+    "clear-body"
+   ]
   },
   {
    "id": 936,
    "name": "Armarouge",
-   "dex": 936
+   "dex": 936,
+   "abilities": [
+    "flash-fire",
+    "weak-armor"
+   ]
   },
   {
    "id": 937,
    "name": "Ceruledge",
-   "dex": 937
+   "dex": 937,
+   "abilities": [
+    "flash-fire",
+    "weak-armor"
+   ]
   },
   {
    "id": 939,
    "name": "Bellibolt",
-   "dex": 939
+   "dex": 939,
+   "abilities": [
+    "electromorphosis",
+    "static",
+    "damp"
+   ]
   },
   {
    "id": 943,
    "name": "Mabosstiff",
-   "dex": 943
+   "dex": 943,
+   "abilities": [
+    "intimidate",
+    "guard-dog",
+    "stakeout"
+   ]
   },
   {
    "id": 952,
    "name": "Scovillain",
-   "dex": 952
+   "dex": 952,
+   "abilities": [
+    "chlorophyll",
+    "insomnia",
+    "moody"
+   ]
   },
   {
    "id": 10320,
    "name": "Mega Scovillain",
-   "dex": 952
+   "dex": 952,
+   "abilities": [
+    "spicy-spray"
+   ]
   },
   {
    "id": 956,
    "name": "Espathra",
-   "dex": 956
+   "dex": 956,
+   "abilities": [
+    "opportunist",
+    "frisk",
+    "speed-boost"
+   ]
   },
   {
    "id": 959,
    "name": "Tinkaton",
-   "dex": 959
+   "dex": 959,
+   "abilities": [
+    "mold-breaker",
+    "own-tempo",
+    "pickpocket"
+   ]
   },
   {
    "id": 964,
    "name": "Zero Palafin",
-   "dex": 964
+   "dex": 964,
+   "abilities": [
+    "zero-to-hero"
+   ]
   },
   {
    "id": 10256,
    "name": "Hero Palafin",
-   "dex": 964
+   "dex": 964,
+   "abilities": [
+    "zero-to-hero"
+   ]
   },
   {
    "id": 968,
    "name": "Orthworm",
-   "dex": 968
+   "dex": 968,
+   "abilities": [
+    "earth-eater",
+    "sand-veil"
+   ]
   },
   {
    "id": 970,
    "name": "Glimmora",
-   "dex": 970
+   "dex": 970,
+   "abilities": [
+    "toxic-debris",
+    "corrosion"
+   ]
   },
   {
    "id": 10321,
    "name": "Mega Glimmora",
-   "dex": 970
+   "dex": 970,
+   "abilities": [
+    "adaptability"
+   ]
   },
   {
    "id": 972,
    "name": "Houndstone",
-   "dex": 972
+   "dex": 972,
+   "abilities": [
+    "sand-rush",
+    "fluffy"
+   ]
   },
   {
    "id": 979,
    "name": "Annihilape",
-   "dex": 979
+   "dex": 979,
+   "abilities": [
+    "vital-spirit",
+    "inner-focus",
+    "defiant"
+   ]
   },
   {
    "id": 981,
    "name": "Farigiraf",
-   "dex": 981
+   "dex": 981,
+   "abilities": [
+    "cud-chew",
+    "armor-tail",
+    "sap-sipper"
+   ]
   },
   {
    "id": 983,
    "name": "Kingambit",
-   "dex": 983
+   "dex": 983,
+   "abilities": [
+    "defiant",
+    "supreme-overlord",
+    "pressure"
+   ]
   },
   {
    "id": 998,
    "name": "Baxcalibur",
-   "dex": 998
+   "dex": 998,
+   "abilities": [
+    "thermal-exchange",
+    "ice-body"
+   ]
   },
   {
    "id": 10325,
    "name": "Mega Baxcalibur",
-   "dex": 998
+   "dex": 998,
+   "abilities": [
+    "thermal-exchange"
+   ]
   },
   {
    "id": 1000,
    "name": "Gholdengo",
-   "dex": 1000
+   "dex": 1000,
+   "abilities": [
+    "good-as-gold"
+   ]
   },
   {
    "id": 1013,
    "name": "Sinistcha",
-   "dex": 1013
+   "dex": 1013,
+   "abilities": [
+    "hospitality",
+    "heatproof"
+   ]
   },
   {
    "id": 1018,
    "name": "Archaludon",
-   "dex": 1018
+   "dex": 1018,
+   "abilities": [
+    "stamina",
+    "sturdy",
+    "stalwart"
+   ]
   },
   {
    "id": 1019,
    "name": "Hydrapple",
-   "dex": 1019
+   "dex": 1019,
+   "abilities": [
+    "supersweet-syrup",
+    "regenerator",
+    "sticky-hold"
+   ]
   }
  ],
  "items": [

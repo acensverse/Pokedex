@@ -122,7 +122,8 @@ function parseDump(text) {
 function labelMap(file) {
   const m = new Map();
   for (const e of file.mSDataSet) {
-    m.set(e.LabelName, e.TextInfos?.[0]?.Text ?? '');
+    const text = (e.OriginalText ?? e.TextInfos?.[0]?.Text ?? '').replace(/\r?\n/g, ' ').trim();
+    m.set(e.LabelName, text);
   }
   return m;
 }
@@ -132,15 +133,19 @@ function labelMap(file) {
   const source = `${REPO}@${meta.sha.slice(0, 12)}`;
   console.log(`upstream: ${source} (${meta.date})\n`);
 
-  const [personal, item, dumpText, tokusei, itemname] = await Promise.all([
-    fetchJson('masterdata/personal.json'),
-    fetchJson('masterdata/item.json'),
-    fetchCached('parse/personal_dump.txt'),
-    fetchJson('rom-txt/usa/tokusei.json'),
-    fetchJson('rom-txt/usa/itemname.json'),
-  ]);
+  const [personal, item, dumpText, tokusei, itemname, wazaLearn, tokuseiInfo] =
+      await Promise.all([
+        fetchJson('masterdata/personal.json'),
+        fetchJson('masterdata/item.json'),
+        fetchCached('parse/personal_dump.txt'),
+        fetchJson('rom-txt/usa/tokusei.json'),
+        fetchJson('rom-txt/usa/itemname.json'),
+        fetchJson('masterdata/waza_learn.json'),
+        fetchJson('rom-txt/usa/tokuseiinfo_syn.json'),
+      ]);
   const abilityNames = labelMap(tokusei);
   const itemNames = labelMap(itemname);
+  const abilityDescs = labelMap(tokuseiInfo);
 
   // ---- champout forms ---------------------------------------------------------
   const dump = parseDump(dumpText);
@@ -179,6 +184,7 @@ function labelMap(file) {
       stats,
       types,
       abilities,
+      abilityIds,
       regNo: p.reg_no,
     };
   });
@@ -311,9 +317,169 @@ function labelMap(file) {
     process.exit(1);
   }
 
+  // ---- moves_seed learn inheritance -------------------------------------------
+  // The moves seed's learn data (`learn` id lists + `ld` [id, level, method]
+  // entries) predates the newest forms: a brand-new champion form (e.g. the
+  // v1.2.0 Z-megas) has zero coverage, so its detail screen shows no moves.
+  // The game's own learnsets (masterdata/waza_learn.json, one flat move list
+  // per form) say which forms share a learnset — inherit from a covered
+  // species form with an IDENTICAL game learnset; fail loud if none exists.
+  const gameLearnsets = new Map(); // "dddefff" (champout id) -> Set<moveId>
+  for (const e of Array.isArray(wazaLearn) ? wazaLearn : Object.values(wazaLearn)) {
+    gameLearnsets.set(String(e.id), new Set(String(e.waza).split(',').map(Number)));
+  }
+  const gameLearnsetOf = (f) => {
+    const key = `${String(f.dex).padStart(4, '0')}${String(f.formIndex).padStart(3, '0')}`;
+    const set = gameLearnsets.get(key);
+    if (!set) throw new Error(`"${f.name}": no waza_learn entry for id ${key}`);
+    return set;
+  };
+
+  const movesSeed = require('../assets/moves_seed.json');
+  const coveredRows = new Set();
+  for (const m of movesSeed) {
+    for (const id of m.learn ?? []) coveredRows.add(id);
+    for (const e of m.ld ?? []) coveredRows.add(e[0]);
+  }
+
+  const learnInherited = [];
+  for (const [f, row] of matched) {
+    if (coveredRows.has(row.id)) continue;
+    const want = gameLearnsetOf(f);
+    if (want.size === 0) {
+      console.log(`learn: "${f.name}" has an empty game learnset — nothing to inherit`);
+      continue;
+    }
+    // Source: a covered seed row of the same species whose matched champout
+    // form has the identical game learnset. Prefer the lowest seed id.
+    const candidates = [...matched.entries()]
+      .filter(([f2, row2]) => row2.speciesId === (row.speciesId ?? row.id) && coveredRows.has(row2.id))
+      .filter(([f2]) => {
+        const s2 = gameLearnsetOf(f2);
+        return s2.size === want.size && [...want].every((w) => s2.has(w));
+      })
+      .sort((a, b) => a[1].id - b[1].id);
+    if (candidates.length === 0) {
+      console.error(
+        `FAIL: "${f.name}" (#${row.id}) has no learn data and no covered species form shares its game learnset (${want.size} moves) — extend the moves seed manually.`,
+      );
+      process.exit(1);
+    }
+    const [, sourceRow] = candidates[0];
+    let added = 0;
+    for (const m of movesSeed) {
+      if ((m.learn ?? []).includes(sourceRow.id)) {
+        const list = m.learn;
+        if (list.every((x, i) => i === 0 || x > list[i - 1])) {
+          const at = list.findIndex((x) => x > row.id);
+          list.splice(at < 0 ? list.length : at, 0, row.id);
+        } else {
+          list.push(row.id);
+        }
+        added++;
+      }
+      for (const e of m.ld ?? []) {
+        if (e[0] === sourceRow.id) {
+          m.ld.push([row.id, e[1], e[2]]);
+          added++;
+        }
+      }
+    }
+    if (added === 0) {
+      console.error(`FAIL: "${f.name}" inheritance from #${sourceRow.id} found no entries to copy — moves seed data is inconsistent.`);
+      process.exit(1);
+    }
+    learnInherited.push(`${f.name} (#${row.id}) <- ${sourceRow.name} (#${sourceRow.id}): ${added} entries`);
+  }
+
+  const movesSeedFile = path.join(__dirname, '..', 'assets', 'moves_seed.json');
+  const movesBefore = fs.readFileSync(movesSeedFile, 'utf8');
+  const movesAfter = JSON.stringify(movesSeed);
+  if (movesBefore !== movesAfter) {
+    fs.writeFileSync(movesSeedFile, movesAfter);
+  }
+
+  // ---- pokedex_seed.json & abilities_seed.json automatic sync -----------------
+  // Syncs any ability changes or additions from champout into pokedex_seed.json
+  // and abilities_seed.json without requiring manual code changes.
+  const abilitiesSeedFile = path.join(__dirname, '..', 'assets', 'abilities_seed.json');
+  const abilitiesSeed = require(abilitiesSeedFile);
+  let pokedexSeedChanged = false;
+  let abilitiesSeedChanged = false;
+  const abilityUpdates = [];
+
+  for (const [f, row] of matched) {
+    const fSlugs = [...new Set(f.abilities.map(slug))];
+    if (fSlugs.length === 0) continue;
+
+    // 1. Sync row in pokedex_seed if abilities drifted
+    const newAbilitiesStr = fSlugs.join(',');
+    if (row.abilities !== newAbilitiesStr) {
+      abilityUpdates.push(`${f.name} (#${row.id}): "${row.abilities}" -> "${newAbilitiesStr}"`);
+      row.abilities = newAbilitiesStr;
+      pokedexSeedChanged = true;
+    }
+
+    // 2. Sync abilities_seed
+    for (let i = 0; i < f.abilities.length; i++) {
+      const aName = f.abilities[i];
+      const aSlug = slug(aName);
+      const aId = f.abilityIds[i];
+
+      let entry = abilitiesSeed.find((x) => x.name === aSlug);
+      if (!entry) {
+        const descKey = `TOKUSEIINFO_SYN_${String(aId).padStart(3, '0')}`;
+        const desc = abilityDescs.get(descKey) || `The Pokémon possesses the ${aName} ability.`;
+        entry = {
+          id: aId,
+          name: aSlug,
+          gen: 'ix',
+          eff: desc,
+          flavor: desc,
+          pokemon: [row.id],
+          hidden: [],
+        };
+        abilitiesSeed.push(entry);
+        abilitiesSeedChanged = true;
+      } else {
+        if (!entry.pokemon.includes(row.id)) {
+          entry.pokemon.push(row.id);
+          entry.pokemon.sort((a, b) => a - b);
+          abilitiesSeedChanged = true;
+        }
+      }
+    }
+  }
+
+  // Remove row.id from any ability in abilities_seed that this champion row no longer has
+  for (const [f, row] of matched) {
+    const fSlugs = new Set(f.abilities.map(slug));
+    for (const aEntry of abilitiesSeed) {
+      if (!fSlugs.has(aEntry.name) && aEntry.pokemon.includes(row.id)) {
+        aEntry.pokemon = aEntry.pokemon.filter((id) => id !== row.id);
+        abilitiesSeedChanged = true;
+      }
+    }
+  }
+
+  if (pokedexSeedChanged) {
+    const pokedexSeedFile = path.join(__dirname, '..', 'assets', 'pokedex_seed.json');
+    fs.writeFileSync(pokedexSeedFile, JSON.stringify(seed, null, 2) + '\n');
+  }
+
+  if (abilitiesSeedChanged) {
+    abilitiesSeed.sort((a, b) => a.id - b.id);
+    fs.writeFileSync(abilitiesSeedFile, JSON.stringify(abilitiesSeed) + '\n');
+  }
+
   // ---- champions_seed.json ------------------------------------------------------
   const pokemon = [...matched.entries()]
-    .map(([f, row]) => ({ id: row.id, name: row.name, dex: row.speciesId ?? row.id }))
+    .map(([f, row]) => ({
+      id: row.id,
+      name: row.name,
+      dex: row.speciesId ?? row.id,
+      abilities: [...new Set(f.abilities.map(slug))],
+    }))
     .sort((a, b) => a.dex - b.dex || a.id - b.id);
 
   const items = item
@@ -377,6 +543,8 @@ function labelMap(file) {
   for (const d of abilityDrift) console.log('  ~ ' + d);
   console.log(`cosmetic collapsed:    ${collapsed.length}`);
   for (const d of collapsed) console.log('  = ' + d);
+  console.log(`learn inherited:       ${learnInherited.length}`);
+  for (const d of learnInherited) console.log('  + ' + d);
   console.log(`roster added:          ${added.length}`);
   for (const p of added) console.log('  + ' + p.name + ' (#' + p.id + ')');
   console.log(`roster removed:        ${removed.length}`);

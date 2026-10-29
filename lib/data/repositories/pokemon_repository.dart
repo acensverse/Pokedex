@@ -54,25 +54,34 @@ class PokemonRepository {
   /// re-run the (cheap) integrity check once more.
   static const _seedDoneFlag = 'seed_v14_complete';
   static const _seedRevKey = 'seed_asset_rev';
+  static const _seedContentHashKey = 'seed_asset_content_hash';
 
   /// Bumped alongside [_seedDoneFlag] whenever baked asset CONTENT changes.
   /// Lets a healthy-looking database (rows pass the sniff test below) still
   /// be recognized as pre-rebake, forcing exactly one re-seed.
   static const _seedAssetRev =
-      8; // 8 = corrected Floette (#670) base Speed 52 -> 92
+      9; // 9 = champout ability corrections (5 megas) + Z-mega learnsets
 
   // Seed SQLite from local JSON asset once per install/seed-version
   Future<void> checkAndSeedDatabase() async {
     final prefs = await SharedPreferences.getInstance();
-    if ((prefs.getBool(_seedDoneFlag) ?? false) &&
-        (prefs.getInt(_seedRevKey) ?? 0) >= _seedAssetRev) {
-      return;
-    }
+    final jsonString = await rootBundle.loadString(
+      'assets/pokedex_seed.json',
+    );
+    // Fingerprint based on length and sample hashes so baked asset changes
+    // trigger auto-reseed without requiring manual code changes.
+    final currentContentHash =
+        '${jsonString.length}_${jsonString.substring(0, 80).hashCode}';
+    final savedContentHash = prefs.getString(_seedContentHashKey);
 
     final cachedCount = await _db.searchPokemon('', '');
 
     bool needsUpdate = false;
-    if (cachedCount.isNotEmpty) {
+    if (savedContentHash != currentContentHash) {
+      needsUpdate = true;
+    }
+
+    if (cachedCount.isNotEmpty && !needsUpdate) {
       final first = await _db.getPokemonById(1);
       // Stale seed = missing category/flavor text or mojibake rows from the
       // corrupted asset era (flavor text shipped starting with seed v9)
@@ -89,20 +98,19 @@ class PokemonRepository {
     // Healthy database AND current asset revision -> nothing to do.
     if (!needsUpdate &&
         cachedCount.length >= 1329 &&
-        (prefs.getInt(_seedRevKey) ?? 0) >= _seedAssetRev) {
+        (prefs.getInt(_seedRevKey) ?? 0) >= _seedAssetRev &&
+        (prefs.getBool(_seedDoneFlag) ?? false)) {
       await prefs.setBool(_seedDoneFlag, true);
       return;
     }
 
     try {
-      final jsonString = await rootBundle.loadString(
-        'assets/pokedex_seed.json',
-      );
       final parsed = await compute(_parsePokedexSeed, jsonString);
 
       // Batch insert in a single transaction instead of 1291 row-by-row awaits
       await _db.cacheAllPokemon(parsed);
       await prefs.setInt(_seedRevKey, _seedAssetRev);
+      await prefs.setString(_seedContentHashKey, currentContentHash);
       await prefs.setBool(_seedDoneFlag, true);
     } catch (e, st) {
       debugPrint('Seeding the local database failed: $e\n$st');
@@ -117,6 +125,21 @@ class PokemonRepository {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_seedDoneFlag, false);
     await checkAndSeedDatabase();
+  }
+
+  /// Syncs champion abilities directly into SQLite so offline and cache reads
+  /// reflect the latest champion data immediately.
+  Future<void> syncChampionsAbilities(List<dynamic> roster) async {
+    for (final item in roster) {
+      if (item is! Map) continue;
+      final id = item['id'] as int?;
+      final rawAbilities = item['abilities'];
+      if (id == null || rawAbilities is! List || rawAbilities.isEmpty) continue;
+      final abilitiesJson = jsonEncode(
+        rawAbilities.map((a) => {'n': a.toString(), 'h': false}).toList(),
+      );
+      await _db.updatePokemonAbilities(id, abilitiesJson);
+    }
   }
 
   // Get Pokemon list from local database (offline-first, no network dependency).

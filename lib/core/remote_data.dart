@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'providers.dart';
 
 /// Where the app fetches regenerated Champions data from: this repo's
 /// `assets/` directory on main, refreshed by
@@ -18,10 +19,14 @@ const String kRemoteDataBaseUrl =
 /// Baked asset names that can be overridden at runtime.
 const String kRemoteChampionsFile = 'champions_seed.json';
 const String kRemoteSpeedTiersFile = 'speed_tiers.json';
+const String kRemoteMovesFile = 'moves_seed.json';
+const String kRemoteAbilitiesFile = 'abilities_seed.json';
 
 /// Baked asset paths, used when no override exists.
 const String kChampionsAssetPath = 'assets/champions_seed.json';
 const String kSpeedTiersAssetPath = 'assets/speed_tiers.json';
+const String kMovesAssetPath = 'assets/moves_seed.json';
+const String kAbilitiesAssetPath = 'assets/abilities_seed.json';
 
 /// How long an auto-check result stays trusted before the next app start
 /// checks again (manual checks bypass this).
@@ -49,6 +54,9 @@ String? validateChampionsPayload(dynamic data) {
         entry['name'] is! String ||
         entry['dex'] is! int) {
       return 'malformed pokemon entry: $entry';
+    }
+    if (entry.containsKey('abilities') && entry['abilities'] is! List) {
+      return 'malformed pokemon abilities: $entry';
     }
   }
   final items = data['items'];
@@ -218,6 +226,32 @@ class RemoteDataController extends Notifier<RemoteDataStatus> {
 
       await store.write(kRemoteChampionsFile, jsonEncode(championsData));
       await store.write(kRemoteSpeedTiersFile, jsonEncode(tiersData));
+
+      // Fetch companion moves and abilities overrides if present
+      try {
+        final movesRes =
+            await dio.get<String>('$kRemoteDataBaseUrl$kRemoteMovesFile');
+        if (movesRes.data != null && movesRes.data!.isNotEmpty) {
+          await store.write(kRemoteMovesFile, movesRes.data!);
+        }
+      } catch (_) {}
+
+      try {
+        final abilitiesRes =
+            await dio.get<String>('$kRemoteDataBaseUrl$kRemoteAbilitiesFile');
+        if (abilitiesRes.data != null && abilitiesRes.data!.isNotEmpty) {
+          await store.write(kRemoteAbilitiesFile, abilitiesRes.data!);
+        }
+      } catch (_) {}
+
+      // Sync champion abilities directly into SQLite so offline reads and
+      // the About section reflect updated abilities immediately.
+      final repo = ref.read(pokemonRepositoryProvider);
+      final roster = championsData['pokemon'];
+      if (roster is List) {
+        await repo.syncChampionsAbilities(roster);
+      }
+
       ref.read(remoteDataVersionProvider.notifier).state++;
       state = RemoteDataStatus.updated;
       return state;
@@ -230,6 +264,7 @@ class RemoteDataController extends Notifier<RemoteDataStatus> {
   /// Deletes the overrides so providers fall back to the baked assets again.
   Future<void> revertToBaked() async {
     await ref.read(remoteDataStoreProvider).clear();
+    await ref.read(pokemonRepositoryProvider).forceReseedDatabase();
     ref.read(remoteDataVersionProvider.notifier).state++;
     state = RemoteDataStatus.idle;
   }

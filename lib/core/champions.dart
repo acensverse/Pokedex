@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'app_preferences.dart';
 import 'remote_data.dart';
 import 'utils/name_forms.dart';
 
@@ -28,10 +29,15 @@ class ChampionsData {
   /// Normalized names of every legal held item.
   final Set<String> itemSlugs;
 
+  /// Form-specific ability overrides for champion forms (e.g. Mega Lucario Z
+  /// -> ["aura-guard"]).
+  final Map<int, List<String>> pokemonAbilities;
+
   const ChampionsData({
     required this.pokemonIds,
     required this.speciesIds,
     required this.itemSlugs,
+    this.pokemonAbilities = const {},
   });
 }
 
@@ -47,6 +53,14 @@ final championsDataProvider = FutureProvider<ChampionsData>((ref) async {
   final data = jsonDecode(raw) as Map<String, dynamic>;
   final pokemon =
       (data['pokemon'] as List<dynamic>).cast<Map<String, dynamic>>();
+  final abilitiesMap = <int, List<String>>{};
+  for (final p in pokemon) {
+    final abs = p['abilities'];
+    if (abs is List) {
+      abilitiesMap[p['id'] as int] =
+          abs.map((e) => e.toString()).toList();
+    }
+  }
   return ChampionsData(
     pokemonIds: {for (final p in pokemon) p['id'] as int},
     speciesIds: {for (final p in pokemon) p['dex'] as int},
@@ -54,10 +68,51 @@ final championsDataProvider = FutureProvider<ChampionsData>((ref) async {
       for (final name in (data['items'] as List<dynamic>).cast<String>())
         normalizeItemName(name),
     },
+    pokemonAbilities: abilitiesMap,
   );
 });
+
+const String _defaultPokedexPrefKey = 'user_default_pokedex_preference';
+
+enum DefaultPokedexMode { national, champions }
+
+final defaultPokedexModeProvider = StateProvider<DefaultPokedexMode>((ref) {
+  final prefs = AppPreferences.instance;
+  if (prefs != null) {
+    final saved = prefs.getString(_defaultPokedexPrefKey);
+    if (saved == 'champions') {
+      return DefaultPokedexMode.champions;
+    }
+  }
+  return DefaultPokedexMode.national;
+});
+
+class DefaultPokedexHelper {
+  static const String prefKey = _defaultPokedexPrefKey;
+
+  static Future<void> setDefaultPokedex(
+    dynamic ref,
+    DefaultPokedexMode mode,
+  ) async {
+    ref.read(defaultPokedexModeProvider.notifier).state = mode;
+    ref.read(championsModeProvider.notifier).state =
+        mode == DefaultPokedexMode.champions;
+    final prefs = await AppPreferences.getPrefs();
+    await prefs.setString(
+      _defaultPokedexPrefKey,
+      mode == DefaultPokedexMode.champions ? 'champions' : 'national',
+    );
+  }
+}
 
 /// When true, the home Pokédex and the Moves/Abilities/Items tools are scoped
 /// to the Champions roster. Toggled from the tools sheet's Champions Pokédex
 /// button or the Champions pill on the home screen.
-final championsModeProvider = StateProvider<bool>((ref) => false);
+final championsModeProvider = StateProvider<bool>((ref) {
+  final prefs = AppPreferences.instance;
+  if (prefs != null) {
+    final saved = prefs.getString(_defaultPokedexPrefKey);
+    return saved == 'champions';
+  }
+  return false;
+});

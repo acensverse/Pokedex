@@ -158,6 +158,13 @@ class AppDatabase extends _$AppDatabase {
     );
   }
 
+  // Update pokemon abilities
+  Future<void> updatePokemonAbilities(int id, String abilitiesJson) async {
+    await (update(pokemonCache)..where((t) => t.id.equals(id))).write(
+      PokemonCacheCompanion(abilities: Value(abilitiesJson)),
+    );
+  }
+
   // Search cached pokemon offline.
   // Type matching wraps the CSV column in commas (',grass,poison,' LIKE '%,fire,%')
   // so filters match whole list items instead of substrings.

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/theme_provider.dart';
+import '../../core/champions.dart';
 import '../../core/providers.dart';
 import '../../core/remote_data.dart';
 import '../../data/database/app_database.dart';
@@ -123,12 +124,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       final currentLayout = ref.read(pokedexLayoutProvider);
       final layoutStr = currentLayout == PokedexLayoutMode.grid ? 'grid' : 'list';
 
+      final currentDefaultDex = ref.read(defaultPokedexModeProvider);
+      final defaultDexStr =
+          currentDefaultDex == DefaultPokedexMode.champions
+              ? 'champions'
+              : 'national';
+
       final backupData = {
         'app': 'Pokédex',
         'version': '1.0.0',
         'exportedAt': DateTime.now().toIso8601String(),
         'themeMode': themeStr,
         'layoutMode': layoutStr,
+        'defaultPokedex': defaultDexStr,
         'favorites': favoriteIds,
         'teams': teamsData,
       };
@@ -342,6 +350,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         }
       }
 
+      // Restore Default Pokédex if available
+      if (data.containsKey('defaultPokedex') &&
+          data['defaultPokedex'] is String) {
+        final dp = data['defaultPokedex'];
+        if (dp == 'champions') {
+          await DefaultPokedexHelper.setDefaultPokedex(
+            ref,
+            DefaultPokedexMode.champions,
+          );
+        } else if (dp == 'national') {
+          await DefaultPokedexHelper.setDefaultPokedex(
+            ref,
+            DefaultPokedexMode.national,
+          );
+        }
+      }
+
       // Refresh providers
       ref.invalidate(localPokemonListProvider);
 
@@ -411,6 +436,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   Widget build(BuildContext context) {
     final activeThemeMode = ref.watch(themeModeProvider);
     final activeLayoutMode = ref.watch(pokedexLayoutProvider);
+    final activeDefaultDex = ref.watch(defaultPokedexModeProvider);
     final remoteDataStatus = ref.watch(remoteDataControllerProvider);
     final championsDataInfo = ref.watch(activeChampionsDataProvider).value;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -496,6 +522,45 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     subtitle: 'Full Width',
                     icon: Icons.view_list_rounded,
                     isSelected: activeLayoutMode == PokedexLayoutMode.list,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 24),
+
+            // -----------------------------------------------------------------
+            // SECTION: DEFAULT POKÉDEX (NATIONAL / CHAMPIONS)
+            // -----------------------------------------------------------------
+            _buildSectionHeader(
+              'Default Pokédex',
+              Icons.auto_awesome_rounded,
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildDefaultDexCard(
+                    context: context,
+                    mode: DefaultPokedexMode.national,
+                    title: 'National Dex',
+                    subtitle: 'All Pokémon',
+                    icon: Icons.catching_pokemon,
+                    isSelected:
+                        activeDefaultDex == DefaultPokedexMode.national,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildDefaultDexCard(
+                    context: context,
+                    mode: DefaultPokedexMode.champions,
+                    title: 'Champions Dex',
+                    subtitle: 'Champions Roster',
+                    icon: Icons.emoji_events_rounded,
+                    isSelected:
+                        activeDefaultDex == DefaultPokedexMode.champions,
+                    activeColor: const Color(0xFF9C27B0),
                   ),
                 ),
               ],
@@ -1279,6 +1344,89 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   : Icons.radio_button_unchecked_rounded,
               size: 16,
               color: isSelected ? AppColors.primary : Colors.grey.shade400,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDefaultDexCard({
+    required BuildContext context,
+    required DefaultPokedexMode mode,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required bool isSelected,
+    Color activeColor = AppColors.primary,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return InkWell(
+      onTap: () {
+        DefaultPokedexHelper.setDefaultPokedex(ref, mode);
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? activeColor.withValues(alpha: isDark ? 0.25 : 0.1)
+              : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected
+                ? activeColor
+                : (isDark ? Colors.grey.shade800 : Colors.grey.shade300),
+            width: isSelected ? 2.0 : 1.0,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: activeColor.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ]
+              : null,
+        ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              color: isSelected
+                  ? activeColor
+                  : (isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+              size: 26,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected
+                    ? activeColor
+                    : (isDark ? Colors.white : AppColors.textPrimary),
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 10,
+                color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Icon(
+              isSelected
+                  ? Icons.check_circle_rounded
+                  : Icons.radio_button_unchecked_rounded,
+              size: 16,
+              color: isSelected ? activeColor : Colors.grey.shade400,
             ),
           ],
         ),

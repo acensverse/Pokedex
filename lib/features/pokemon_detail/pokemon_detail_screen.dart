@@ -6,6 +6,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:audioplayers/audioplayers.dart';
+import '../../core/champions.dart';
+import '../../core/remote_data.dart';
 import '../../core/providers.dart';
 import '../../core/utils/name_forms.dart';
 import '../../core/utils/pokemon_helpers.dart';
@@ -23,8 +25,22 @@ final pokemonDetailProvider = FutureProvider.family<Pokemon, int>((
   ref,
   id,
 ) async {
+  ref.watch(remoteDataVersionProvider);
+  final champions = ref.watch(championsDataProvider).asData?.value;
+  final overrideAbilities = champions?.pokemonAbilities[id];
   final repository = ref.read(pokemonRepositoryProvider);
-  return repository.getPokemonDetails(id);
+  final pokemon = await repository.getPokemonDetails(id);
+  if (overrideAbilities != null && overrideAbilities.isNotEmpty) {
+    final championSlots = overrideAbilities.asMap().entries.map((entry) {
+      return PokemonAbilitySlot(
+        slot: entry.key + 1,
+        isHidden: false,
+        ability: PokemonAbilityInfo(name: entry.value, url: ''),
+      );
+    }).toList();
+    return pokemon.copyWith(abilities: championSlots);
+  }
+  return pokemon;
 });
 
 final speciesInfoProvider =
@@ -48,7 +64,10 @@ final cachedSpeciesProvider =
 final abilitiesSeedProvider = FutureProvider<List<Map<String, dynamic>>>((
   ref,
 ) async {
-  final raw = await rootBundle.loadString('assets/abilities_seed.json');
+  ref.watch(remoteDataVersionProvider);
+  final store = ref.read(remoteDataStoreProvider);
+  final override = await store.read(kRemoteAbilitiesFile);
+  final raw = override ?? await rootBundle.loadString(kAbilitiesAssetPath);
   final list = jsonDecode(raw) as List<dynamic>;
   return list.cast<Map<String, dynamic>>();
 });

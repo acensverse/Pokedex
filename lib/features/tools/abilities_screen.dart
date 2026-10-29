@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_spacing.dart';
 import '../../core/champions.dart';
+import '../../core/remote_data.dart';
 import '../../core/utils/pokemon_helpers.dart';
 import '../pokedex/pokedex_provider.dart';
 import '../pokedex/widgets/tools_sheet.dart';
@@ -52,9 +53,13 @@ class AbilityEntry {
   String? get description => eff ?? flavor;
 }
 
-/// All abilities baked from assets/abilities_seed.json (offline-first).
+/// All abilities baked from assets/abilities_seed.json (offline-first),
+/// with runtime overrides supported when Champions data is updated.
 final abilitiesSeedProvider = FutureProvider<List<AbilityEntry>>((ref) async {
-  final raw = await rootBundle.loadString('assets/abilities_seed.json');
+  ref.watch(remoteDataVersionProvider);
+  final store = ref.read(remoteDataStoreProvider);
+  final override = await store.read(kRemoteAbilitiesFile);
+  final raw = override ?? await rootBundle.loadString(kAbilitiesAssetPath);
   final list = jsonDecode(raw) as List<dynamic>;
   return list
       .map((e) => AbilityEntry.fromJson(e as Map<String, dynamic>))
@@ -87,11 +92,6 @@ class _AbilitiesScreenState extends ConsumerState<AbilitiesScreen> {
         _query = '';
       }
     });
-  }
-
-  void _clearSearch() {
-    _searchController.clear();
-    setState(() => _query = '');
   }
 
   void _openFilterSheet(List<String> gens) {
@@ -231,19 +231,7 @@ class _AbilitiesScreenState extends ConsumerState<AbilitiesScreen> {
                               LucideIcons.search,
                               color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.6),
                             ),
-                            suffixIcon: _query.isNotEmpty
-                                ? IconButton(
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(
-                                        minWidth: 36, minHeight: 36),
-                                    icon: Icon(
-                                      Icons.close,
-                                      color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.6),
-                                      size: 20,
-                                    ),
-                                    onPressed: _clearSearch,
-                                  )
-                                : null,
+                            suffixIcon: null,
                             isDense: true,
                             filled: true,
                             fillColor: Theme.of(context).cardColor,
