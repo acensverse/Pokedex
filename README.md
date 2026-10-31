@@ -4,7 +4,7 @@
 
   <img src="./assets/pokedex.png" alt="Pokédex Flutter Logo" width="130" height="130" style="border-radius: 32px; box-shadow: 0 16px 36px rgba(0,0,0,0.18);" />
 
-  # **POKÉDEX // FLUTTER**
+  # **POKÉDEX**
   ### *An Offline-First, High-Performance Pokémon Encyclopedia & Battle Suite*
 
   <p align="center">
