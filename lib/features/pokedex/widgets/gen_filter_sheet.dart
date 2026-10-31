@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/feedback_service.dart';
 import '../pokedex_provider.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_spacing.dart';
@@ -62,6 +63,7 @@ class GenFilterSheet extends ConsumerWidget {
                   padding: const EdgeInsets.only(bottom: 8),
                   child: GestureDetector(
                     onTap: () {
+                      AppFeedback.selectionClick();
                       ref.read(genFilterProvider.notifier).state = isSelected
                           ? 0
                           : info.gen;

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:go_router/go_router.dart';
-import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_spacing.dart';
 import '../../core/champions.dart';
 import '../../core/remote_data.dart';
@@ -13,6 +12,7 @@ import '../../core/utils/pokemon_helpers.dart';
 import '../pokedex/pokedex_provider.dart';
 import '../pokedex/widgets/tools_sheet.dart';
 import 'widgets/tool_widgets.dart';
+import '../../core/widgets/app_search_bar.dart';
 
 class AbilityEntry {
   final int id;
@@ -112,10 +112,7 @@ class _AbilitiesScreenState extends ConsumerState<AbilitiesScreen> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (_) => FractionallySizedBox(
-        heightFactor: 0.8,
-        child: AbilityDetailSheet(ability: ability),
-      ),
+      builder: (_) => AbilityDetailSheet(ability: ability),
     );
   }
 
@@ -144,7 +141,7 @@ class _AbilitiesScreenState extends ConsumerState<AbilitiesScreen> {
               LucideIcons.search,
               size: 26,
               color: _isSearching
-                  ? AppColors.primary
+                  ? (isDark ? const Color(0xFF4DB6AC) : const Color(0xFF00897B))
                   : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
             ),
             onPressed: _toggleSearch,
@@ -155,7 +152,7 @@ class _AbilitiesScreenState extends ConsumerState<AbilitiesScreen> {
               Icons.tune,
               size: 26,
               color: _genFilter != null
-                  ? AppColors.primary
+                  ? (isDark ? const Color(0xFF4DB6AC) : const Color(0xFF00897B))
                   : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
             ),
             onPressed: () {
@@ -215,40 +212,14 @@ class _AbilitiesScreenState extends ConsumerState<AbilitiesScreen> {
                 child: _isSearching
                     ? Padding(
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                        child: TextField(
+                        child: AppSearchBar(
                           controller: _searchController,
+                          hintText: 'Search abilities...',
                           autofocus: true,
-                          style: TextStyle(
-                            color: Theme.of(context).textTheme.bodyLarge?.color,
-                          ),
+                          voiceTitle: 'Abilities Voice Search',
+                          voiceHint: 'Say an ability name...',
                           onChanged: (v) => setState(() => _query = v),
-                          decoration: InputDecoration(
-                            hintText: 'Search abilities...',
-                            hintStyle: TextStyle(
-                              color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
-                            ),
-                            prefixIcon: Icon(
-                              LucideIcons.search,
-                              color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.6),
-                            ),
-                            suffixIcon: null,
-                            isDense: true,
-                            filled: true,
-                            fillColor: Theme.of(context).cardColor,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide: BorderSide(color: Theme.of(context).dividerColor),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide: BorderSide(color: Theme.of(context).dividerColor),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide: BorderSide(
-                                  color: AppColors.primary, width: 1.5),
-                            ),
-                          ),
+                          onClear: () => setState(() => _query = ''),
                         ),
                       )
                     : SizedBox.shrink(),
@@ -371,8 +342,6 @@ class AbilityDetailSheet extends ConsumerWidget {
 
   const AbilityDetailSheet({super.key, required this.ability});
 
-  static const _accent = Color(0xFF43A047);
-
   void _openHoldersInPokedex(BuildContext context, WidgetRef ref) {
     if (ability.pokemon.isEmpty) return;
     ref.read(searchQueryProvider.notifier).state = '';
@@ -403,225 +372,365 @@ class AbilityDetailSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      child: Column(
-        children: [
-          SizedBox(height: 12),
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Theme.of(context).dividerColor,
-                borderRadius: BorderRadius.circular(2),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor =
+        isDark ? const Color(0xFF4DB6AC) : const Color(0xFF00897B);
+
+    return SafeArea(
+      top: false,
+      child: Container(
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF16181F) : const Color(0xFFF7F8FA),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Container(
+                margin: const EdgeInsets.only(top: 12, bottom: 6),
+                width: 42,
+                height: 4.5,
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white24 : Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(3),
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-              children: [
-                SizedBox(height: 4),
-                Center(
-                  child: Text('ABILITY',
-                      style: TextStyle(
-                          fontSize: 12,
-                          letterSpacing: 1.5,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey)),
-                ),
-                SizedBox(height: 4),
-                Center(
-                  child: Text(
-                    PokemonHelpers.formatName(ability.name),
-                    style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.w900,
-                        color: Theme.of(context).textTheme.titleLarge?.color),
-                  ),
-                ),
-                SizedBox(height: 12),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 10,
-                  runSpacing: 8,
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(16, 6, 16, 12),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (ability.gen.isNotEmpty)
-                      _InfoPill(label: _genLabel(ability.gen)),
-                    _InfoPill(
-                        label: '${ability.pokemon.length} Pok\u00e9mon'),
-                  ],
-                ),
-                SizedBox(height: 26),
-                _sectionCard(
-                  context,
-                  'Details',
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (ability.flavor != null) ...[
-                        const _CardHeading('Description'),
-                        SizedBox(height: 6),
-                        Text(ability.flavor!,
-                            style: TextStyle(
-                                fontSize: 14,
-                                height: 1.4,
-                                color: Theme.of(context).textTheme.bodyMedium?.color)),
+                    Center(
+                      child: Text(
+                        'ABILITY',
+                        style: TextStyle(
+                          fontSize: 11,
+                          letterSpacing: 1.8,
+                          fontWeight: FontWeight.w700,
+                          color: isDark ? Colors.white38 : Colors.grey.shade500,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Center(
+                      child: Text(
+                        PokemonHelpers.formatName(ability.name),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.4,
+                          color: Theme.of(context).textTheme.titleLarge?.color,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: 8,
+                      runSpacing: 6,
+                      children: [
+                        if (ability.gen.isNotEmpty)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.06)
+                                  : Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color:
+                                    isDark ? Colors.white12 : Colors.grey.shade300,
+                              ),
+                            ),
+                            child: Text(
+                              _genLabel(ability.gen),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: Theme.of(context).textTheme.bodyMedium?.color,
+                              ),
+                            ),
+                          ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: accentColor.withValues(alpha: isDark ? 0.2 : 0.1),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: accentColor.withValues(alpha: 0.3),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(LucideIcons.users, size: 13, color: accentColor),
+                              const SizedBox(width: 6),
+                              Text(
+                                '${ability.pokemon.length} Pokémon',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: accentColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
-                      if (ability.eff != null) ...[
-                        SizedBox(height: 14),
-                        const _CardHeading('Effect'),
-                        SizedBox(height: 6),
-                        Text(ability.eff!,
-                            style: TextStyle(
-                                fontSize: 14,
-                                height: 1.4,
-                                color: Theme.of(context).textTheme.bodyMedium?.color)),
-                      ],
-                      if (ability.hidden.isNotEmpty) ...[
-                        SizedBox(height: 14),
-                        const _CardHeading('Hidden by'),
-                        SizedBox(height: 6),
-                        Text(
-                            '${ability.hidden.length} Pok\u00e9mon have this as their hidden ability.',
-                            style: TextStyle(
-                                fontSize: 14,
-                                height: 1.4,
-                                color: Theme.of(context).textTheme.bodyMedium?.color)),
-                      ],
-                      if (ability.flavor == null && ability.eff == null)
-                        Text('No details available.',
-                            style: TextStyle(
+                    ),
+                    const SizedBox(height: 16),
+                    _buildSectionCard(
+                      context: context,
+                      isDark: isDark,
+                      title: 'Details',
+                      icon: LucideIcons.sparkles,
+                      accentColor: accentColor,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (ability.flavor != null) ...[
+                            Text(
+                              'DESCRIPTION',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.6,
+                                color: Colors.grey.shade500,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              ability.flavor!,
+                              style: TextStyle(
+                                fontSize: 13.5,
+                                height: 1.45,
+                                color:
+                                    Theme.of(context).textTheme.bodyMedium?.color,
+                              ),
+                            ),
+                          ],
+                          if (ability.eff != null &&
+                              ability.eff!.isNotEmpty &&
+                              ability.eff != ability.flavor) ...[
+                            if (ability.flavor != null)
+                              const SizedBox(height: 14),
+                            Text(
+                              'IN-DEPTH EFFECT',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.6,
+                                color: Colors.grey.shade500,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              ability.eff!,
+                              style: TextStyle(
+                                fontSize: 13,
+                                height: 1.45,
+                                color:
+                                    Theme.of(context).textTheme.bodyMedium?.color,
+                              ),
+                            ),
+                          ],
+                          if (ability.hidden.isNotEmpty) ...[
+                            const SizedBox(height: 14),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.amber.withValues(
+                                  alpha: isDark ? 0.12 : 0.08,
+                                ),
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: Colors.amber.withValues(alpha: 0.28),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    LucideIcons.sparkles,
+                                    size: 16,
+                                    color: isDark
+                                        ? Colors.amber.shade300
+                                        : Colors.amber.shade700,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      '${ability.hidden.length} Pokémon have this as their Hidden Ability.',
+                                      style: TextStyle(
+                                        fontSize: 12.5,
+                                        fontWeight: FontWeight.w600,
+                                        color: isDark
+                                            ? Colors.amber.shade200
+                                            : Colors.amber.shade900,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                          if (ability.flavor == null && ability.eff == null)
+                            Text(
+                              'No details available.',
+                              style: TextStyle(
                                 fontSize: 13,
                                 fontStyle: FontStyle.italic,
-                                color: Theme.of(context).textTheme.bodyMedium?.color)),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 8),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-            child: SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: GestureDetector(
-                onTap: ability.pokemon.isEmpty
-                    ? null
-                    : () => _openHoldersInPokedex(context, ref),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: ability.pokemon.isEmpty
-                        ? LinearGradient(
-                            colors: [Colors.grey, Colors.grey])
-                        : LinearGradient(
-                            colors: [Color(0xFF7CB342), Color(0xFF26A69A)],
-                          ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.catching_pokemon,
-                        color: Colors.white,
+                                color:
+                                    Theme.of(context).textTheme.bodyMedium?.color,
+                              ),
+                            ),
+                        ],
                       ),
-                      SizedBox(width: 8),
-                      Text(
-                        ability.pokemon.isEmpty
-                            ? 'NO POK\u00c9MON HAVE THIS ABILITY'
-                            : 'POK\u00c9MON LIST',
-                        style: TextStyle(
+                    ),
+                    const SizedBox(height: 4),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+              child: SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: GestureDetector(
+                  onTap: ability.pokemon.isEmpty
+                      ? null
+                      : () => _openHoldersInPokedex(context, ref),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: ability.pokemon.isEmpty
+                          ? LinearGradient(
+                              colors: [
+                                Colors.grey.shade600,
+                                Colors.grey.shade500,
+                              ],
+                            )
+                          : const LinearGradient(
+                              colors: [
+                                Color(0xFF00897B),
+                                Color(0xFF26A69A),
+                              ],
+                            ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: ability.pokemon.isEmpty
+                          ? null
+                          : [
+                              BoxShadow(
+                                color: const Color(
+                                  0xFF00897B,
+                                ).withValues(alpha: 0.32),
+                                blurRadius: 10,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.catching_pokemon,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          ability.pokemon.isEmpty
+                              ? 'NO POKÉMON HAVE THIS ABILITY'
+                              : 'POKÉMON LIST',
+                          style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.w900,
-                            letterSpacing: 1.2,
-                            fontSize: 15),
-                      ),
-                    ],
+                            letterSpacing: 1.1,
+                            fontSize: 14.5,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _sectionCard(BuildContext context, String title, Widget child) => Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.topCenter,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 14),
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(16, 22, 16, 16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: child,
-          ),
-          Positioned(
-            top: 0,
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: _accent, width: 1.5),
-              ),
-              child: Text(title,
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                      color: _accent)),
-            ),
-          ),
-        ],
-      );
-}
-
-class _InfoPill extends StatelessWidget {
-  final String label;
-
-  const _InfoPill({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildSectionCard({
+    required BuildContext context,
+    required bool isDark,
+    required String title,
+    required IconData icon,
+    required Color accentColor,
+    required Widget child,
+  }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF8E24AA),
-        borderRadius: BorderRadius.circular(30),
+        color: isDark ? const Color(0xFF1E212B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.06),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.28)
+                : Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
-      child: Text(
-        label,
-        style: TextStyle(
-            color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: isDark ? 0.22 : 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, size: 14, color: accentColor),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.0,
+                  color: accentColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          child,
+        ],
       ),
     );
   }
-}
-
-class _CardHeading extends StatelessWidget {
-  final String text;
-
-  const _CardHeading(this.text);
-
-  @override
-  Widget build(BuildContext context) => Text(text,
-      style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w800,
-          color: Theme.of(context).textTheme.bodyLarge?.color));
 }
 
 /// Generation filter bottom sheet: 3-column grid of gen pills, same style
@@ -680,12 +789,12 @@ class _GenFilterSheet extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       decoration: BoxDecoration(
                         color: selected == gen
-                            ? AppColors.primary.withValues(alpha: 0.15)
+                            ? const Color(0xFF00897B).withValues(alpha: 0.15)
                             : Colors.grey.withValues(alpha: 0.06),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: selected == gen
-                              ? AppColors.primary
+                              ? const Color(0xFF00897B)
                               : Colors.grey.shade400,
                           width: selected == gen ? 3 : 1.5,
                         ),
@@ -697,7 +806,7 @@ class _GenFilterSheet extends StatelessWidget {
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
                             color: selected == gen
-                                ? AppColors.primary
+                                ? const Color(0xFF00897B)
                                 : Colors.grey.shade700,
                           ),
                         ),

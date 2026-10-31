@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
+import '../../../core/feedback_service.dart';
 import '../pokedex_provider.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_spacing.dart';
@@ -9,6 +10,7 @@ class FilterSheet extends ConsumerWidget {
   const FilterSheet({super.key});
 
   void _toggleType(WidgetRef ref, String type, bool dualMode) {
+    AppFeedback.selectionClick();
     final notifier = ref.read(selectedTypesProvider.notifier);
     final current = List<String>.of(notifier.state);
     if (current.contains(type)) {
@@ -129,6 +131,7 @@ class FilterSheet extends ConsumerWidget {
                       Switch(
                         value: dualMode,
                         onChanged: (val) {
+                          AppFeedback.selectionClick();
                           final types = ref.read(selectedTypesProvider);
                           if (!val && types.length > 1) {
                             ref.read(selectedTypesProvider.notifier).state = [
@@ -149,6 +152,7 @@ class FilterSheet extends ConsumerWidget {
                     onPressed: selectedTypes.isEmpty
                         ? null
                         : () {
+                            AppFeedback.lightImpact();
                             ref.read(selectedTypesProvider.notifier).state = [];
                           },
                     style: FilledButton.styleFrom(

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import '../../../core/feedback_service.dart';
 import '../../../models/pokemon.dart';
-import '../../pokedex/pokedex_provider.dart';
-import '../pokemon_detail_screen.dart';
+import '../../tools/abilities_screen.dart' show AbilityEntry, AbilityDetailSheet, abilitiesSeedProvider;
+import '../pokemon_detail_screen.dart' hide abilitiesSeedProvider;
 
 class AboutTab extends ConsumerWidget {
   final Pokemon pokemon;
@@ -236,64 +236,47 @@ class AboutTab extends ConsumerWidget {
                                 )
                                 .join(' ');
                             return GestureDetector(
+                              behavior: HitTestBehavior.opaque,
                               onTap: () async {
+                                AppFeedback.lightImpact();
                                 final seed = await ref.read(
                                   abilitiesSeedProvider.future,
                                 );
-                                final slug = a.ability.name
+                                final cleanTarget = a.ability.name
                                     .toLowerCase()
-                                    .replaceAll(' ', '-');
-                                final match = seed.firstWhere(
-                                  (e) => e['name'] == slug,
-                                  orElse: () => {},
-                                );
-                                if (match.isEmpty) return;
-                                final allIds =
-                                    (match['pokemon'] as List<dynamic>? ?? [])
-                                        .map((e) => e as int)
-                                        .toSet();
-                                final hiddenIds =
-                                    (match['hidden'] as List<dynamic>? ?? [])
-                                        .map((e) => e as int)
-                                        .toSet();
-                                final normalIds = allIds.difference(hiddenIds);
-                                final flavor =
-                                    (match['flavor'] as String?) ?? '';
-                                final eff = (match['eff'] as String?) ?? '';
-                                ref.read(searchQueryProvider.notifier).state =
-                                    '';
-                                ref
-                                        .read(
-                                          debouncedSearchQueryProvider.notifier,
-                                        )
-                                        .state =
-                                    '';
-                                ref.read(selectedTypesProvider.notifier).state =
-                                    [];
-                                ref.read(genFilterProvider.notifier).state = 0;
-                                ref.read(favoritesOnlyProvider.notifier).state =
-                                    false;
-                                ref
-                                        .read(
-                                          toolLearnerFilterProvider.notifier,
-                                        )
-                                        .state =
-                                    null;
-
-                                ref
-                                    .read(toolAbilityFilterProvider.notifier)
-                                    .state = (
-                                  name: abilityName,
-                                  mode: 'all',
-                                  allIds: allIds,
-                                  normalIds: normalIds,
-                                  hiddenIds: hiddenIds,
-                                  flavor: flavor,
-                                  eff: eff,
-                                );
+                                    .replaceAll(' ', '-')
+                                    .replaceAll('_', '-')
+                                    .trim();
+                                AbilityEntry? match;
+                                for (final AbilityEntry e in seed) {
+                                  final cleanName = e.name
+                                      .toLowerCase()
+                                      .replaceAll(' ', '-')
+                                      .replaceAll('_', '-')
+                                      .trim();
+                                  if (cleanName == cleanTarget) {
+                                    match = e;
+                                    break;
+                                  }
+                                }
+                                if (match == null) {
+                                  final targetCompact = cleanTarget.replaceAll('-', '');
+                                  for (final AbilityEntry e in seed) {
+                                    final comp = e.name.toLowerCase().replaceAll('-', '').replaceAll(' ', '');
+                                    if (comp == targetCompact) {
+                                      match = e;
+                                      break;
+                                    }
+                                  }
+                                }
+                                if (match == null) return;
                                 if (context.mounted) {
-                                  FocusManager.instance.primaryFocus?.unfocus();
-                                  context.push('/');
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    backgroundColor: Colors.transparent,
+                                    builder: (_) => AbilityDetailSheet(ability: match!),
+                                  );
                                 }
                               },
                               child: Container(

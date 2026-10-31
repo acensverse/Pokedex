@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../../app/theme/app_colors.dart';
 import '../../core/champions.dart';
 import '../../core/speed_tiers.dart';
 import '../../core/utils/name_forms.dart';
@@ -12,6 +11,7 @@ import '../pokedex/pokedex_provider.dart';
 import '../pokedex/widgets/tools_sheet.dart';
 import 'widgets/tool_widgets.dart';
 import 'widgets/type_picker_sheet.dart';
+import '../../core/widgets/app_search_bar.dart';
 
 /// Champions Speed Tiers: every Pokemon on the Champions roster ranked by
 /// Level-50 speed, with the common build and battle modifiers from
@@ -96,7 +96,7 @@ class _SpeedTiersScreenState extends ConsumerState<SpeedTiersScreen> {
               LucideIcons.search,
               size: 26,
               color: _isSearching
-                  ? AppColors.primary
+                  ? (isDark ? const Color(0xFF4DB6AC) : const Color(0xFF00796B))
                   : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
             ),
             onPressed: _toggleSearch,
@@ -107,7 +107,7 @@ class _SpeedTiersScreenState extends ConsumerState<SpeedTiersScreen> {
               Icons.tune,
               size: 26,
               color: _typeFilter != null
-                  ? AppColors.primary
+                  ? (isDark ? const Color(0xFF4DB6AC) : const Color(0xFF00796B))
                   : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
             ),
             onPressed: _openTypeFilter,
@@ -236,71 +236,16 @@ class _SpeedTiersScreenState extends ConsumerState<SpeedTiersScreen> {
                   child: _isSearching
                       ? Padding(
                           padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                          child: TextField(
-                            controller: _searchController,
-                            autofocus: true,
-                            style: TextStyle(
-                              color:
-                                  Theme.of(context).textTheme.bodyLarge?.color,
+                            child: AppSearchBar(
+                              controller: _searchController,
+                              hintText: 'Search Pokémon speed...',
+                              autofocus: true,
+                              voiceTitle: 'Speed Tiers Voice Search',
+                              voiceHint: 'Say a Pokémon name...',
+                              onChanged: (v) => setState(() => _query = v),
+                              onClear: _clearSearch,
                             ),
-                            onChanged: (v) => setState(() => _query = v),
-                            decoration: InputDecoration(
-                              hintText: 'Search Pok\u00e9mon...',
-                              hintStyle: TextStyle(
-                                color: isDark
-                                    ? Colors.grey.shade500
-                                    : Colors.grey.shade400,
-                              ),
-                              prefixIcon: Icon(
-                                LucideIcons.search,
-                                color: Theme.of(context)
-                                    .iconTheme
-                                    .color
-                                    ?.withValues(alpha: 0.6),
-                              ),
-                              suffixIcon: _query.isNotEmpty
-                                  ? IconButton(
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(
-                                        minWidth: 36,
-                                        minHeight: 36,
-                                      ),
-                                      icon: Icon(
-                                        Icons.close,
-                                        color: Theme.of(context)
-                                            .iconTheme
-                                            .color
-                                            ?.withValues(alpha: 0.6),
-                                        size: 20,
-                                      ),
-                                      onPressed: _clearSearch,
-                                    )
-                                  : null,
-                              isDense: true,
-                              filled: true,
-                              fillColor: Theme.of(context).cardColor,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(14),
-                                borderSide: BorderSide(
-                                  color: Theme.of(context).dividerColor,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(14),
-                                borderSide: BorderSide(
-                                  color: Theme.of(context).dividerColor,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(14),
-                                borderSide: BorderSide(
-                                  color: AppColors.primary,
-                                  width: 1.5,
-                                ),
-                              ),
-                            ),
-                          ),
-                        )
+                          )
                       : const SizedBox.shrink(),
                 ),
                 Expanded(
@@ -441,7 +386,7 @@ class _TierCard extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.asset(
-                      PokemonHelpers.getThumbnailAssetPath(pokemon.id),
+                      PokemonHelpers.getHomeAssetPath(pokemon.id),
                       width: 44,
                       height: 44,
                       fit: BoxFit.contain,

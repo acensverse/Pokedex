@@ -1,9 +1,10 @@
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
+import '../../../core/feedback_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers.dart';
 import '../../../models/pokemon.dart';
 import '../../pokedex/widgets/pokemon_card.dart';
+import '../../../core/widgets/app_search_bar.dart';
 
 /// Modal sheet with a search field over the full local dex, rendered with
 /// the same cards as the home Pokedex grid; returns the picked [Pokemon]
@@ -27,8 +28,7 @@ class PokemonPickerSheet extends ConsumerStatefulWidget {
   ConsumerState<PokemonPickerSheet> createState() => _PokemonPickerSheetState();
 }
 
-class _PokemonPickerSheetState extends ConsumerState<PokemonPickerSheet> {
-  String _query = '';
+class _PokemonPickerSheetState extends ConsumerState<PokemonPickerSheet> {  String _query = '';  final TextEditingController _searchController = TextEditingController();  @override  void dispose() {    _searchController.dispose();    super.dispose();  }
 
   @override
   Widget build(BuildContext context) {
@@ -51,21 +51,15 @@ class _PokemonPickerSheetState extends ConsumerState<PokemonPickerSheet> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(12),
-            child: TextField(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: AppSearchBar(
+              controller: _searchController,
+              hintText: 'Search for a Pokémon...',
               autofocus: true,
+              voiceTitle: 'Pokémon Voice Search',
+              voiceHint: 'Say a Pokémon name...',
               onChanged: (v) => setState(() => _query = v),
-              decoration: InputDecoration(
-                hintText: 'Search for a Pok\u00e9mon...',
-                prefixIcon: Icon(LucideIcons.search),
-                filled: true,
-                fillColor: Theme.of(context).colorScheme.surface,
-                contentPadding: EdgeInsets.zero,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                  borderSide: BorderSide.none,
-                ),
-              ),
+              onClear: () => setState(() => _query = ''),
             ),
           ),
           Expanded(
@@ -94,7 +88,10 @@ class _PokemonPickerSheetState extends ConsumerState<PokemonPickerSheet> {
                     return PokemonCard(
                       pokemon: p,
                       showHero: false,
-                      onTap: () => Navigator.pop(context, p),
+                      onTap: () {
+                        AppFeedback.selectionClick();
+                        Navigator.pop(context, p);
+                      },
                     );
                   },
                 );

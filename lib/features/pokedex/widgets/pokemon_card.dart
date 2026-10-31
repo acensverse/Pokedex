@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_spacing.dart';
+import '../../../core/feedback_service.dart';
 import '../../../core/utils/pokemon_helpers.dart';
 import '../../../models/pokemon.dart';
 import '../../../core/providers.dart';
@@ -122,13 +123,16 @@ class PokemonCard extends ConsumerWidget {
           label: semanticLabel,
           child: ExcludeSemantics(
             child: GestureDetector(
-              onTap:
-                  onTap ??
-                  () {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                    ref.read(searchClearTriggerProvider.notifier).state++;
-                    context.push('/pokemon/${pokemon.id}');
-                  },
+              onTap: () {
+                AppFeedback.lightImpact();
+                if (onTap != null) {
+                  onTap!();
+                } else {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                  ref.read(searchClearTriggerProvider.notifier).state++;
+                  context.push('/pokemon/${pokemon.id}');
+                }
+              },
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -304,13 +308,16 @@ class PokemonCard extends ConsumerWidget {
         label: semanticLabel,
         child: ExcludeSemantics(
           child: GestureDetector(
-            onTap:
-                onTap ??
-                () {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                  ref.read(searchClearTriggerProvider.notifier).state++;
-                  context.push('/pokemon/${pokemon.id}');
-                },
+            onTap: () {
+              AppFeedback.lightImpact();
+              if (onTap != null) {
+                onTap!();
+              } else {
+                FocusManager.instance.primaryFocus?.unfocus();
+                ref.read(searchClearTriggerProvider.notifier).state++;
+                context.push('/pokemon/${pokemon.id}');
+              }
+            },
             child: Container(
               height: 92,
               margin: const EdgeInsets.symmetric(
@@ -411,6 +418,7 @@ class PokemonCard extends ConsumerWidget {
                                     ),
                                     GestureDetector(
                                       onTap: () {
+                                        AppFeedback.selectionClick();
                                         ref
                                             .read(pokemonRepositoryProvider)
                                             .toggleFavorite(pokemon.id, !isFavorite);

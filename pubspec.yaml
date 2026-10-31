@@ -22,6 +22,8 @@ dependencies:
   flutter_svg: ^2.0.9
   audioplayers: ^6.8.1
   lucide_icons_flutter: ^3.1.17
+  speech_to_text: ^7.5.0
+  permission_handler: ^13.0.2
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +56,8 @@ flutter:
     - assets/home_shiny/
     - assets/types/
     - assets/images/
+    - assets/pokedex.png
+    - assets/icon/
     - assets/pokedex_seed.json
     - assets/moves_seed.json
     - assets/items_seed.json

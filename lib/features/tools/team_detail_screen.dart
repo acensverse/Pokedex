@@ -1,14 +1,17 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../app/theme/app_colors.dart';
+import '../../core/feedback_service.dart';
 import '../../core/providers.dart';
+import '../../core/utils/pokemon_helpers.dart';
 import '../../core/utils/type_chart.dart';
-import '../pokedex/widgets/pokemon_card.dart';
 import '../../models/pokemon.dart';
+import 'services/team_customization_service.dart';
+import 'widgets/team_member_editor_sheet.dart';
 import 'widgets/tool_widgets.dart';
 
 /// One move from the baked seed: its type plus the IDs of Pokemon that can
@@ -60,43 +63,103 @@ class TeamDetailScreen extends ConsumerStatefulWidget {
 class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
   bool _showDefenseIndex = false;
   bool _showSemCounts = false;
+  Map<int, MemberCustomization> _customizations = {};
 
-  int _statValue(Pokemon p, String key) {
+  @override
+  void initState() {
+    super.initState();
+    _loadCustomizations();
+  }
+
+  Future<void> _loadCustomizations() async {
+    final map = await TeamCustomizationService.loadTeamCustomizations(widget.teamId);
+    if (mounted) {
+      setState(() {
+        _customizations = map;
+      });
+    }
+  }
+
+  int _statValue(Pokemon p, String key, int slotIndex) {
+    final custom = _customizations[slotIndex];
+    if (custom != null && custom.customStats.containsKey(key)) {
+      return custom.customStats[key]!;
+    }
     for (final s in p.stats) {
       if (s.stat.name == key) return s.baseStat;
     }
     return 0;
   }
 
+  Future<void> _editMember(int slotIndex, Pokemon pokemon) async {
+    AppFeedback.lightImpact();
+    final updated = await TeamMemberEditorSheet.show(
+      context,
+      pokemon: pokemon,
+      initialCustomization: _customizations[slotIndex],
+      onSave: (custom) async {
+        setState(() {
+          _customizations[slotIndex] = custom;
+        });
+        await TeamCustomizationService.saveMemberCustomization(
+          widget.teamId,
+          slotIndex,
+          custom,
+        );
+      },
+    );
+
+    if (updated != null && mounted) {
+      setState(() {
+        _customizations[slotIndex] = updated;
+      });
+      await TeamCustomizationService.saveMemberCustomization(
+        widget.teamId,
+        slotIndex,
+        updated,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final teamFuture = ref.watch(databaseProvider).getTeamById(widget.teamId);
     final membersAsync = ref.watch(localPokemonListProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(LucideIcons.arrowLeft, size: 20),
+          onPressed: () => context.pop(),
+        ),
         title: FutureBuilder(
           future: teamFuture,
           builder: (context, snapshot) => Text(
-            snapshot.data?.name ?? 'Team',
+            snapshot.data?.name ?? 'Team Details',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              color: Theme.of(context).textTheme.bodyLarge?.color,
               fontWeight: FontWeight.w800,
               fontSize: 18,
+              color: isDark ? const Color(0xFF34D399) : const Color(0xFF059669),
             ),
           ),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.edit, color: Theme.of(context).textTheme.bodyLarge?.color),
-            onPressed: () =>
-                context.push('/tools/teams/new?id=${widget.teamId}'),
+            icon: const Icon(LucideIcons.pencil, size: 18),
+            tooltip: 'Edit Roster',
+            onPressed: () async {
+              AppFeedback.selectionClick();
+              await context.push('/tools/teams/new?id=${widget.teamId}');
+              await _loadCustomizations();
+            },
           ),
+          const SizedBox(width: 8),
         ],
       ),
       body: FutureBuilder(
@@ -104,7 +167,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
         builder: (context, teamSnapshot) {
           final team = teamSnapshot.data;
           if (team == null) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           final slotIds = [
             team.slot1,
@@ -116,7 +179,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
           ].whereType<int>().toList();
 
           return membersAsync.when(
-            loading: () => Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Center(child: Text('Failed to load dex:\n$e')),
             data: (dex) {
               final byId = {for (final p in dex) p.id: p};
@@ -126,29 +189,80 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
               ];
 
               return ListView(
-                padding: const EdgeInsets.only(bottom: 32),
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 40),
                 children: [
-                  // Members as home-grid gradient cards.
-                  for (final p in members) PokemonCard(pokemon: p),
+                  // Party Members Overview Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Party Members (${members.length}/6)',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      Text(
+                        'Tap "Edit Stats" on any Pokémon',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.color
+                              ?.withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Members Cards with Editable Stats
+                  for (var i = 0; i < members.length; i++)
+                    _buildMemberDetailCard(i, members[i], isDark),
+
                   if (members.isEmpty)
                     Padding(
-                      padding: EdgeInsets.all(32),
+                      padding: const EdgeInsets.all(32),
                       child: Center(
-                        child: Text(
-                          'Empty party',
-                          style: TextStyle(color: Colors.grey),
+                        child: Column(
+                          children: [
+                            Icon(
+                              LucideIcons.users,
+                              size: 48,
+                              color: Theme.of(context).dividerColor,
+                            ),
+                            const SizedBox(height: 12),
+                            const Text(
+                              'Empty party\nTap edit above to add Pokémon to this team.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ],
                         ),
                       ),
                     )
                   else ...[
-                    SizedBox(height: 16),
-                    _sectionCard('Team stats', _teamStatsBody(members)),
-                    SizedBox(height: 26),
-                    _sectionCard('Defensive coverage', _defenseBody(members)),
-                    SizedBox(height: 26),
-                    _sectionCard(
-                      'Move type coverage',
-                      _moveCoverageBody(members),
+                    const SizedBox(height: 16),
+                    _buildSectionCard(
+                      title: 'Team Stats & Averages',
+                      icon: LucideIcons.barChart3,
+                      isDark: isDark,
+                      child: _teamStatsBody(members, isDark),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildSectionCard(
+                      title: 'Defensive Coverage',
+                      icon: LucideIcons.shieldCheck,
+                      isDark: isDark,
+                      child: _defenseBody(members),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildSectionCard(
+                      title: 'Move Type Coverage',
+                      icon: LucideIcons.swords,
+                      isDark: isDark,
+                      child: _moveCoverageBody(members, isDark),
                     ),
                   ],
                 ],
@@ -160,25 +274,241 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
     );
   }
 
-  // ---- Shared section chrome ----------------------------------------------
+  Widget _buildMemberDetailCard(int slotIndex, Pokemon pokemon, bool isDark) {
+    final custom = _customizations[slotIndex];
+    final primaryType = pokemon.types.isNotEmpty
+        ? pokemon.types.first.type.name
+        : 'normal';
+    final typeColor = AppColors.getTypeColor(primaryType);
 
-  Widget _sectionCard(String title, Widget child) => Stack(
-    clipBehavior: Clip.none,
-    alignment: Alignment.topCenter,
-    children: [
-      Container(
-        margin: const EdgeInsets.only(top: 14),
-        width: double.infinity,
-        padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+    final displayName = custom?.nickname != null && custom!.nickname!.isNotEmpty
+        ? '${custom.nickname} (${PokemonHelpers.formatName(pokemon.name)})'
+        : PokemonHelpers.formatName(pokemon.name);
+
+    final level = custom?.level ?? 50;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E212B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.05),
+          width: 1.2,
         ),
-        child: child,
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.25)
+                : Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
       ),
-      Positioned(top: 0, child: SectionHeaderPill(title)),
-    ],
-  );
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              // 3D Artwork
+              Container(
+                width: 62,
+                height: 62,
+                decoration: BoxDecoration(
+                  color: typeColor.withValues(alpha: isDark ? 0.22 : 0.12),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Image.asset(
+                  PokemonHelpers.getHomeAssetPath(pokemon.id),
+                  fit: BoxFit.contain,
+                  cacheWidth: PokemonHelpers.cacheWidth(context, 62),
+                  errorBuilder: (_, _, _) => Image.asset(
+                    PokemonHelpers.getThumbnailAssetPath(pokemon.id),
+                    fit: BoxFit.contain,
+                    cacheWidth: PokemonHelpers.cacheWidth(context, 52),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      displayName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: [
+                        for (final t in pokemon.types)
+                          TypePill(t.type.name, fontSize: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.08)
+                                : Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            'Lv. $level',
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              // "Edit Stats" Button
+              ElevatedButton.icon(
+                onPressed: () => _editMember(slotIndex, pokemon),
+                icon: const Icon(LucideIcons.pencil, size: 13),
+                label: const Text('Edit Stats', style: TextStyle(fontSize: 11.5)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: typeColor.withValues(alpha: isDark ? 0.3 : 0.15),
+                  foregroundColor: isDark ? Colors.white : typeColor,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(
+                      color: typeColor.withValues(alpha: 0.4),
+                      width: 1,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (custom != null && (custom.nature != null || custom.heldItem != null || custom.moves.isNotEmpty)) ...[
+            const SizedBox(height: 10),
+            Divider(
+              height: 1,
+              color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.grey.shade200,
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                if (custom.nature != null)
+                  Expanded(
+                    child: Text(
+                      'Nature: ${custom.nature!.split(" ").first}',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.color
+                            ?.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ),
+                if (custom.heldItem != null)
+                  Expanded(
+                    child: Text(
+                      'Item: ${custom.heldItem}',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.color
+                            ?.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  // ---- Shared Section Card ------------------------------------------------
+
+  Widget _buildSectionCard({
+    required String title,
+    required IconData icon,
+    required bool isDark,
+    required Widget child,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E212B) : Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.05),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.28)
+                : Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: (isDark ? const Color(0xFF34D399) : const Color(0xFF059669))
+                      .withValues(alpha: isDark ? 0.2 : 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Icon(
+                    icon,
+                    size: 16,
+                    color: isDark ? const Color(0xFF34D399) : const Color(0xFF059669),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          child,
+        ],
+      ),
+    );
+  }
 
   Widget _groupHeading(String text, String? subtitle) {
     return Padding(
@@ -224,7 +554,7 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
     required List<String> types,
     required String? Function(String) badgeFor,
   }) {
-    if (types.isEmpty) return SizedBox.shrink();
+    if (types.isEmpty) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -241,9 +571,9 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
     );
   }
 
-  // ---- Team stats -----------------------------------------------------------
+  // ---- Team Stats Body (Uses Edited / Custom Stats!) ------------------------
 
-  Widget _teamStatsBody(List<Pokemon> members) {
+  Widget _teamStatsBody(List<Pokemon> members, bool isDark) {
     const keys = [
       ('HP', 'hp'),
       ('Attack', 'attack'),
@@ -256,12 +586,10 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
     Widget bar(double fraction) => FractionallySizedBox(
       widthFactor: fraction.clamp(0.0, 1.0),
       child: Container(
-        height: 10,
+        height: 8,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF26A69A), Color(0xFF66BB6A)],
-          ),
-          borderRadius: BorderRadius.circular(6),
+          color: const Color(0xFF26A69A),
+          borderRadius: BorderRadius.circular(4),
         ),
       ),
     );
@@ -271,7 +599,11 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
     for (final (label, key) in keys) {
       final avg = members.isEmpty
           ? 0.0
-          : members.map((m) => _statValue(m, key)).reduce((a, b) => a + b) /
+          : members
+                    .asMap()
+                    .entries
+                    .map((e) => _statValue(e.value, key, e.key))
+                    .reduce((a, b) => a + b) /
                 members.length;
       final shown = avg.round();
       total += shown;
@@ -284,31 +616,37 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
                 width: 78,
                 child: Text(
                   label,
-                  style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyLarge?.color),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
                 ),
               ),
               Expanded(
                 child: Stack(
                   children: [
                     Container(
-                      height: 10,
+                      height: 8,
                       decoration: BoxDecoration(
-                        color: (Theme.of(context).brightness == Brightness.dark) ? Colors.grey.shade800 : Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(6),
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.08)
+                            : Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(4),
                       ),
                     ),
                     bar(avg / 255),
                   ],
                 ),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 10),
               SizedBox(
-                width: 34,
+                width: 38,
                 child: Text(
                   '$shown',
                   textAlign: TextAlign.end,
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 12.5,
                     fontWeight: FontWeight.w800,
                     color: Theme.of(context).textTheme.bodyLarge?.color,
                   ),
@@ -324,37 +662,47 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ...rows,
-        const Divider(height: 20),
+        Divider(
+          height: 16,
+          color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.grey.shade200,
+        ),
         Row(
           children: [
-            SizedBox(
+            const SizedBox(
               width: 78,
               child: Text(
-                'Total:',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
+                'Total BST:',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900),
               ),
             ),
             const Expanded(child: SizedBox()),
             Text(
               '$total',
               style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w800,
-                color: Theme.of(context).textTheme.bodyLarge?.color,
+                fontSize: 13.5,
+                fontWeight: FontWeight.w900,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ],
         ),
-        SizedBox(height: 8),
+        const SizedBox(height: 8),
         Text(
-          'Each stat is an average of the stats of each Pok\u00e9mon in the party.',
-          style: TextStyle(fontSize: 10.5, color: Colors.grey.shade500),
+          'Each stat shows the average computed from your party\'s active (and customized) stats.',
+          style: TextStyle(
+            fontSize: 11,
+            color: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.color
+                ?.withValues(alpha: 0.6),
+          ),
         ),
       ],
     );
   }
 
-  // ---- Defensive coverage ---------------------------------------------------
+  // ---- Defensive Coverage ---------------------------------------------------
 
   double _defenseIndex(List<Pokemon> members, String attacker) =>
       teamDefenseIndex([
@@ -388,22 +736,20 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'The Defense Index (DI) indicates how resistant (or weak) your team '
-          'is against a specific type. Higher positive value indicates '
-          'greater team resistance.',
+          'The Defense Index (DI) indicates how resistant your party is against specific attacking types.',
           style: TextStyle(
             fontSize: 12.5,
             height: 1.4,
             color: Theme.of(context).textTheme.bodyMedium?.color,
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Show Defense Index',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
             ),
             Switch(
               value: _showDefenseIndex,
@@ -433,14 +779,14 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
     );
   }
 
-  // ---- Move type coverage ---------------------------------------------------
+  // ---- Move Type Coverage ---------------------------------------------------
 
-  Widget _moveCoverageBody(List<Pokemon> members) {
+  Widget _moveCoverageBody(List<Pokemon> members, bool isDark) {
     final seedAsync = ref.watch(_movesSeedProvider);
     final memberIds = members.map((m) => m.id).toSet();
 
     return seedAsync.when(
-      loading: () => Padding(
+      loading: () => const Padding(
         padding: EdgeInsets.all(24),
         child: Center(child: CircularProgressIndicator()),
       ),
@@ -449,8 +795,6 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
         style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
       ),
       data: (seedMoves) {
-        // SEM per defending type: moves that any party member can learn and
-        // that hit the defender super effectively.
         int sem(String defender) {
           var count = 0;
           for (final mv in seedMoves) {
@@ -478,15 +822,14 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'This value is based on the number of Super Effective Moves (SEM) '
-              'available in your party against a specific type.',
+              'Super Effective Moves (SEM) available in your party against defending types.',
               style: TextStyle(
                 fontSize: 12.5,
                 height: 1.4,
                 color: Theme.of(context).textTheme.bodyMedium?.color,
               ),
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Row(
               children: [
                 SizedBox(
@@ -500,28 +843,26 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
                   child: Stack(
                     children: [
                       Container(
-                        height: 10,
+                        height: 8,
                         decoration: BoxDecoration(
-                          color: (Theme.of(context).brightness == Brightness.dark) ? Colors.grey.shade800 : Colors.grey.shade200,
-                          borderRadius: BorderRadius.circular(6),
+                          color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(4),
                         ),
                       ),
                       FractionallySizedBox(
                         widthFactor: coveragePct / 100,
                         child: Container(
-                          height: 10,
+                          height: 8,
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Color(0xFFFFB300), Color(0xFFE4613E)],
-                            ),
-                            borderRadius: BorderRadius.circular(6),
+                            color: const Color(0xFFFFB300),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 SizedBox(
                   width: 40,
                   child: Text(
@@ -536,13 +877,13 @@ class _TeamDetailScreenState extends ConsumerState<TeamDetailScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Show Super Effective Moves',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
                 ),
                 Switch(
                   value: _showSemCounts,

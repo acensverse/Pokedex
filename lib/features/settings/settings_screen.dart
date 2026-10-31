@@ -2,10 +2,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../app/theme/app_colors.dart';
 import '../../app/theme/theme_provider.dart';
 import '../../core/champions.dart';
+import '../../core/feedback_service.dart';
 import '../../core/providers.dart';
 import '../../core/remote_data.dart';
 import '../../data/database/app_database.dart';
@@ -24,37 +26,67 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   bool _devOptionsUnlocked = false;
   bool _isExporting = false;
   bool _isRestoring = false;
+  bool _legalExpanded = false;
+
+  int _favCount = 0;
+  int _teamCount = 0;
 
   @override
   void initState() {
     super.initState();
     _checkDevModeUnlocked();
+    _loadQuickStats();
   }
 
   Future<void> _checkDevModeUnlocked() async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getBool(_devModePrefKey) ?? false) {
-      setState(() {
-        _devOptionsUnlocked = true;
-      });
+      if (mounted) {
+        setState(() => _devOptionsUnlocked = true);
+      }
     }
   }
 
+  Future<void> _loadQuickStats() async {
+    try {
+      final db = ref.read(databaseProvider);
+      final favRows = await (db.select(
+        db.pokemonCache,
+      )..where((t) => t.isFavorite.equals(true))).get();
+      final teamRows = await (db.select(db.teams)).get();
+      if (mounted) {
+        setState(() {
+          _favCount = favRows.length;
+          _teamCount = teamRows.length;
+        });
+      }
+    } catch (_) {}
+  }
+
   void _onVersionTapped() async {
+    AppFeedback.lightImpact();
+
     if (_devOptionsUnlocked) {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('🛠️ Developer options are already enabled!'),
-          duration: Duration(seconds: 1),
+        SnackBar(
+          content: const Row(
+            children: [
+              Icon(LucideIcons.wrench, color: Colors.white, size: 18),
+              SizedBox(width: 10),
+              Text('Developer options are already active!'),
+            ],
+          ),
+          backgroundColor: Colors.green.shade700,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          duration: const Duration(seconds: 2),
         ),
       );
       return;
     }
 
-    setState(() {
-      _versionTapCount++;
-    });
+    setState(() => _versionTapCount++);
 
     final remaining = 7 - _versionTapCount;
 
@@ -63,25 +95,37 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'You are $remaining step${remaining > 1 ? 's' : ''} away from being a developer!',
+            'Almost there! $remaining more tap${remaining > 1 ? 's' : ''} to unlock developer mode.',
           ),
-          duration: const Duration(seconds: 1),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          duration: const Duration(milliseconds: 900),
         ),
       );
     } else if (remaining <= 0) {
-      setState(() {
-        _devOptionsUnlocked = true;
-      });
+      setState(() => _devOptionsUnlocked = true);
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_devModePrefKey, true);
 
       if (mounted) {
+        AppFeedback.mediumImpact();
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('🎉 Developer options enabled! See section below.'),
-            backgroundColor: AppColors.primary,
-            duration: Duration(seconds: 3),
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(LucideIcons.terminal, color: Colors.white, size: 20),
+                SizedBox(width: 10),
+                Text(
+                  'Developer Options Unlocked!',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.green.shade700,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            duration: const Duration(seconds: 3),
           ),
         );
       }
@@ -93,13 +137,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     try {
       final db = ref.read(databaseProvider);
 
-      // 1. Get favorite IDs
       final favoriteRows = await (db.select(
         db.pokemonCache,
       )..where((t) => t.isFavorite.equals(true))).get();
       final favoriteIds = favoriteRows.map((r) => r.id).toList();
 
-      // 2. Get Teams
       final teamRows = await (db.select(db.teams)).get();
       final teamsData = teamRows
           .map(
@@ -122,7 +164,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           : (currentTheme == ThemeMode.dark ? 'dark' : 'system');
 
       final currentLayout = ref.read(pokedexLayoutProvider);
-      final layoutStr = currentLayout == PokedexLayoutMode.grid ? 'grid' : 'list';
+      final layoutStr =
+          currentLayout == PokedexLayoutMode.grid ? 'grid' : 'list';
 
       final currentDefaultDex = ref.read(defaultPokedexModeProvider);
       final defaultDexStr =
@@ -144,80 +187,147 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       final jsonStr = const JsonEncoder.withIndent('  ').convert(backupData);
 
       if (!mounted) return;
-      setState(() => _isExporting = false);
+      setState(() {
+        _isExporting = false;
+        _favCount = favoriteIds.length;
+        _teamCount = teamsData.length;
+      });
 
       _showBackupDialog(jsonStr, favoriteIds.length, teamsData.length);
     } catch (e) {
       if (!mounted) return;
       setState(() => _isExporting = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to generate backup: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to generate backup: $e'),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
   }
 
   void _showBackupDialog(String jsonStr, int favCount, int teamCount) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Row(
           children: [
-            Icon(Icons.cloud_download_outlined, color: AppColors.primary),
-            SizedBox(width: 10),
-            Text('Backup Generated'),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(LucideIcons.cloudUpload, color: AppColors.primary, size: 20),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              'Backup Ready',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+            ),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _buildStatPill(
+                  icon: LucideIcons.heart,
+                  label: '$favCount Favorites',
+                  color: const Color(0xFFE53935),
+                  isDark: isDark,
+                ),
+                _buildStatPill(
+                  icon: LucideIcons.users,
+                  label: '$teamCount Teams',
+                  color: Colors.blue.shade600,
+                  isDark: isDark,
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
             Text(
-              'Summary:\n• Favorites: $favCount Pokémon\n• Custom Teams: $teamCount Teams',
-              style: const TextStyle(fontWeight: FontWeight.w600),
+              'Copy this JSON backup to transfer your favorites, teams, and settings to any device:',
+              style: TextStyle(
+                fontSize: 12.5,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                height: 1.35,
+              ),
             ),
-            const SizedBox(height: 12),
-            const Text(
-              'Copy your JSON backup string to restore it anytime on any device:',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-            ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Container(
-              constraints: const BoxConstraints(maxHeight: 140),
+              constraints: const BoxConstraints(maxHeight: 150),
               width: double.maxFinite,
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.grey.shade300),
+                color: isDark ? const Color(0xFF14171E) : Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+                ),
               ),
               child: SingleChildScrollView(
                 child: SelectableText(
                   jsonStr,
-                  style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+                  style: const TextStyle(
+                    fontFamily: 'monospace',
+                    fontSize: 11,
+                    letterSpacing: 0.2,
+                  ),
                 ),
               ),
             ),
           ],
         ),
+        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Close'),
+            child: Text(
+              'Close',
+              style: TextStyle(
+                color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
           FilledButton.icon(
             onPressed: () {
               Clipboard.setData(ClipboardData(text: jsonStr));
               Navigator.of(ctx).pop();
+              AppFeedback.lightImpact();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('📋 Backup copied to clipboard!'),
+                SnackBar(
+                  content: const Row(
+                    children: [
+                      Icon(LucideIcons.checkCheck, color: Colors.white, size: 18),
+                      SizedBox(width: 8),
+                      Text('Backup copied to clipboard!'),
+                    ],
+                  ),
                   backgroundColor: AppColors.primary,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
               );
             },
-            icon: const Icon(Icons.copy_rounded, size: 18),
-            label: const Text('Copy to Clipboard'),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            ),
+            icon: const Icon(LucideIcons.copy, size: 16),
+            label: const Text('Copy to Clipboard', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -226,27 +336,45 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   void _showRestoreDialog() {
     final textController = TextEditingController();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Row(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Row(
           children: [
-            Icon(
-              Icons.settings_backup_restore_rounded,
-              color: AppColors.primary,
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                LucideIcons.cloudDownload,
+                color: AppColors.primary,
+                size: 20,
+              ),
             ),
-            SizedBox(width: 10),
-            Text('Restore Backup'),
+            const SizedBox(width: 12),
+            const Text(
+              'Restore Backup',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+            ),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Paste your JSON backup data below to restore your saved favorites and custom teams:',
-              style: TextStyle(fontSize: 13),
+            Text(
+              'Paste your exported JSON backup data below to restore your Pokémon favorites, custom battle teams, and settings:',
+              style: TextStyle(
+                fontSize: 12.5,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                height: 1.35,
+              ),
             ),
             const SizedBox(height: 12),
             TextField(
@@ -255,21 +383,38 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
               decoration: InputDecoration(
                 hintText:
-                    '{\n  "app": "Pokédex",\n  "favorites": [...],\n  "teams": [...]\n}',
-                hintStyle: TextStyle(color: Colors.grey.shade400),
+                    '{\r\n  "app": "Pokédex",\r\n  "favorites": [...],\r\n  "teams": [...]\r\n}',
+                hintStyle: TextStyle(
+                  color: isDark ? Colors.grey.shade600 : Colors.grey.shade400,
+                ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: BorderSide(
+                    color: isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                 ),
                 filled: true,
-                fillColor: Colors.grey.shade50,
+                fillColor: isDark ? const Color(0xFF14171E) : Colors.grey.shade50,
+                contentPadding: const EdgeInsets.all(12),
               ),
             ),
           ],
         ),
+        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
           FilledButton.icon(
             onPressed: () async {
@@ -279,8 +424,14 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               Navigator.of(ctx).pop();
               await _handleRestoreImport(rawJson);
             },
-            icon: const Icon(Icons.restore_rounded, size: 18),
-            label: const Text('Restore Data'),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            ),
+            icon: const Icon(LucideIcons.refreshCw, size: 16),
+            label: const Text('Restore Data', style: TextStyle(fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -328,29 +479,29 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         }
       }
 
-      // Restore ThemeMode if available
+      // Restore ThemeMode
       if (data.containsKey('themeMode') && data['themeMode'] is String) {
         final tm = data['themeMode'];
         if (tm == 'light') {
-          ThemeHelper.setTheme(ref, ThemeMode.light);
+          await ThemeHelper.setTheme(ref, ThemeMode.light);
         } else if (tm == 'dark') {
-          ThemeHelper.setTheme(ref, ThemeMode.dark);
+          await ThemeHelper.setTheme(ref, ThemeMode.dark);
         } else if (tm == 'system') {
-          ThemeHelper.setTheme(ref, ThemeMode.system);
+          await ThemeHelper.setTheme(ref, ThemeMode.system);
         }
       }
 
-      // Restore LayoutMode if available
+      // Restore LayoutMode
       if (data.containsKey('layoutMode') && data['layoutMode'] is String) {
         final lm = data['layoutMode'];
         if (lm == 'grid') {
-          LayoutHelper.setLayout(ref, PokedexLayoutMode.grid);
+          await LayoutHelper.setLayout(ref, PokedexLayoutMode.grid);
         } else if (lm == 'list') {
-          LayoutHelper.setLayout(ref, PokedexLayoutMode.list);
+          await LayoutHelper.setLayout(ref, PokedexLayoutMode.list);
         }
       }
 
-      // Restore Default Pokédex if available
+      // Restore Default Pokédex
       if (data.containsKey('defaultPokedex') &&
           data['defaultPokedex'] is String) {
         final dp = data['defaultPokedex'];
@@ -369,16 +520,29 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
       // Refresh providers
       ref.invalidate(localPokemonListProvider);
+      await _loadQuickStats();
 
       if (!mounted) return;
       setState(() => _isRestoring = false);
 
+      AppFeedback.mediumImpact();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            '🎉 Restore successful! Restored $restoredFavs favorites & $restoredTeams custom teams.',
+          content: Row(
+            children: [
+              const Icon(LucideIcons.checkCheck, color: Colors.white, size: 20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Restore successful! Restored $restoredFavs favorites & $restoredTeams teams.',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
           ),
           backgroundColor: AppColors.primary,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           duration: const Duration(seconds: 4),
         ),
       );
@@ -389,22 +553,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         SnackBar(
           content: Text('Invalid backup JSON: $e'),
           backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
         ),
       );
     }
   }
 
-  /// Manual "Check for updates" for the Champions data; reports via snackbar.
   Future<void> _checkChampionsData() async {
+    AppFeedback.lightImpact();
     final status = await ref
         .read(remoteDataControllerProvider.notifier)
         .checkForUpdates();
     if (!mounted) return;
     final (message, isError) = switch (status) {
-      RemoteDataStatus.updated => ('Champions data updated!', false),
-      RemoteDataStatus.upToDate => ('Champions data is up to date.', false),
+      RemoteDataStatus.updated => ('Champions tournament data updated!', false),
+      RemoteDataStatus.upToDate => ('Champions data is already up to date.', false),
       RemoteDataStatus.failed => (
-        'Update check failed — check your connection.',
+        'Update check failed — check your network connection.',
         true,
       ),
       _ => (null, false),
@@ -414,20 +579,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       SnackBar(
         content: Text(message),
         backgroundColor: isError ? Colors.redAccent : AppColors.primary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
 
-  /// Drops the downloaded override so the baked assets serve again.
   Future<void> _revertChampionsData() async {
+    AppFeedback.lightImpact();
     await ref
         .read(remoteDataControllerProvider.notifier)
         .revertToBaked();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Reverted to the app-baked Champions data.'),
+        content: const Text('Reverted to bundled app Champions data.'),
         backgroundColor: AppColors.primary,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
   }
@@ -443,712 +612,1615 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(
           'Settings',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+            fontSize: 20,
+            letterSpacing: -0.3,
+          ),
         ),
+        centerTitle: false,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // -----------------------------------------------------------------
-            // SECTION 1: THEME CARDS (3 IN A ROW)
-            // -----------------------------------------------------------------
-            _buildSectionHeader('Theme Mode', Icons.palette_outlined),
-            const SizedBox(height: 8),
-            Row(
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 680),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 40),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: _buildThemeCard(
-                    context: context,
-                    mode: ThemeMode.light,
-                    title: 'Light',
-                    icon: Icons.wb_sunny_rounded,
-                    isSelected: activeThemeMode == ThemeMode.light,
-                  ),
+                // -------------------------------------------------------------
+                // HERO HEADER CARD
+                // -------------------------------------------------------------
+                _buildHeroBanner(isDark),
+
+                const SizedBox(height: 24),
+
+                // -------------------------------------------------------------
+                // SECTION 1: APPEARANCE & THEME
+                // -------------------------------------------------------------
+                _buildSectionHeader(
+                  title: 'Appearance',
+                  subtitle: 'Personalize colors and display theme',
+                  icon: LucideIcons.palette,
+                  color: const Color(0xFFE53935),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _buildThemeCard(
-                    context: context,
-                    mode: ThemeMode.dark,
-                    title: 'Dark',
-                    icon: Icons.nightlight_round,
-                    isSelected: activeThemeMode == ThemeMode.dark,
-                  ),
+                const SizedBox(height: 10),
+                _buildThemeSelector(activeThemeMode, isDark),
+
+                const SizedBox(height: 24),
+
+                // -------------------------------------------------------------
+                // SECTION 2: POKÉDEX VIEW LAYOUT
+                // -------------------------------------------------------------
+                _buildSectionHeader(
+                  title: 'Pokédex View',
+                  subtitle: 'Choose card density for Pokémon lists',
+                  icon: LucideIcons.layoutGrid,
+                  color: const Color(0xFF1E88E5),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _buildThemeCard(
-                    context: context,
-                    mode: ThemeMode.system,
-                    title: 'System',
-                    icon: Icons.settings_brightness_rounded,
-                    isSelected: activeThemeMode == ThemeMode.system,
-                  ),
+                const SizedBox(height: 10),
+                _buildLayoutSelector(activeLayoutMode, isDark),
+
+                const SizedBox(height: 24),
+
+                // -------------------------------------------------------------
+                // SECTION 3: DEFAULT POKÉDEX CATALOG
+                // -------------------------------------------------------------
+                _buildSectionHeader(
+                  title: 'Default Pokédex',
+                  subtitle: 'Select catalog loaded on launch',
+                  icon: LucideIcons.trophy,
+                  color: const Color(0xFF9C27B0),
                 ),
+                const SizedBox(height: 10),
+                _buildDefaultDexSelector(activeDefaultDex, isDark),
+
+                const SizedBox(height: 24),
+
+                // -------------------------------------------------------------
+                // SECTION: HAPTICS & SOUND
+                // -------------------------------------------------------------
+                _buildSectionHeader(
+                  title: 'Touch & Feedback',
+                  subtitle: 'Vibration and tap sound preferences',
+                  icon: LucideIcons.vibrate,
+                  color: const Color(0xFF00897B),
+                ),
+                const SizedBox(height: 10),
+                _buildFeedbackSettingsCard(isDark),
+
+                const SizedBox(height: 24),
+
+                // -------------------------------------------------------------
+                // SECTION 4: DATA SAFEGUARD & BACKUP
+                // -------------------------------------------------------------
+                _buildSectionHeader(
+                  title: 'Data & Backup',
+                  subtitle: 'Export and restore your offline favorites & teams',
+                  icon: LucideIcons.shieldCheck,
+                  color: const Color(0xFF43A047),
+                ),
+                const SizedBox(height: 10),
+                _buildBackupCard(isDark),
+
+                const SizedBox(height: 24),
+
+                // -------------------------------------------------------------
+                // SECTION 5: CHAMPIONS LIVE DATA SYNC
+                // -------------------------------------------------------------
+                _buildSectionHeader(
+                  title: 'Champions Meta Sync',
+                  subtitle: 'Live tournament roster and legality data',
+                  icon: LucideIcons.cloud,
+                  color: const Color(0xFF8E24AA),
+                ),
+                const SizedBox(height: 10),
+                _buildChampionsSyncCard(
+                  remoteDataStatus,
+                  championsDataInfo,
+                  isDark,
+                ),
+
+                const SizedBox(height: 24),
+
+                // -------------------------------------------------------------
+                // SECTION 6: APP INFO, VERSION & LEGAL
+                // -------------------------------------------------------------
+                _buildSectionHeader(
+                  title: 'About Pokédex',
+                  subtitle: 'Version details & copyright disclaimers',
+                  icon: LucideIcons.info,
+                  color: const Color(0xFF757575),
+                ),
+                const SizedBox(height: 10),
+                _buildAboutCard(isDark),
+
+                // -------------------------------------------------------------
+                // SECTION 7: DEVELOPER OPTIONS (UNLOCKED ON 7 TAPS)
+                // -------------------------------------------------------------
+                if (_devOptionsUnlocked) ...[
+                  const SizedBox(height: 24),
+                  _buildSectionHeader(
+                    title: 'Developer Console',
+                    subtitle: 'Database diagnostics & internal debugging tools',
+                    icon: LucideIcons.terminal,
+                    color: Colors.greenAccent.shade700,
+                  ),
+                  const SizedBox(height: 10),
+                  _buildDevOptionsCard(isDark),
+                ],
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
 
-            const SizedBox(height: 24),
-
-            // -----------------------------------------------------------------
-            // SECTION 2: POKÉDEX LAYOUT MODE (GRID / LIST)
-            // -----------------------------------------------------------------
-            _buildSectionHeader('Pokédex View', Icons.grid_view_rounded),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildLayoutCard(
-                    context: context,
-                    mode: PokedexLayoutMode.grid,
-                    title: 'Grid View',
-                    subtitle: '2+ Columns',
-                    icon: Icons.grid_view_rounded,
-                    isSelected: activeLayoutMode == PokedexLayoutMode.grid,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _buildLayoutCard(
-                    context: context,
-                    mode: PokedexLayoutMode.list,
-                    title: 'List View',
-                    subtitle: 'Full Width',
-                    icon: Icons.view_list_rounded,
-                    isSelected: activeLayoutMode == PokedexLayoutMode.list,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            // -----------------------------------------------------------------
-            // SECTION: DEFAULT POKÉDEX (NATIONAL / CHAMPIONS)
-            // -----------------------------------------------------------------
-            _buildSectionHeader(
-              'Default Pokédex',
-              Icons.auto_awesome_rounded,
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildDefaultDexCard(
-                    context: context,
-                    mode: DefaultPokedexMode.national,
-                    title: 'National Dex',
-                    subtitle: 'All Pokémon',
-                    icon: Icons.catching_pokemon,
-                    isSelected:
-                        activeDefaultDex == DefaultPokedexMode.national,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _buildDefaultDexCard(
-                    context: context,
-                    mode: DefaultPokedexMode.champions,
-                    title: 'Champions Dex',
-                    subtitle: 'Champions Roster',
-                    icon: Icons.emoji_events_rounded,
-                    isSelected:
-                        activeDefaultDex == DefaultPokedexMode.champions,
-                    activeColor: const Color(0xFF9C27B0),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 24),
-
-            // -----------------------------------------------------------------
-            // SECTION 3: BACKUP & RESTORE
-            // -----------------------------------------------------------------
-            _buildSectionHeader(
-              'Data Backup & Restore',
-              Icons.cloud_sync_outlined,
-            ),
-            const SizedBox(height: 8),
-            Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(
-                  color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                ),
+  // ===========================================================================
+  // HERO BANNER WIDGET
+  // ===========================================================================
+  Widget _buildHeroBanner(bool isDark) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isDark
+              ? [
+                  const Color(0xFF261514),
+                  const Color(0xFF1A1C24),
+                ]
+              : [
+                  const Color(0xFFFFF4F1),
+                  const Color(0xFFFFFFFF),
+                ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: AppColors.primary.withValues(alpha: isDark ? 0.35 : 0.2),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.08),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              // Pokédex icon
+              Image.asset(
+                'assets/pokedex.png',
+                width: 54,
+                height: 54,
+                fit: BoxFit.contain,
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Row(
-                      children: [
-                        Icon(
-                          Icons.shield_outlined,
-                          color: AppColors.primary,
-                          size: 20,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Offline Data Safeguard',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'You can easily backup all your saved Pokédex data—including your favorite Pokémon, custom built battle teams, and user preferences—to a portable JSON format, or restore it anytime.',
-                      style: TextStyle(
-                        fontSize: 12,
-                        height: 1.4,
-                        color: isDark
-                            ? Colors.grey.shade400
-                            : Colors.grey.shade700,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed:
-                                _isExporting ? null : _handleBackupExport,
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              side: const BorderSide(color: AppColors.primary),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            icon: _isExporting
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Icon(
-                                    Icons.upload_file_rounded,
-                                    size: 18,
-                                  ),
-                            label: const Text('Export Backup'),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: FilledButton.icon(
-                            onPressed: _isRestoring ? null : _showRestoreDialog,
-                            style: FilledButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              backgroundColor: AppColors.primary,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            icon: _isRestoring
-                                ? const SizedBox(
-                                    width: 16,
-                                    height: 16,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : const Icon(Icons.download_rounded, size: 18),
-                            label: const Text('Restore Backup'),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // -----------------------------------------------------------------
-            // SECTION: CHAMPIONS DATA (auto-updates from GitHub)
-            // -----------------------------------------------------------------
-            _buildSectionHeader(
-              'Champions Data',
-              Icons.cloud_download_outlined,
-            ),
-            const SizedBox(height: 8),
-            Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(
-                  color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
+              const SizedBox(width: 16),
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      children: [
-                        Icon(
-                          switch (remoteDataStatus) {
-                            RemoteDataStatus.failed =>
-                              Icons.cloud_off_outlined,
-                            RemoteDataStatus.updated =>
-                              Icons.cloud_done_outlined,
-                            _ => Icons.cloud_outlined,
-                          },
-                          color: remoteDataStatus == RemoteDataStatus.failed
-                              ? Colors.redAccent
-                              : AppColors.primary,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            switch (remoteDataStatus) {
-                              RemoteDataStatus.checking =>
-                                'Checking for updates…',
-                              RemoteDataStatus.updated =>
-                                'Updated — Champions data is fresh.',
-                              RemoteDataStatus.upToDate =>
-                                'Up to date with the latest game data.',
-                              RemoteDataStatus.failed =>
-                                'Last update check failed.',
-                              _ => championsDataInfo?.fromOverride ?? false
-                                  ? 'Using downloaded data.'
-                                  : 'Using the built-in data.',
-                            },
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                        if (remoteDataStatus == RemoteDataStatus.checking)
-                          const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'The Champions Pokédex and Speed Tiers refresh automatically '
-                      'when the game adds Pokémon, moves or items.',
-                      style: TextStyle(
-                        fontSize: 12,
-                        height: 1.4,
-                        color: isDark
-                            ? Colors.grey.shade400
-                            : Colors.grey.shade700,
-                      ),
-                    ),
-                    if (championsDataInfo?.source case final source?)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
-                          'Data version: $source',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey.shade500,
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: remoteDataStatus ==
-                                    RemoteDataStatus.checking
-                                ? null
-                                : _checkChampionsData,
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              side: const BorderSide(color: AppColors.primary),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            icon: const Icon(Icons.refresh_rounded, size: 18),
-                            label: const Text('Check for Updates'),
-                          ),
-                        ),
-                        if (championsDataInfo?.fromOverride ?? false) ...[
-                          const SizedBox(width: 12),
-                          TextButton(
-                            onPressed: remoteDataStatus ==
-                                    RemoteDataStatus.checking
-                                ? null
-                                : _revertChampionsData,
-                            child: const Text('Revert'),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // -----------------------------------------------------------------
-            // SECTION 3: APP INFO, VERSION & COPYRIGHT
-            // -----------------------------------------------------------------
-            _buildSectionHeader(
-              'App Info & Copyright',
-              Icons.info_outline_rounded,
-            ),
-            const SizedBox(height: 8),
-            Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(
-                  color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    // App Logo Header
-                    Row(
-                      children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.catching_pokemon,
-                            color: AppColors.primary,
-                            size: 28,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Pokédex',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                              ),
-                            ),
-                            Text(
-                              'Offline-First Pokémon Companion',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: isDark
-                                    ? Colors.grey.shade400
-                                    : Colors.grey.shade600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const Divider(height: 24),
-
-                    // Version Row (Tappable 7 times for Easter Egg!)
-                    InkWell(
-                      onTap: _onVersionTapped,
-                      borderRadius: BorderRadius.circular(10),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8.0,
-                          horizontal: 4.0,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'App Version',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(
-                                  alpha: 0.12,
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Text(
-                                'v1.0.0 (Build 1)',
-                                style: TextStyle(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    const Divider(height: 24),
-
-                    // Copyright & Legal Info
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Legal & Content Copyright Notice',
+                          'Pokédex',
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
+                            fontSize: 21,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: -0.4,
                           ),
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'Pokémon and Pokémon character names are registered trademarks of Nintendo, Creatures Inc., GAME FREAK inc., and The Pokémon Company.',
-                          style: TextStyle(
-                            fontSize: 11,
-                            height: 1.4,
-                            color: isDark
-                                ? Colors.grey.shade400
-                                : Colors.grey.shade600,
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 7,
+                            vertical: 2.5,
                           ),
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          'This application is an independent, non-commercial fan project built strictly for educational and informational reference purposes. No copyright or trademark infringement is intended.',
-                          style: TextStyle(
-                            fontSize: 11,
-                            height: 1.4,
-                            color: isDark
-                                ? Colors.grey.shade400
-                                : Colors.grey.shade600,
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Text(
+                            'PRO',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              color: AppColors.primary,
+                              letterSpacing: 0.5,
+                            ),
                           ),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 3),
+                    Text(
+                      'Offline Pokémon encyclopedia & battle companion',
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        color: isDark
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade600,
+                        height: 1.25,
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ),
+            ],
+          ),
+          const SizedBox(height: 18),
 
-            // -----------------------------------------------------------------
-            // SECTION 4: DEVELOPER OPTIONS (UNLOCKED AFTER 7 TAPS)
-            // -----------------------------------------------------------------
-            if (_devOptionsUnlocked) ...[
-              const SizedBox(height: 24),
-              _buildSectionHeader(
-                '🛠️ Developer Options',
-                Icons.developer_mode_rounded,
-              ),
-              const SizedBox(height: 8),
-              Card(
-                elevation: 0,
+          // Quick Live Summary Stats Row
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.black.withValues(alpha: 0.35)
+                  : Colors.white.withValues(alpha: 0.75),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
                 color: isDark
-                    ? const Color(0xFF1E261E)
-                    : const Color(0xFFF4FAF4),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  side: BorderSide(
-                    color: Colors.green.withValues(alpha: 0.5),
-                    width: 1.5,
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.05),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildHeaderStat(
+                  icon: LucideIcons.database,
+                  label: 'Indexed',
+                  value: '1,025',
+                  color: AppColors.primary,
+                  isDark: isDark,
+                ),
+                Container(
+                  height: 24,
+                  width: 1,
+                  color: isDark ? Colors.white12 : Colors.black12,
+                ),
+                _buildHeaderStat(
+                  icon: LucideIcons.heart,
+                  label: 'Favorites',
+                  value: '$_favCount',
+                  color: const Color(0xFFE53935),
+                  isDark: isDark,
+                ),
+                Container(
+                  height: 24,
+                  width: 1,
+                  color: isDark ? Colors.white12 : Colors.black12,
+                ),
+                _buildHeaderStat(
+                  icon: LucideIcons.users,
+                  label: 'Teams',
+                  value: '$_teamCount',
+                  color: Colors.blue.shade600,
+                  isDark: isDark,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeaderStat({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+    required bool isDark,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 15, color: color),
+        const SizedBox(width: 7),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              value,
+              style: const TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 14,
+                height: 1.1,
+              ),
+            ),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // ===========================================================================
+  // SECTION HEADER COMPONENT
+  // ===========================================================================
+  Widget _buildSectionHeader({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+  }) {
+    return Row(
+      children: [
+        Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.14),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: color, size: 17),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 15.5,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.2,
+                ),
+              ),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w400,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey.shade400
+                      : Colors.grey.shade600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ===========================================================================
+  // THEME SELECTOR WIDGET (LIGHT, DARK, SYSTEM)
+  // ===========================================================================
+  Widget _buildThemeSelector(ThemeMode activeMode, bool isDark) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: _buildThemeTile(
+              title: 'Light',
+              subtitle: 'Day mode',
+              icon: LucideIcons.sun,
+              accentColor: const Color(0xFFFFA000),
+              isSelected: activeMode == ThemeMode.light,
+              onTap: () => ThemeHelper.setTheme(ref, ThemeMode.light),
+              isDark: isDark,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildThemeTile(
+              title: 'Dark',
+              subtitle: 'Night mode',
+              icon: LucideIcons.moon,
+              accentColor: const Color(0xFF7E57C2),
+              isSelected: activeMode == ThemeMode.dark,
+              onTap: () => ThemeHelper.setTheme(ref, ThemeMode.dark),
+              isDark: isDark,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildThemeTile(
+              title: 'System',
+              subtitle: 'Auto-sync',
+              icon: LucideIcons.monitor,
+              accentColor: const Color(0xFF26A69A),
+              isSelected: activeMode == ThemeMode.system,
+              onTap: () => ThemeHelper.setTheme(ref, ThemeMode.system),
+              isDark: isDark,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThemeTile({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color accentColor,
+    required bool isSelected,
+    required VoidCallback onTap,
+    required bool isDark,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        AppFeedback.selectionClick();
+        onTap();
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark
+                  ? accentColor.withValues(alpha: 0.16)
+                  : accentColor.withValues(alpha: 0.08))
+              : (isDark
+                  ? const Color(0xFF171920)
+                  : Colors.white),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: isSelected
+                ? accentColor
+                : (isDark ? Colors.grey.shade800 : Colors.grey.shade200),
+            width: isSelected ? 1.8 : 1.0,
+          ),
+          boxShadow: [
+            if (isSelected)
+              BoxShadow(
+                color: accentColor.withValues(alpha: 0.2),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              )
+            else
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: isSelected ? 0.22 : 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                color: accentColor,
+                size: 20,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                color: isSelected
+                    ? (isDark ? Colors.white : Colors.black87)
+                    : (isDark ? Colors.grey.shade300 : Colors.grey.shade700),
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 10.5,
+                color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 18,
+              height: 18,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected ? accentColor : Colors.transparent,
+                border: Border.all(
+                  color: isSelected ? accentColor : Colors.grey.shade400,
+                  width: 1.5,
+                ),
+              ),
+              child: isSelected
+                  ? const Center(
+                      child: Icon(Icons.check, size: 12, color: Colors.white),
+                    )
+                  : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ===========================================================================
+  // POKÉDEX LAYOUT SELECTOR (GRID VS LIST)
+  // ===========================================================================
+  Widget _buildLayoutSelector(PokedexLayoutMode activeLayout, bool isDark) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: _buildLayoutTile(
+              title: 'Grid Layout',
+              subtitle: 'Compact 2+ columns view',
+              icon: LucideIcons.layoutGrid,
+              isSelected: activeLayout == PokedexLayoutMode.grid,
+              onTap: () => LayoutHelper.setLayout(ref, PokedexLayoutMode.grid),
+              isDark: isDark,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: _buildLayoutTile(
+              title: 'List Layout',
+              subtitle: 'Detailed full-width cards',
+              icon: LucideIcons.layoutList,
+              isSelected: activeLayout == PokedexLayoutMode.list,
+              onTap: () => LayoutHelper.setLayout(ref, PokedexLayoutMode.list),
+              isDark: isDark,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLayoutTile({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+    required bool isDark,
+  }) {
+    const activeColor = Color(0xFF1E88E5);
+
+    return GestureDetector(
+      onTap: () {
+        AppFeedback.selectionClick();
+        onTap();
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark
+                  ? activeColor.withValues(alpha: 0.16)
+                  : activeColor.withValues(alpha: 0.08))
+              : (isDark ? const Color(0xFF171920) : Colors.white),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: isSelected
+                ? activeColor
+                : (isDark ? Colors.grey.shade800 : Colors.grey.shade200),
+            width: isSelected ? 1.8 : 1.0,
+          ),
+          boxShadow: [
+            if (isSelected)
+              BoxShadow(
+                color: activeColor.withValues(alpha: 0.18),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              )
+            else
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: activeColor.withValues(alpha: isSelected ? 0.2 : 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: activeColor, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 13.5,
+                      fontWeight:
+                          isSelected ? FontWeight.w800 : FontWeight.w600,
+                      color: isSelected
+                          ? (isDark ? Colors.white : Colors.black87)
+                          : (isDark
+                              ? Colors.grey.shade300
+                              : Colors.grey.shade700),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 10.5,
+                      color:
+                          isDark ? Colors.grey.shade500 : Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 18,
+              height: 18,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected ? activeColor : Colors.transparent,
+                border: Border.all(
+                  color: isSelected ? activeColor : Colors.grey.shade400,
+                  width: 1.5,
+                ),
+              ),
+              child: isSelected
+                  ? const Center(
+                      child: Icon(Icons.check, size: 12, color: Colors.white),
+                    )
+                  : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ===========================================================================
+  // DEFAULT POKÉDEX SELECTOR (NATIONAL VS CHAMPIONS)
+  // ===========================================================================
+  Widget _buildDefaultDexSelector(
+    DefaultPokedexMode activeDex,
+    bool isDark,
+  ) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: _buildDefaultDexTile(
+              title: 'National Dex',
+              subtitle: '1,025 All-Gens',
+              icon: Icons.catching_pokemon,
+              activeColor: AppColors.primary,
+              isSelected: activeDex == DefaultPokedexMode.national,
+              onTap: () => DefaultPokedexHelper.setDefaultPokedex(
+                ref,
+                DefaultPokedexMode.national,
+              ),
+              isDark: isDark,
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: _buildDefaultDexTile(
+              title: 'Champions Dex',
+              subtitle: 'Tournament Roster',
+              icon: LucideIcons.trophy,
+              activeColor: const Color(0xFF9C27B0),
+              isSelected: activeDex == DefaultPokedexMode.champions,
+              onTap: () => DefaultPokedexHelper.setDefaultPokedex(
+                ref,
+                DefaultPokedexMode.champions,
+              ),
+              isDark: isDark,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDefaultDexTile({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color activeColor,
+    required bool isSelected,
+    required VoidCallback onTap,
+    required bool isDark,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        AppFeedback.selectionClick();
+        onTap();
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? (isDark
+                  ? activeColor.withValues(alpha: 0.16)
+                  : activeColor.withValues(alpha: 0.08))
+              : (isDark ? const Color(0xFF171920) : Colors.white),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: isSelected
+                ? activeColor
+                : (isDark ? Colors.grey.shade800 : Colors.grey.shade200),
+            width: isSelected ? 1.8 : 1.0,
+          ),
+          boxShadow: [
+            if (isSelected)
+              BoxShadow(
+                color: activeColor.withValues(alpha: 0.18),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              )
+            else
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+          ],
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                color: activeColor.withValues(alpha: isSelected ? 0.2 : 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: activeColor, size: 20),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight:
+                          isSelected ? FontWeight.w800 : FontWeight.w600,
+                      color: isSelected
+                          ? (isDark ? Colors.white : Colors.black87)
+                          : (isDark
+                              ? Colors.grey.shade300
+                              : Colors.grey.shade700),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 10.5,
+                      color:
+                          isDark ? Colors.grey.shade500 : Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 4),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 18,
+              height: 18,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isSelected ? activeColor : Colors.transparent,
+                border: Border.all(
+                  color: isSelected ? activeColor : Colors.grey.shade400,
+                  width: 1.5,
+                ),
+              ),
+              child: isSelected
+                  ? const Center(
+                      child: Icon(Icons.check, size: 12, color: Colors.white),
+                    )
+                  : null,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ===========================================================================
+  // HAPTIC & SOUND FEEDBACK CARD
+  // ===========================================================================
+  Widget _buildFeedbackSettingsCard(bool isDark) {
+    final feedbackSettings = ref.watch(feedbackSettingsProvider);
+    final tealColor = const Color(0xFF00897B);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF171920) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // Vibration / Haptic Feedback Toggle
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            secondary: Container(
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                color: tealColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(LucideIcons.vibrate, color: tealColor, size: 20),
+            ),
+            title: Text(
+              'Touch Vibration',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+            subtitle: Text(
+              'Haptic feedback on card selection, tabs & buttons',
+              style: TextStyle(
+                fontSize: 11.5,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+            activeThumbColor: tealColor,
+            value: feedbackSettings.hapticsEnabled,
+            onChanged: (val) {
+              FeedbackHelper.setHapticsEnabled(ref, val);
+              if (val) {
+                AppFeedback.selectionClick();
+              }
+            },
+          ),
+          Divider(
+            height: 1,
+            color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+          ),
+          // Touch Sound Toggle
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            secondary: Container(
+              padding: const EdgeInsets.all(9),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E88E5).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(LucideIcons.volume2, color: Color(0xFF1E88E5), size: 20),
+            ),
+            title: Text(
+              'Touch Sound',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : Colors.black87,
+              ),
+            ),
+            subtitle: Text(
+              'Play subtle click sound effect when tapping controls',
+              style: TextStyle(
+                fontSize: 11.5,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+            activeThumbColor: const Color(0xFF1E88E5),
+            value: feedbackSettings.soundEnabled,
+            onChanged: (val) {
+              FeedbackHelper.setSoundEnabled(ref, val);
+              if (val) {
+                AppFeedback.selectionClick();
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ===========================================================================
+  // BACKUP & RESTORE CARD
+  // ===========================================================================
+  Widget _buildBackupCard(bool isDark) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF171920) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF43A047).withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  LucideIcons.hardDrive,
+                  color: Color(0xFF43A047),
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: 10),
+              const Text(
+                'Offline Data Safeguard',
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14.5),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'Keep your Pokémon collection secure. Export your favorites, custom battle teams, and personal settings to a portable JSON backup, or restore them anytime.',
+            style: TextStyle(
+              fontSize: 12,
+              height: 1.45,
+              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: _isExporting ? null : _handleBackupExport,
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    side: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.7),
+                      width: 1.2,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  icon: _isExporting
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(LucideIcons.cloudUpload, size: 17),
+                  label: const Text(
+                    'Export Backup',
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
                   ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Text(
-                              'DEV MODE ACTIVE',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: _isRestoring ? null : _showRestoreDialog,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    elevation: 1,
+                  ),
+                  icon: _isRestoring
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
                           ),
-                          const Spacer(),
-                          TextButton(
-                            onPressed: () async {
-                              setState(() {
-                                _devOptionsUnlocked = false;
-                                _versionTapCount = 0;
-                              });
-                              final prefs =
-                                  await SharedPreferences.getInstance();
-                              await prefs.remove(_devModePrefKey);
-                            },
-                            child: const Text(
-                              'Lock / Hide',
-                              style: TextStyle(
-                                color: Colors.redAccent,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Dev Tool 1: Re-seed DB
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: const Icon(
-                          Icons.refresh_rounded,
-                          color: Colors.green,
-                        ),
-                        title: const Text(
-                          'Re-seed Database',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: const Text(
-                          'Reloads seed assets while maintaining favorites.',
-                          style: TextStyle(fontSize: 12),
-                        ),
-                        trailing: OutlinedButton(
-                          onPressed: () async {
-                            final repo = ref.read(pokemonRepositoryProvider);
-                            final messenger = ScaffoldMessenger.of(context);
-                            await repo.forceReseedDatabase();
-                            messenger.showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  '✅ Database re-seeded successfully!',
-                                ),
-                              ),
-                            );
-                          },
-                          child: const Text('Re-seed'),
-                        ),
-                      ),
-
-                      const Divider(),
-
-                      // Dev Tool 2: Clear Image Cache
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: const Icon(
-                          Icons.cleaning_services_outlined,
-                          color: Colors.amber,
-                        ),
-                        title: const Text(
-                          'Clear Memory Cache',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        subtitle: const Text(
-                          'Evicts in-memory image and sprite caches.',
-                          style: TextStyle(fontSize: 12),
-                        ),
-                        trailing: OutlinedButton(
-                          onPressed: () {
-                            PaintingBinding.instance.imageCache.clear();
-                            PaintingBinding
-                                .instance
-                                .imageCache
-                                .clearLiveImages();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('🧹 Memory image cache cleared!'),
-                              ),
-                            );
-                          },
-                          child: const Text('Clear'),
-                        ),
-                      ),
-
-                      const Divider(),
-
-                      // Dev Tool 3: Live Stats
-                      const Text(
-                        'Database & Diagnostics Stats',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      FutureBuilder(
-                        future: _fetchDevStats(),
-                        builder: (ctx, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const SizedBox(
-                              height: 40,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                            );
-                          }
-                          final stats = snapshot.data as Map<String, int>;
-                          return Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: [
-                              _buildDevStatChip(
-                                'Total Pokémon',
-                                '${stats['total']}',
-                              ),
-                              _buildDevStatChip(
-                                'Favorites',
-                                '${stats['favs']}',
-                              ),
-                              _buildDevStatChip('Teams', '${stats['teams']}'),
-                              _buildDevStatChip('Asset Rev', 'v1'),
-                            ],
-                          );
-                        },
-                      ),
-                    ],
+                        )
+                      : const Icon(LucideIcons.cloudDownload, size: 17),
+                  label: const Text(
+                    'Restore Backup',
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
                   ),
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
 
-            const SizedBox(height: 40),
-          ],
+  // ===========================================================================
+  // CHAMPIONS DATA SYNC CARD
+  // ===========================================================================
+  Widget _buildChampionsSyncCard(
+    RemoteDataStatus status,
+    ActiveChampionsData? info,
+    bool isDark,
+  ) {
+    final isChecking = status == RemoteDataStatus.checking;
+    final isOverride = info?.fromOverride ?? false;
+
+    final (statusLabel, statusColor, statusIcon) = switch (status) {
+      RemoteDataStatus.checking => (
+        'Checking GitHub for data updates…',
+        Colors.blue,
+        LucideIcons.refreshCw,
+      ),
+      RemoteDataStatus.updated => (
+        'Champions tournament data is fresh & updated.',
+        Colors.green,
+        LucideIcons.checkCheck,
+      ),
+      RemoteDataStatus.upToDate => (
+        'Up to date with the latest tournament data.',
+        Colors.green,
+        LucideIcons.checkCheck,
+      ),
+      RemoteDataStatus.failed => (
+        'Update check failed. Check internet connection.',
+        Colors.redAccent,
+        LucideIcons.cloud,
+      ),
+      _ => isOverride
+          ? (
+              'Using active online Champions dataset.',
+              const Color(0xFF9C27B0),
+              LucideIcons.sparkles,
+            )
+          : (
+              'Using bundled offline Champions dataset.',
+              Colors.grey.shade600,
+              LucideIcons.database,
+            ),
+    };
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF171920) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: statusColor.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(statusIcon, color: statusColor, size: 17),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  statusLabel,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13.5,
+                  ),
+                ),
+              ),
+              if (isChecking)
+                const SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            'The Champions Pokédex, item legality, and competitive speed tiers automatically synchronize with game meta shifts.',
+            style: TextStyle(
+              fontSize: 12,
+              height: 1.45,
+              color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+            ),
+          ),
+          if (info?.source case final source?)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.06)
+                      : Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  'Data source: $source',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontFamily: 'monospace',
+                    color: isDark ? Colors.grey.shade400 : Colors.grey.shade700,
+                  ),
+                ),
+              ),
+            ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: isChecking ? null : _checkChampionsData,
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    side: BorderSide(
+                      color: const Color(0xFF9C27B0).withValues(alpha: 0.7),
+                      width: 1.2,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  icon: const Icon(
+                    LucideIcons.refreshCw,
+                    size: 17,
+                    color: Color(0xFF9C27B0),
+                  ),
+                  label: const Text(
+                    'Check for Updates',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                      color: Color(0xFF9C27B0),
+                    ),
+                  ),
+                ),
+              ),
+              if (isOverride) ...[
+                const SizedBox(width: 12),
+                TextButton.icon(
+                  onPressed: isChecking ? null : _revertChampionsData,
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 14),
+                    foregroundColor: Colors.redAccent,
+                  ),
+                  icon: const Icon(LucideIcons.refreshCw, size: 15),
+                  label: const Text(
+                    'Revert',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ===========================================================================
+  // ABOUT, VERSION & LEGAL NOTICE CARD
+  // ===========================================================================
+  Widget _buildAboutCard(bool isDark) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF171920) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          // App Version Row (Interactive 7-Tap Easter Egg)
+          InkWell(
+            onTap: _onVersionTapped,
+            borderRadius: BorderRadius.circular(14),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+              child: Row(
+                children: [
+                  Image.asset(
+                    'assets/pokedex.png',
+                    width: 32,
+                    height: 32,
+                    fit: BoxFit.contain,
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'App Version',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                          ),
+                        ),
+                        Text(
+                          'Release v1.0.0 • Build 1',
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Text(
+                      'v1.0.0',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+          Divider(
+            height: 1,
+            color: isDark ? Colors.grey.shade800 : Colors.grey.shade200,
+          ),
+          const SizedBox(height: 12),
+
+          // Collapsible Legal & Copyright Notice
+          InkWell(
+            onTap: () {
+              AppFeedback.selectionClick();
+              setState(() => _legalExpanded = !_legalExpanded);
+            },
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+              child: Row(
+                children: [
+                  Icon(
+                    LucideIcons.shieldCheck,
+                    size: 18,
+                    color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Legal & Content Copyright Notice',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                        color: isDark ? Colors.grey.shade300 : Colors.grey.shade800,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    _legalExpanded ? LucideIcons.chevronUp : LucideIcons.chevronDown,
+                    size: 16,
+                    color: Colors.grey,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          AnimatedCrossFade(
+            firstChild: const SizedBox(width: double.infinity),
+            secondChild: Padding(
+              padding: const EdgeInsets.only(top: 12, left: 4, right: 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Pokémon and all character names, distinctive likenesses, and related indicia are registered trademarks of Nintendo, Creatures Inc., GAME FREAK Inc., and The Pokémon Company.',
+                    style: TextStyle(
+                      fontSize: 11,
+                      height: 1.45,
+                      color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'This application is an independent, non-commercial fan project built strictly for educational, research, and offline reference purposes. No copyright infringement or trademark dilution is intended.',
+                    style: TextStyle(
+                      fontSize: 11,
+                      height: 1.45,
+                      color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            crossFadeState: _legalExpanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            duration: const Duration(milliseconds: 220),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ===========================================================================
+  // DEVELOPER OPTIONS CARD (EASTER EGG)
+  // ===========================================================================
+  Widget _buildDevOptionsCard(bool isDark) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF142416) : const Color(0xFFF1FBF2),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: Colors.green.withValues(alpha: 0.45),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.green.withValues(alpha: isDark ? 0.2 : 0.08),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade700,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(LucideIcons.terminal, color: Colors.white, size: 12),
+                    SizedBox(width: 5),
+                    Text(
+                      'DEV MODE ACTIVE',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              TextButton.icon(
+                onPressed: () async {
+                  AppFeedback.lightImpact();
+                  setState(() {
+                    _devOptionsUnlocked = false;
+                    _versionTapCount = 0;
+                  });
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.remove(_devModePrefKey);
+                },
+                icon: const Icon(LucideIcons.wrench, size: 14, color: Colors.redAccent),
+                label: const Text(
+                  'Lock & Hide',
+                  style: TextStyle(
+                    color: Colors.redAccent,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+
+          // Action 1: Re-seed Database
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.green.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(LucideIcons.refreshCw, color: Colors.green, size: 18),
+            ),
+            title: const Text(
+              'Force Re-seed Database',
+              style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.bold),
+            ),
+            subtitle: const Text(
+              'Reloads all asset seeds while preserving user favorites.',
+              style: TextStyle(fontSize: 11),
+            ),
+            trailing: OutlinedButton(
+              onPressed: () async {
+                AppFeedback.mediumImpact();
+                final repo = ref.read(pokemonRepositoryProvider);
+                final messenger = ScaffoldMessenger.of(context);
+                await repo.forceReseedDatabase();
+                await _loadQuickStats();
+                messenger.showSnackBar(
+                  SnackBar(
+                    content: const Text('Database re-seeded successfully!'),
+                    backgroundColor: Colors.green.shade700,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              },
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.green.shade600),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Text('Re-seed'),
+            ),
+          ),
+
+          const Divider(height: 16),
+
+          // Action 2: Clear Image & Sprite Cache
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.amber.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(LucideIcons.sparkles, color: Colors.amber.shade700, size: 18),
+            ),
+            title: const Text(
+              'Evict Memory Image Cache',
+              style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.bold),
+            ),
+            subtitle: const Text(
+              'Frees memory used by cached Pokémon sprites.',
+              style: TextStyle(fontSize: 11),
+            ),
+            trailing: OutlinedButton(
+              onPressed: () {
+                AppFeedback.lightImpact();
+                PaintingBinding.instance.imageCache.clear();
+                PaintingBinding.instance.imageCache.clearLiveImages();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text('Memory image cache cleared!'),
+                    backgroundColor: Colors.green.shade700,
+                    behavior: SnackBarBehavior.floating,
+                  ),
+                );
+              },
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.amber.shade700),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Text('Clear'),
+            ),
+          ),
+
+          const Divider(height: 16),
+
+          // Diagnostic stats
+          const Text(
+            'Live Database Diagnostics',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+          ),
+          const SizedBox(height: 8),
+          FutureBuilder(
+            future: _fetchDevStats(),
+            builder: (ctx, snapshot) {
+              if (!snapshot.hasData) {
+                return const SizedBox(
+                  height: 36,
+                  child: Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                );
+              }
+              final stats = snapshot.data as Map<String, int>;
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _buildDevStatChip('Total Pokémon', '${stats['total']}'),
+                  _buildDevStatChip('Favorites', '${stats['favs']}'),
+                  _buildDevStatChip('Custom Teams', '${stats['teams']}'),
+                  _buildDevStatChip('Asset Schema', 'v9'),
+                ],
+              );
+            },
+          ),
+        ],
       ),
     );
   }
@@ -1170,266 +2242,63 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Widget _buildDevStatChip(String label, String value) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: Colors.green.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(color: Colors.green.withValues(alpha: 0.4)),
       ),
-      child: Text(
-        '$label: $value',
-        style: const TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.bold,
-          color: Colors.green,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '$label: ',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: Colors.green.shade800,
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              color: Colors.green,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title, IconData icon) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: AppColors.primary),
-        const SizedBox(width: 8),
-        Text(
-          title,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildThemeCard({
-    required BuildContext context,
-    required ThemeMode mode,
-    required String title,
+  Widget _buildStatPill({
     required IconData icon,
-    required bool isSelected,
+    required String label,
+    required Color color,
+    required bool isDark,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return InkWell(
-      onTap: () {
-        ThemeHelper.setTheme(ref, mode);
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primary.withValues(alpha: isDark ? 0.25 : 0.1)
-              : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected
-                ? AppColors.primary
-                : (isDark ? Colors.grey.shade800 : Colors.grey.shade300),
-            width: isSelected ? 2.0 : 1.0,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ]
-              : null,
-        ),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              color: isSelected
-                  ? AppColors.primary
-                  : (isDark ? Colors.grey.shade400 : Colors.grey.shade600),
-              size: 26,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected
-                    ? AppColors.primary
-                    : (isDark ? Colors.white : AppColors.textPrimary),
-              ),
-            ),
-            const SizedBox(height: 4),
-            Icon(
-              isSelected
-                  ? Icons.check_circle_rounded
-                  : Icons.radio_button_unchecked_rounded,
-              size: 16,
-              color: isSelected ? AppColors.primary : Colors.grey.shade400,
-            ),
-          ],
-        ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: isDark ? 0.2 : 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
-    );
-  }
-
-  Widget _buildLayoutCard({
-    required BuildContext context,
-    required PokedexLayoutMode mode,
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required bool isSelected,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return InkWell(
-      onTap: () {
-        LayoutHelper.setLayout(ref, mode);
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primary.withValues(alpha: isDark ? 0.25 : 0.1)
-              : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected
-                ? AppColors.primary
-                : (isDark ? Colors.grey.shade800 : Colors.grey.shade300),
-            width: isSelected ? 2.0 : 1.0,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: color),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ]
-              : null,
-        ),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              color: isSelected
-                  ? AppColors.primary
-                  : (isDark ? Colors.grey.shade400 : Colors.grey.shade600),
-              size: 26,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected
-                    ? AppColors.primary
-                    : (isDark ? Colors.white : AppColors.textPrimary),
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: 10,
-                color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Icon(
-              isSelected
-                  ? Icons.check_circle_rounded
-                  : Icons.radio_button_unchecked_rounded,
-              size: 16,
-              color: isSelected ? AppColors.primary : Colors.grey.shade400,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDefaultDexCard({
-    required BuildContext context,
-    required DefaultPokedexMode mode,
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required bool isSelected,
-    Color activeColor = AppColors.primary,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return InkWell(
-      onTap: () {
-        DefaultPokedexHelper.setDefaultPokedex(ref, mode);
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? activeColor.withValues(alpha: isDark ? 0.25 : 0.1)
-              : (isDark ? const Color(0xFF1E1E1E) : Colors.white),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected
-                ? activeColor
-                : (isDark ? Colors.grey.shade800 : Colors.grey.shade300),
-            width: isSelected ? 2.0 : 1.0,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: activeColor.withValues(alpha: 0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ]
-              : null,
-        ),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              color: isSelected
-                  ? activeColor
-                  : (isDark ? Colors.grey.shade400 : Colors.grey.shade600),
-              size: 26,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                color: isSelected
-                    ? activeColor
-                    : (isDark ? Colors.white : AppColors.textPrimary),
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              subtitle,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 10,
-                color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Icon(
-              isSelected
-                  ? Icons.check_circle_rounded
-                  : Icons.radio_button_unchecked_rounded,
-              size: 16,
-              color: isSelected ? activeColor : Colors.grey.shade400,
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }

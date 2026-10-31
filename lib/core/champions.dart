@@ -33,12 +33,28 @@ class ChampionsData {
   /// -> ["aura-guard"]).
   final Map<int, List<String>> pokemonAbilities;
 
+  /// Move legality in Champions: pokemonId -> set of moveIds
+  final Map<int, Set<int>> pokemonMoves;
+
+  /// Inverted move legality: moveId -> set of pokemonIds that learn it in Champions
+  final Map<int, Set<int>> moveLearners;
+
   const ChampionsData({
     required this.pokemonIds,
     required this.speciesIds,
     required this.itemSlugs,
     this.pokemonAbilities = const {},
+    this.pokemonMoves = const {},
+    this.moveLearners = const {},
   });
+
+  /// Set of champion pokemonIds that learn this move in Champions.
+  Set<int> learnersForMove(int moveId) =>
+      moveLearners[moveId] ?? const <int>{};
+
+  /// Whether this move is legal on any Pokémon in Champions.
+  bool isMoveLegal(int moveId) =>
+      (moveLearners[moveId]?.isNotEmpty ?? false);
 }
 
 /// Loads the Champions roster asset — the downloaded override when one is
@@ -54,11 +70,21 @@ final championsDataProvider = FutureProvider<ChampionsData>((ref) async {
   final pokemon =
       (data['pokemon'] as List<dynamic>).cast<Map<String, dynamic>>();
   final abilitiesMap = <int, List<String>>{};
+  final pokemonMovesMap = <int, Set<int>>{};
+  final moveLearnersMap = <int, Set<int>>{};
   for (final p in pokemon) {
+    final pid = p['id'] as int;
     final abs = p['abilities'];
     if (abs is List) {
-      abilitiesMap[p['id'] as int] =
-          abs.map((e) => e.toString()).toList();
+      abilitiesMap[pid] = abs.map((e) => e.toString()).toList();
+    }
+    final mvs = p['moves'];
+    if (mvs is List) {
+      final moveSet = mvs.map((e) => (e as num).toInt()).toSet();
+      pokemonMovesMap[pid] = moveSet;
+      for (final mid in moveSet) {
+        (moveLearnersMap[mid] ??= <int>{}).add(pid);
+      }
     }
   }
   return ChampionsData(
@@ -69,6 +95,8 @@ final championsDataProvider = FutureProvider<ChampionsData>((ref) async {
         normalizeItemName(name),
     },
     pokemonAbilities: abilitiesMap,
+    pokemonMoves: pokemonMovesMap,
+    moveLearners: moveLearnersMap,
   );
 });
 

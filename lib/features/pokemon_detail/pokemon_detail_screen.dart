@@ -12,6 +12,7 @@ import '../../core/providers.dart';
 import '../../core/utils/name_forms.dart';
 import '../../core/utils/pokemon_helpers.dart';
 import '../../models/pokemon.dart';
+import '../../core/feedback_service.dart';
 import '../../app/theme/app_colors.dart';
 import '../pokedex/pokedex_provider.dart';
 import '../pokedex/widgets/pokemon_card.dart';
@@ -481,6 +482,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                                       pokemon.evolutionInfo ?? '[]',
                                   pokemonId: pokemon.id,
                                   speciesId: pokemon.speciesId,
+                                  themeColor: themeColor,
                                 ),
                               ],
                             ),
@@ -512,6 +514,7 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
           child: BottomNavigationBar(
           currentIndex: _currentPage,
           onTap: (index) {
+            AppFeedback.selectionClick();
             _navigateToPage(index);
           },
           type: BottomNavigationBarType.fixed,
@@ -580,6 +583,12 @@ class _GlassButton extends StatelessWidget {
 
     if (onTap == null) return inner;
 
-    return GestureDetector(onTap: onTap, child: inner);
+    return GestureDetector(
+      onTap: () {
+        AppFeedback.lightImpact();
+        onTap!();
+      },
+      child: inner,
+    );
   }
 }

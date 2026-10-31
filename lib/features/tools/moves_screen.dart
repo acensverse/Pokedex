@@ -15,6 +15,7 @@ import '../../core/utils/type_chart.dart';
 import '../pokedex/pokedex_provider.dart';
 import '../pokedex/widgets/tools_sheet.dart';
 import 'widgets/tool_widgets.dart';
+import '../../core/widgets/app_search_bar.dart';
 
 
 class MoveEntry {
@@ -195,7 +196,7 @@ class _MovesScreenState extends ConsumerState<MovesScreen> {
               LucideIcons.search,
               size: 26,
               color: _isSearching
-                  ? AppColors.primary
+                  ? (isDark ? const Color(0xFFFFA726) : const Color(0xFFE65100))
                   : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
             ),
             onPressed: _toggleSearch,
@@ -206,7 +207,7 @@ class _MovesScreenState extends ConsumerState<MovesScreen> {
               Icons.tune,
               size: 26,
               color: (_typeFilter != null || _clsFilter != null)
-                  ? AppColors.primary
+                  ? (isDark ? const Color(0xFFFFA726) : const Color(0xFFE65100))
                   : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
             ),
             onPressed: _openFilterSheet,
@@ -262,40 +263,14 @@ class _MovesScreenState extends ConsumerState<MovesScreen> {
                 child: _isSearching
                     ? Padding(
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                        child: TextField(
+                        child: AppSearchBar(
                           controller: _searchController,
+                          hintText: 'Search moves...',
                           autofocus: true,
-                          style: TextStyle(
-                            color: Theme.of(context).textTheme.bodyLarge?.color,
-                          ),
+                          voiceTitle: 'Moves Voice Search',
+                          voiceHint: 'Say a move name...',
                           onChanged: (v) => setState(() => _query = v),
-                          decoration: InputDecoration(
-                            hintText: 'Search moves...',
-                            hintStyle: TextStyle(
-                              color: isDark ? Colors.grey.shade500 : Colors.grey.shade400,
-                            ),
-                            prefixIcon: Icon(
-                              LucideIcons.search,
-                              color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.6),
-                            ),
-                            suffixIcon: null,
-                            isDense: true,
-                            filled: true,
-                            fillColor: Theme.of(context).cardColor,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide: BorderSide(color: Theme.of(context).dividerColor),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide: BorderSide(color: Theme.of(context).dividerColor),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide: BorderSide(
-                                  color: AppColors.primary, width: 1.5),
-                            ),
-                          ),
+                          onClear: () => setState(() => _query = ''),
                         ),
                       )
                     : SizedBox.shrink(),
@@ -442,7 +417,7 @@ class _FilterTypePill extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset('assets/types/$type.svg', width: 24, height: 24),
+            SvgPicture.asset('assets/types/${type.toLowerCase()}.svg', width: 24, height: 24),
             SizedBox(width: 4),
             Text(
               type[0].toUpperCase() + type.substring(1),
@@ -621,8 +596,6 @@ class MoveDetailSheet extends ConsumerWidget {
 
   const MoveDetailSheet({super.key, required this.move});
 
-  static const _accent = Color(0xFF43A047);
-
   void _openLearnersInPokedex(BuildContext context, WidgetRef ref) {
     ref.read(searchQueryProvider.notifier).state = '';
     ref.read(debouncedSearchQueryProvider.notifier).state = '';
@@ -631,6 +604,26 @@ class MoveDetailSheet extends ConsumerWidget {
     ref.read(favoritesOnlyProvider.notifier).state = false;
     ref.read(toolAbilityFilterProvider.notifier).state = null;
     ref.read(toolLearnerFilterProvider.notifier).state = null;
+    final all = {
+      ...move.learn,
+      ...move.learnDetails.map((ld) => ld[0]),
+    };
+    final levelUp = <int>{};
+    final tm = <int>{};
+    final egg = <int>{};
+    final tutor = <int>{};
+    for (final ld in move.learnDetails) {
+      final pid = ld[0];
+      final m = ld[1];
+      if (m == 1) levelUp.add(pid);
+      if (m == 4) tm.add(pid);
+      if (m == 2) egg.add(pid);
+      if (m == 3) tutor.add(pid);
+    }
+    for (final pid in move.learn) {
+      levelUp.add(pid);
+    }
+
     ref.read(toolMoveFilterProvider.notifier).state = (
       name: PokemonHelpers.formatName(move.name),
       flavor: move.flavor ?? '',
@@ -640,10 +633,13 @@ class MoveDetailSheet extends ConsumerWidget {
       power: move.power,
       accuracy: move.acc,
       pp: move.pp,
-      ids: {
-        ...move.learn,
-        ...move.learnDetails.map((ld) => ld[0]),
-      },
+      mode: 'all',
+      allIds: all,
+      levelUpIds: levelUp,
+      tmIds: tm,
+      eggIds: egg,
+      tutorIds: tutor,
+      championsIds: const <int>{},
     );
     Navigator.of(context).pop(); // close the sheet
     // push (not go) so system-back from the filtered home returns here.
@@ -653,6 +649,7 @@ class MoveDetailSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final typeColor = AppColors.getTypeColor(move.type);
     final clsColor = _clsColor(move.cls);
 
@@ -674,350 +671,572 @@ class MoveDetailSheet extends ConsumerWidget {
       }
     }
 
+    final totalLearners = move.learn.length + move.learnDetails.length;
+
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        color: isDark ? const Color(0xFF16181F) : const Color(0xFFF7F8FA),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         children: [
-          SizedBox(height: 12),
           Center(
             child: Container(
-              width: 40,
-              height: 4,
+              margin: const EdgeInsets.only(top: 12, bottom: 6),
+              width: 42,
+              height: 4.5,
               decoration: BoxDecoration(
-                color: Theme.of(context).dividerColor,
-                borderRadius: BorderRadius.circular(2),
+                color: isDark ? Colors.white24 : Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(3),
               ),
             ),
           ),
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              padding: const EdgeInsets.fromLTRB(16, 6, 16, 12),
               children: [
-                SizedBox(height: 4),
                 Center(
-                  child: Text('MOVE',
-                      style: TextStyle(
-                          fontSize: 12,
-                          letterSpacing: 1.5,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey)),
+                  child: Text(
+                    'MOVE',
+                    style: TextStyle(
+                      fontSize: 11,
+                      letterSpacing: 1.8,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? Colors.white38 : Colors.grey.shade500,
+                    ),
+                  ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Center(
                   child: Text(
                     PokemonHelpers.formatName(move.name),
+                    textAlign: TextAlign.center,
                     style: TextStyle(
-                        fontSize: 26,
-                        fontWeight: FontWeight.w900,
-                        color: Theme.of(context).textTheme.titleLarge?.color),
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.4,
+                      color: Theme.of(context).textTheme.titleLarge?.color,
+                    ),
                   ),
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 10),
                 Wrap(
                   alignment: WrapAlignment.center,
-                  spacing: 10,
-                  runSpacing: 8,
+                  spacing: 8,
+                  runSpacing: 6,
                   children: [
                     _TypePill(type: move.type, color: typeColor),
                     _SolidClsPill(cls: move.cls, color: clsColor),
                   ],
                 ),
-                SizedBox(height: 26),
-                _sectionCard(
-                  context,
-                  'Stats',
-                  Row(
+                const SizedBox(height: 16),
+
+                // Card 1: Stats (2x2 Grid with Power, Accuracy, PP, Priority)
+                _buildSectionCard(
+                  context: context,
+                  isDark: isDark,
+                  title: 'Stats',
+                  icon: LucideIcons.chartColumnBig,
+                  accentColor: typeColor,
+                  child: Column(
                     children: [
-                      _StatColumn(
-                          label: 'Power',
-                          value: move.power?.toString() ?? '\u2014'),
-                      _verticalDivider(context),
-                      _StatColumn(
-                          label: 'Accuracy',
-                          value: move.acc != null ? '${move.acc}' : '\u2014'),
-                      _verticalDivider(context),
-                      _StatColumn(
-                          label: 'PP',
-                          value: move.pp?.toString() ?? '\u2014'),
-                      _verticalDivider(context),
-                      _StatColumn(
-                          label: 'Priority',
-                          value: move.pri > 0
-                              ? '+${move.pri}'
-                              : '${move.pri}'),
+                      Row(
+                        children: [
+                          _buildStatBox(
+                            context: context,
+                            isDark: isDark,
+                            label: 'Power',
+                            value: move.power != null && move.power! > 0
+                                ? '${move.power}'
+                                : '—',
+                            subtitle: move.power != null && move.power! > 0
+                                ? 'Base Damage'
+                                : 'Status Move',
+                            icon: LucideIcons.zap,
+                            accentColor: typeColor,
+                          ),
+                          const SizedBox(width: 10),
+                          _buildStatBox(
+                            context: context,
+                            isDark: isDark,
+                            label: 'Accuracy',
+                            value: move.acc != null
+                                ? '${move.acc}%'
+                                : (move.cls.toLowerCase() == 'status'
+                                    ? '—'
+                                    : '∞'),
+                            subtitle: move.acc != null
+                                ? 'Hit Rate'
+                                : (move.cls.toLowerCase() == 'status'
+                                    ? 'Self / Field'
+                                    : 'Never Misses'),
+                            icon: LucideIcons.target,
+                            accentColor: const Color(0xFF26A69A),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          _buildStatBox(
+                            context: context,
+                            isDark: isDark,
+                            label: 'PP',
+                            value: move.pp != null ? '${move.pp}' : '—',
+                            subtitle: move.pp != null
+                                ? 'Max ${(move.pp! * 1.6).floor()}'
+                                : 'Power Points',
+                            icon: LucideIcons.repeat,
+                            accentColor: const Color(0xFF5C6BC0),
+                          ),
+                          const SizedBox(width: 10),
+                          _buildStatBox(
+                            context: context,
+                            isDark: isDark,
+                            label: 'Priority',
+                            value: move.pri > 0
+                                ? '+${move.pri}'
+                                : (move.pri < 0 ? '${move.pri}' : '0'),
+                            subtitle: move.pri > 0
+                                ? 'Fast Move'
+                                : (move.pri < 0 ? 'Slow Move' : 'Standard (0)'),
+                            icon: LucideIcons.clock,
+                            accentColor: move.pri > 0
+                                ? const Color(0xFF43A047)
+                                : (move.pri < 0
+                                    ? const Color(0xFFE53935)
+                                    : Colors.blueGrey),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
-                SizedBox(height: 26),
-                _sectionCard(
-                  context,
-                  'Details',
-                  Column(
+
+                // Card 2: Details
+                _buildSectionCard(
+                  context: context,
+                  isDark: isDark,
+                  title: 'Details',
+                  icon: LucideIcons.fileText,
+                  accentColor: typeColor,
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (move.flavor != null) ...[
-                        const _CardHeading('Description'),
-                        SizedBox(height: 6),
-                        Text(move.flavor!,
-                            style: TextStyle(
-                                fontSize: 14,
-                                height: 1.4,
-                                color: Theme.of(context).textTheme.bodyMedium?.color)),
+                        Text(
+                          'DESCRIPTION',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.6,
+                            color: Colors.grey.shade500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          move.flavor!,
+                          style: TextStyle(
+                            fontSize: 13.5,
+                            height: 1.45,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                          ),
+                        ),
                       ],
-                      if (move.eff != null) ...[
-                        if (move.flavor != null) SizedBox(height: 12),
-                        const _CardHeading('Effect'),
-                        SizedBox(height: 6),
-                        Text(move.eff!,
-                            style: TextStyle(
-                                fontSize: 14,
-                                height: 1.4,
-                                color: Theme.of(context).textTheme.bodyMedium?.color)),
+                      if (move.eff != null && move.eff!.isNotEmpty) ...[
+                        if (move.flavor != null) const SizedBox(height: 14),
+                        Text(
+                          'IN-DEPTH EFFECT',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.6,
+                            color: Colors.grey.shade500,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          move.eff!,
+                          style: TextStyle(
+                            fontSize: 13,
+                            height: 1.45,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                          ),
+                        ),
                       ],
-                      if (move.contest != null) ...[
-                        SizedBox(height: 16),
+                      if (move.contest != null && move.contest!.isNotEmpty) ...[
+                        const SizedBox(height: 14),
                         Row(
                           children: [
-                            const _CardHeading('Contest:'),
-                            SizedBox(width: 10),
+                            Text(
+                              'CONTEST CATEGORY:',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.6,
+                                color: Colors.grey.shade500,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
                             Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 6),
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
-                                color: (Theme.of(context).brightness == Brightness.dark) ? Colors.grey.shade800 : Colors.grey.shade200,
-                                borderRadius: BorderRadius.circular(18),
+                                color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.grey.shade100,
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: Text(
-                                move.contest![0].toUpperCase() +
-                                    move.contest!.substring(1),
+                                PokemonHelpers.formatName(move.contest!),
                                 style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                    color: Theme.of(context).textTheme.bodyLarge?.color),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ],
-                      if (move.flavor == null &&
-                          move.eff == null &&
-                          move.contest == null)
-                        Text('No details available.',
-                            style: TextStyle(
-                                fontSize: 13,
-                                fontStyle: FontStyle.italic,
-                                color: Theme.of(context).textTheme.bodyMedium?.color)),
+                      if (move.flavor == null && move.eff == null && move.contest == null)
+                        Text(
+                          'No details available.',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontStyle: FontStyle.italic,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                          ),
+                        ),
                     ],
                   ),
                 ),
-                SizedBox(height: 26),
-                _sectionCard(
-                  context,
-                  'Damage dealt',
-                  Column(
+
+                // Card 3: Damage Dealt with Generous Spacing Between Sections
+                _buildSectionCard(
+                  context: context,
+                  isDark: isDark,
+                  title: 'Damage Dealt',
+                  icon: LucideIcons.swords,
+                  accentColor: typeColor,
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _DamageGroup(
-                        heading: 'Super effective against:',
-                        subtitle: '2x damage',
+                      _buildDamageGroup(
+                        context: context,
+                        isDark: isDark,
+                        heading: 'Super effective against',
+                        badge: '2x damage',
+                        badgeColor: const Color(0xFF43A047),
                         types: supers,
                       ),
-                      _DamageGroup(
-                        heading: 'Weak against:',
-                        subtitle: '1/2x damage',
+                      _buildDamageGroup(
+                        context: context,
+                        isDark: isDark,
+                        heading: 'Weak against',
+                        badge: '1/2x damage',
+                        badgeColor: const Color(0xFFFB8C00),
                         types: weaks,
                       ),
-                      _DamageGroup(
-                        heading: 'No effect against:',
-                        subtitle: '0x damage',
+                      _buildDamageGroup(
+                        context: context,
+                        isDark: isDark,
+                        heading: 'No effect against',
+                        badge: '0x damage',
+                        badgeColor: Colors.grey,
                         types: noEffects,
                       ),
-                      _DamageGroup(
-                        heading: 'Normal damage to:',
-                        subtitle: '1x damage',
+                      _buildDamageGroup(
+                        context: context,
+                        isDark: isDark,
+                        heading: 'Normal damage to',
+                        badge: '1x damage',
+                        badgeColor: Colors.blueGrey,
                         types: normals,
                       ),
                     ],
                   ),
-                 ),
-                 SizedBox(height: 8),
-               ],
-             ),
-           ),
-           Padding(
-             padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-             child: SizedBox(
-               width: double.infinity,
-               height: 52,
-               child: GestureDetector(
-                 onTap: move.learn.isEmpty
-                     ? null
-                     : () => _openLearnersInPokedex(context, ref),
-                 child: Container(
-                   decoration: BoxDecoration(
-                     gradient: move.learn.isEmpty
-                         ? LinearGradient(
-                             colors: [Colors.grey, Colors.grey])
-                         : LinearGradient(
-                             colors: [Color(0xFF7CB342), Color(0xFF26A69A)],
-                           ),
-                     borderRadius: BorderRadius.circular(16),
-                   ),
-                   child: Row(
-                     mainAxisAlignment: MainAxisAlignment.center,
-                     children: [
-                       Icon(
-                         Icons.catching_pokemon,
-                         color: Colors.white,
-                       ),
-                       SizedBox(width: 8),
-                       Text(
-                         move.learn.isEmpty
-                             ? 'NO POK\u00c9MON LEARN THIS MOVE'
-                             : 'POK\u00c9MON LIST',
-                         style: TextStyle(
-                             color: Colors.white,
-                             fontWeight: FontWeight.w900,
-                             letterSpacing: 1.2,
-                             fontSize: 15),
-                       ),
-                     ],
-                   ),
-                 ),
-               ),
-             ),
-           ),
+                ),
+                const SizedBox(height: 4),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+            child: SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: GestureDetector(
+                onTap: totalLearners == 0
+                    ? null
+                    : () => _openLearnersInPokedex(context, ref),
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: totalLearners == 0
+                        ? LinearGradient(colors: [Colors.grey.shade600, Colors.grey.shade500])
+                        : LinearGradient(colors: [typeColor, typeColor.withValues(alpha: 0.82)]),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: totalLearners == 0
+                        ? null
+                        : [
+                            BoxShadow(
+                              color: typeColor.withValues(alpha: 0.32),
+                              blurRadius: 10,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.catching_pokemon,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        totalLearners == 0
+                            ? 'NO POKÉMON LEARN THIS MOVE'
+                            : 'POKÉMON LIST',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.1,
+                          fontSize: 14.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _verticalDivider(BuildContext context) =>
-      Container(width: 1, height: 36, color: Theme.of(context).dividerColor);
-
-  Widget _sectionCard(BuildContext context, String title, Widget child) => Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.topCenter,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 14),
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(16, 22, 16, 16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: child,
+  Widget _buildStatBox({
+    required BuildContext context,
+    required bool isDark,
+    required String label,
+    required String value,
+    required String subtitle,
+    required IconData icon,
+    required Color accentColor,
+  }) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.04),
           ),
-          Positioned(
-            top: 0,
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: _accent, width: 1.5),
-              ),
-              child: Text(title,
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                      color: _accent)),
-            ),
-          ),
-        ],
-      );
-}
-
-class _CardHeading extends StatelessWidget {
-  final String text;
-
-  const _CardHeading(this.text);
-
-  @override
-  Widget build(BuildContext context) => Text(text,
-      style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w800,
-          color: Theme.of(context).textTheme.bodyLarge?.color));
-}
-
-class _StatColumn extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _StatColumn({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) => Expanded(
+        ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label,
-                style:
-                    TextStyle(fontSize: 13, color: Theme.of(context).textTheme.bodyMedium?.color)),
-            SizedBox(height: 2),
-            Text(value,
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    color: Theme.of(context).textTheme.bodyLarge?.color)),
+            Row(
+              children: [
+                Icon(icon, size: 14, color: accentColor),
+                const SizedBox(width: 6),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w900,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              subtitle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                color: isDark ? Colors.grey.shade500 : Colors.grey.shade600,
+              ),
+            ),
           ],
         ),
-      );
-}
+      ),
+    );
+  }
 
-class _DamageGroup extends StatelessWidget {
-  final String heading;
-  final String subtitle;
-  final List<String> types;
-
-  const _DamageGroup({
-    required this.heading,
-    required this.subtitle,
-    required this.types,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (types.isEmpty) return SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+  Widget _buildDamageGroup({
+    required BuildContext context,
+    required bool isDark,
+    required String heading,
+    required String badge,
+    required Color badgeColor,
+    required List<String> types,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.04),
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(heading,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w800,
-                  color: Theme.of(context).textTheme.bodyLarge?.color)),
-          SizedBox(height: 2),
-          Text(subtitle,
-              style:
-                  TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyMedium?.color)),
-          SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
+          Row(
             children: [
-              for (final t in types)
-                _TypePill(
-                    type: t,
-                    color: AppColors.getTypeColor(t),
-                    compact: true),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: badgeColor.withValues(alpha: isDark ? 0.22 : 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  badge,
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w800,
+                    color: badgeColor,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  heading,
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  '${types.length}',
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? Colors.white60 : Colors.grey.shade700,
+                  ),
+                ),
+              ),
             ],
           ),
+          const SizedBox(height: 10),
+          if (types.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Text(
+                'None',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  color: isDark ? Colors.white38 : Colors.grey.shade500,
+                ),
+              ),
+            )
+          else
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final t in types)
+                  _TypePill(
+                    type: t,
+                    color: AppColors.getTypeColor(t),
+                    compact: true,
+                  ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionCard({
+    required BuildContext context,
+    required bool isDark,
+    required String title,
+    required IconData icon,
+    required Color accentColor,
+    required Widget child,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E212B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.06),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.28)
+                : Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: isDark ? 0.22 : 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, size: 14, color: accentColor),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.0,
+                  color: accentColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          child,
         ],
       ),
     );
   }
 }
 
-/// Type pill in the app's standard style: natural colored type icon on a
-/// tinted background with matching colored label.
 class _TypePill extends StatelessWidget {
   final String type;
   final Color color;
@@ -1033,7 +1252,9 @@ class _TypePill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
-          horizontal: compact ? 12 : 16, vertical: compact ? 6 : 8),
+        horizontal: compact ? 12 : 16,
+        vertical: compact ? 6 : 8,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(30),
@@ -1042,15 +1263,20 @@ class _TypePill extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SvgPicture.asset(
-            'assets/types/$type.svg',
+            'assets/types/${type.toLowerCase()}.svg',
             width: compact ? 16 : 18,
             height: compact ? 16 : 18,
           ),
-          SizedBox(width: 6),
+          const SizedBox(width: 6),
           Text(
-            type[0].toUpperCase() + type.substring(1),
+            type.isNotEmpty
+                ? type[0].toUpperCase() + type.substring(1).toLowerCase()
+                : '',
             style: TextStyle(
-                color: color, fontSize: 13, fontWeight: FontWeight.w700),
+              color: color,
+              fontSize: compact ? 12 : 13,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),
@@ -1066,29 +1292,20 @@ class _SolidClsPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final icon = switch (cls) {
-      'physical' => Icons.fitness_center,
-      'special' => Icons.auto_awesome,
-      _ => Icons.adjust,
-    };
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6.5),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(30),
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color, width: 1.2),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 16, color: Colors.white),
-          SizedBox(width: 6),
-          Text(_clsLabel(cls),
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700)),
-        ],
+      child: Text(
+        _clsLabel(cls),
+        style: TextStyle(
+          fontSize: 12.5,
+          fontWeight: FontWeight.w800,
+          color: color,
+        ),
       ),
     );
   }

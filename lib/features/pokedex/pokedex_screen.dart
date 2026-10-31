@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,6 +12,7 @@ import 'widgets/pokemon_grid.dart';
 import 'widgets/filter_sheet.dart';
 import 'widgets/gen_filter_sheet.dart';
 import 'widgets/tools_sheet.dart';
+import '../../core/feedback_service.dart';
 import 'pokedex_provider.dart';
 
 
@@ -90,6 +92,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) {
           ref.read(toolAbilityFilterProvider.notifier).state = null;
+          ref.read(toolMoveFilterProvider.notifier).state = null;
         }
       },
       child: Scaffold(
@@ -101,6 +104,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
             label: 'Open Pok\u00e9dex tools menu',
             child: GestureDetector(
               onTap: () {
+                AppFeedback.lightImpact();
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
@@ -123,22 +127,11 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                         color: championsMode ? championsPurple : Colors.red,
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 22,
-                      height: 22,
-                      decoration: BoxDecoration(
-                        color:
-                            championsMode ? championsPurple : AppColors.primary,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Center(
-                        child: Icon(
-                          Icons.keyboard_arrow_down,
-                          color: Colors.white,
-                          size: 16,
-                        ),
-                      ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      color: championsMode ? championsPurple : Colors.red,
+                      size: 24,
                     ),
                   ],
                 ),
@@ -180,25 +173,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                 });
               },
             ),
-            IconButton(
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-              tooltip: 'Shiny mode',
-              icon: Icon(
-                LucideIcons.sparkles,
-                size: 24,
-                color: shinyMode
-                    ? Colors.amber
-                    : Theme.of(context)
-                        .iconTheme
-                        .color
-                        ?.withValues(alpha: 0.7),
-              ),
-              onPressed: () {
-                ref.read(shinyModeProvider.notifier).state =
-                    !ref.read(shinyModeProvider);
-              },
-            ),
+            
             IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
@@ -283,34 +258,13 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                             },
                           ),
                           _FilterPill(
-                            label: 'Champions',
-                            isActive: championsMode,
-                            activeColor: const Color(0xFF8E24AA),
+                            label: 'Shiny',
+                            icon: LucideIcons.sparkles,
+                            isActive: shinyMode,
+                            activeColor: const Color(0xFFFFA000),
                             onTap: () {
-                              final next = !ref.read(championsModeProvider);
-                              ref.read(championsModeProvider.notifier).state =
-                                  next;
-                              if (next) {
-                                // Entering champions mode starts clean
-                                ref.read(selectedTypesProvider.notifier).state =
-                                    [];
-                                ref.read(genFilterProvider.notifier).state = 0;
-                                ref.read(searchQueryProvider.notifier).state =
-                                    '';
-                                ref
-                                    .read(debouncedSearchQueryProvider
-                                        .notifier)
-                                    .state = '';
-                                ref
-                                    .read(toolLearnerFilterProvider.notifier)
-                                    .state = null;
-                                ref
-                                    .read(toolAbilityFilterProvider.notifier)
-                                    .state = null;
-                                ref
-                                    .read(toolMoveFilterProvider.notifier)
-                                    .state = null;
-                              }
+                              ref.read(shinyModeProvider.notifier).state =
+                                  !ref.read(shinyModeProvider);
                             },
                           ),
                         ],
@@ -354,12 +308,11 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Theme.of(context).dividerColor),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
+                            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
+                            blurRadius: 14,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
@@ -376,7 +329,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                                     vertical: 5,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: AppColors.primary,
+                                    color: const Color(0xFF9C27B0),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Text(
@@ -452,6 +405,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                     const SizedBox(height: 8),
                     _AbilityModeSegmentedSwitch(
                       activeMode: abilityFilter.mode,
+                      activeColor: const Color(0xFF9C27B0),
                       onModeChanged: (newMode) {
                         final c = ref.read(toolAbilityFilterProvider);
                         if (c != null) {
@@ -482,12 +436,11 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Theme.of(context).dividerColor),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
+                            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.08),
+                            blurRadius: 14,
+                            offset: const Offset(0, 4),
                           ),
                         ],
                       ),
@@ -595,14 +548,7 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                               borderRadius: const BorderRadius.vertical(
                                 bottom: Radius.circular(16),
                               ),
-                              border: Border(
-                                top: BorderSide(
-                                  color: Theme.of(context)
-                                      .dividerColor
-                                      .withValues(alpha: 0.5),
-                                ),
-                              ),
-                            ),
+                                                          ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -640,6 +586,75 @@ class _PokedexScreenState extends ConsumerState<PokedexScreen> {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 8),
+                    if (championsMode)
+                      Container(
+                        height: 42,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.surface,
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        alignment: Alignment.center,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.emoji_events,
+                              size: 16,
+                              color: Color(0xFFD4AF37),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'CHAMPIONS ROSTER LEARNERS (${moveFilter.championsIds.length})',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      _MoveModeSegmentedSwitch(
+                        activeMode: moveFilter.mode,
+                        activeColor: moveFilter.type != null
+                            ? AppColors.getTypeColor(moveFilter.type!)
+                            : const Color(0xFF26A69A),
+                        hasTutor: moveFilter.tutorIds.isNotEmpty,
+                        onModeChanged: (newMode) {
+                          final c = ref.read(toolMoveFilterProvider);
+                          if (c != null) {
+                            ref
+                                .read(toolMoveFilterProvider.notifier)
+                                .state = (
+                              name: c.name,
+                              flavor: c.flavor,
+                              eff: c.eff,
+                              type: c.type,
+                              category: c.category,
+                              power: c.power,
+                              accuracy: c.accuracy,
+                              pp: c.pp,
+                              mode: newMode,
+                              allIds: c.allIds,
+                              levelUpIds: c.levelUpIds,
+                              tmIds: c.tmIds,
+                              eggIds: c.eggIds,
+                              tutorIds: c.tutorIds,
+                              championsIds: c.championsIds,
+                            );
+                          }
+                        },
+                      ),
                   ],
                 ),
               ),
@@ -729,19 +744,57 @@ class _MoveStatItemPill extends StatelessWidget {
   }
 }
 
-class _AbilityModeSegmentedSwitch extends StatelessWidget {
+class _AbilityModeSegmentedSwitch extends StatefulWidget {
   final String activeMode;
+  final Color activeColor;
   final ValueChanged<String> onModeChanged;
 
   const _AbilityModeSegmentedSwitch({
     required this.activeMode,
+    this.activeColor = const Color(0xFF9C27B0),
     required this.onModeChanged,
   });
 
   @override
+  State<_AbilityModeSegmentedSwitch> createState() =>
+      _AbilityModeSegmentedSwitchState();
+}
+
+class _AbilityModeSegmentedSwitchState
+    extends State<_AbilityModeSegmentedSwitch> {
+  late String _currentMode;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentMode = widget.activeMode;
+  }
+
+  @override
+  void didUpdateWidget(covariant _AbilityModeSegmentedSwitch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.activeMode != oldWidget.activeMode) {
+      _currentMode = widget.activeMode;
+    }
+  }
+
+  void _onTapTab(String mode) {
+    AppFeedback.selectionClick();
+    if (_currentMode == mode) return;
+    setState(() {
+      _currentMode = mode;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        widget.onModeChanged(mode);
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final int activeIndex = switch (activeMode) {
+    final int activeIndex = switch (_currentMode) {
       'normal' => 1,
       'hidden' => 2,
       _ => 0,
@@ -759,14 +812,10 @@ class _AbilityModeSegmentedSwitch extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-          width: 1.2,
-        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-            blurRadius: 6,
+            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
+            blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
@@ -776,22 +825,15 @@ class _AbilityModeSegmentedSwitch extends StatelessWidget {
         children: [
           AnimatedAlign(
             alignment: indicatorAlignment,
-            duration: const Duration(milliseconds: 250),
-            curve: Curves.easeInOutCubic,
+            duration: const Duration(milliseconds: 280),
+            curve: Curves.easeInOut,
             child: FractionallySizedBox(
               widthFactor: 1 / 3,
               heightFactor: 1.0,
               child: Container(
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: widget.activeColor,
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.35),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
                 ),
               ),
             ),
@@ -820,11 +862,7 @@ class _AbilityModeSegmentedSwitch extends StatelessWidget {
     return Expanded(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () {
-          if (!isSelected) {
-            onModeChanged(mode);
-          }
-        },
+        onTap: () => _onTapTab(mode),
         child: Center(
           child: AnimatedDefaultTextStyle(
             duration: const Duration(milliseconds: 200),
@@ -844,14 +882,168 @@ class _AbilityModeSegmentedSwitch extends StatelessWidget {
   }
 }
 
+class _MoveModeSegmentedSwitch extends StatefulWidget {
+  final String activeMode;
+  final Color? activeColor;
+  final bool hasTutor;
+  final ValueChanged<String> onModeChanged;
+
+  const _MoveModeSegmentedSwitch({
+    required this.activeMode,
+    this.activeColor,
+    this.hasTutor = false,
+    required this.onModeChanged,
+  });
+
+  @override
+  State<_MoveModeSegmentedSwitch> createState() =>
+      _MoveModeSegmentedSwitchState();
+}
+
+class _MoveModeSegmentedSwitchState extends State<_MoveModeSegmentedSwitch> {
+  late String _currentMode;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentMode = widget.activeMode;
+  }
+
+  @override
+  void didUpdateWidget(covariant _MoveModeSegmentedSwitch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.activeMode != oldWidget.activeMode) {
+      _currentMode = widget.activeMode;
+    }
+  }
+
+  void _onTapTab(String mode) {
+    if (_currentMode == mode) return;
+    setState(() {
+      _currentMode = mode;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        widget.onModeChanged(mode);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final tabActiveColor = widget.activeColor ?? AppColors.primary;
+    final modes = [
+      ('all', 'All'),
+      ('level-up', 'Level up'),
+      ('tm', 'TM/HM'),
+      ('egg', 'Eggs'),
+      if (widget.hasTutor) ('tutor', 'Tutor'),
+    ];
+
+    final n = modes.length;
+    var activeIndex = modes.indexWhere((m) =>
+        m.$1 == _currentMode ||
+        m.$2.toLowerCase() == _currentMode.toLowerCase() ||
+        (m.$1 == 'tm' && (_currentMode.toLowerCase() == 'tm' || _currentMode.toLowerCase() == 'tm/hm')) ||
+        (m.$1 == 'level-up' && (_currentMode.toLowerCase() == 'level-up' || _currentMode.toLowerCase() == 'level up')) ||
+        (m.$1 == 'egg' && (_currentMode.toLowerCase() == 'egg' || _currentMode.toLowerCase() == 'eggs')));
+    if (activeIndex < 0) activeIndex = 0;
+
+    final double xAlignment = n > 1 ? -1.0 + (2.0 * activeIndex) / (n - 1) : 0.0;
+
+    return Container(
+      height: 42,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(4),
+      child: Stack(
+        children: [
+          AnimatedAlign(
+            alignment: Alignment(xAlignment, 0.0),
+            duration: const Duration(milliseconds: 280),
+            curve: Curves.easeInOut,
+            child: FractionallySizedBox(
+              widthFactor: 1 / n,
+              heightFactor: 1.0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: tabActiveColor,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              for (var i = 0; i < n; i++)
+                _buildTab(
+                  context,
+                  modes[i].$2,
+                  modes[i].$1,
+                  i,
+                  activeIndex,
+                  isDark,
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTab(
+    BuildContext context,
+    String label,
+    String mode,
+    int index,
+    int activeIndex,
+    bool isDark,
+  ) {
+    final isSelected = activeIndex == index;
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => _onTapTab(mode),
+        child: Center(
+          child: AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeInOut,
+            style: TextStyle(
+              fontSize: 11.5,
+              fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+              color: isSelected
+                  ? Colors.white
+                  : (isDark ? Colors.grey.shade400 : Colors.grey.shade600),
+            ),
+            child: Text(label),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _FilterPill extends StatelessWidget {
   final String label;
+  final IconData? icon;
   final bool isActive;
   final Color activeColor;
   final VoidCallback onTap;
 
   const _FilterPill({
     required this.label,
+    this.icon,
     required this.isActive,
     this.activeColor = AppColors.primary,
     required this.onTap,
@@ -860,7 +1052,10 @@ class _FilterPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        AppFeedback.selectionClick();
+        onTap();
+      },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
@@ -874,13 +1069,26 @@ class _FilterPill extends StatelessWidget {
             width: isActive ? 1.5 : 1,
           ),
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            color: isActive ? activeColor : Colors.grey.shade700,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) ...[
+              Icon(
+                icon,
+                size: 14,
+                color: isActive ? activeColor : Colors.grey.shade700,
+              ),
+              const SizedBox(width: 5),
+            ],
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: isActive ? activeColor : Colors.grey.shade700,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -890,74 +1098,276 @@ class _FilterPill extends StatelessWidget {
 class _PokeballIcon extends StatelessWidget {
   final double size;
 
-  const _PokeballIcon({required this.size});
+  const _PokeballIcon({this.size = 28});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: size,
       height: size,
-      child: CustomPaint(painter: _PokeballPainter()),
+      child: const CustomPaint(painter: _PokeballPainter()),
     );
   }
 }
 
 class _PokeballPainter extends CustomPainter {
-  static const _outlineColor = Color(0xFF303030);
+  const _PokeballPainter();
 
   @override
   void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width / 2;
-    final bandHeight = size.height * 0.12;
-    final buttonRadius = radius * 0.34;
+    final w = size.width;
+    final h = size.height;
+    final center = Offset(w / 2, h / 2);
+    final radius = (math.min(w, h) / 2) - 1.0;
+    if (radius <= 0) return;
 
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      3.14159,
-      3.14159,
-      true,
-      Paint()..color = AppColors.primary,
+    final ballRect = Rect.fromCircle(center: center, radius: radius);
+
+    // 1. Ambient Drop Shadow underneath the sphere for realistic depth
+    final shadowPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.25)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5);
+    canvas.drawCircle(center.translate(0, 1.2), radius, shadowPaint);
+
+    // Save layer to clip sphere contents cleanly to the perimeter
+    canvas.save();
+    final circleClip = Path()..addOval(ballRect);
+    canvas.clipPath(circleClip);
+
+    // 2. Top Hemisphere (Actual Vibrant 3D Pokéball Scarlet Red with Spherical Shading)
+    final topHalfPath = Path()
+      ..moveTo(center.dx - radius, center.dy)
+      ..arcTo(ballRect, math.pi, math.pi, false)
+      ..lineTo(center.dx + radius, center.dy)
+      ..close();
+
+    final redLightCenter = Offset(
+      center.dx - radius * 0.25,
+      center.dy - radius * 0.30,
+    );
+    final topPaint = Paint()
+      ..shader = RadialGradient(
+        center: Alignment(
+          (redLightCenter.dx - center.dx) / radius,
+          (redLightCenter.dy - center.dy) / radius,
+        ),
+        radius: 0.95,
+        colors: const [
+          Color(0xFFFF4E4E), // bright light highlight
+          Color(0xFFEE1515), // iconic vivid Pokéball red
+          Color(0xFFB30B12), // deep crimson shading
+          Color(0xFF7E0409), // outer rim shadow
+        ],
+        stops: const [0.0, 0.40, 0.80, 1.0],
+      ).createShader(ballRect);
+
+    canvas.drawPath(topHalfPath, topPaint);
+
+    // 3. Curved Glossy Specular Glass Highlight on Top Shell
+    final glossRect = Rect.fromCenter(
+      center: Offset(center.dx, center.dy - radius * 0.44),
+      width: radius * 1.15,
+      height: radius * 0.46,
+    );
+    final glossPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Colors.white.withValues(alpha: 0.65),
+          Colors.white.withValues(alpha: 0.18),
+          Colors.white.withValues(alpha: 0.0),
+        ],
+        stops: const [0.0, 0.50, 1.0],
+      ).createShader(glossRect);
+    canvas.drawOval(glossRect, glossPaint);
+
+    // 4. Bottom Hemisphere (3D Pearl White with Ambient Ground Bounce)
+    final bottomHalfPath = Path()
+      ..moveTo(center.dx - radius, center.dy)
+      ..arcTo(ballRect, 0, math.pi, false)
+      ..lineTo(center.dx - radius, center.dy)
+      ..close();
+
+    final whiteLightCenter = Offset(
+      center.dx - radius * 0.20,
+      center.dy + radius * 0.10,
+    );
+    final bottomPaint = Paint()
+      ..shader = RadialGradient(
+        center: Alignment(
+          (whiteLightCenter.dx - center.dx) / radius,
+          (whiteLightCenter.dy - center.dy) / radius,
+        ),
+        radius: 0.95,
+        colors: const [
+          Color(0xFFFFFFFF), // pure pearl white
+          Color(0xFFF2F4F7), // soft silver
+          Color(0xFFD4DAE1), // ambient under-shadow
+          Color(0xFFAAB3BD), // dark bottom rim
+        ],
+        stops: const [0.0, 0.45, 0.80, 1.0],
+      ).createShader(ballRect);
+
+    canvas.drawPath(bottomHalfPath, bottomPaint);
+
+    // 5. Subtle Bottom Bounce Reflection
+    final bottomBounceRect = Rect.fromCenter(
+      center: Offset(center.dx, center.dy + radius * 0.72),
+      width: radius * 0.72,
+      height: radius * 0.22,
+    );
+    final bottomBouncePaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.bottomCenter,
+        end: Alignment.topCenter,
+        colors: [
+          Colors.white.withValues(alpha: 0.35),
+          Colors.white.withValues(alpha: 0.0),
+        ],
+      ).createShader(bottomBounceRect);
+    canvas.drawOval(bottomBounceRect, bottomBouncePaint);
+
+    // 6. Center Dividing Band (Recessed Obsidian Metal Band with Seams)
+    final bandHeight = radius * 0.22;
+    final bandRect = Rect.fromCenter(
+      center: center,
+      width: (radius + 2) * 2,
+      height: bandHeight,
     );
 
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      0,
-      3.14159,
-      true,
-      Paint()..color = Colors.white,
+    final bandPaint = Paint()
+      ..shader = const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Color(0xFF141518),
+          Color(0xFF24262C),
+          Color(0xFF141518),
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ).createShader(bandRect);
+
+    canvas.drawRect(bandRect, bandPaint);
+
+    // Groove seam lines at top and bottom of the band for physical separation
+    final seamTopPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.55)
+      ..strokeWidth = 0.7
+      ..style = PaintingStyle.stroke;
+    canvas.drawLine(
+      Offset(center.dx - radius, center.dy - bandHeight / 2),
+      Offset(center.dx + radius, center.dy - bandHeight / 2),
+      seamTopPaint,
     );
 
-    canvas.drawRect(
-      Rect.fromLTWH(
-        0,
-        size.height / 2 - bandHeight / 2,
-        size.width,
-        bandHeight,
-      ),
-      Paint()..color = _outlineColor,
+    final seamBottomPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.40)
+      ..strokeWidth = 0.7
+      ..style = PaintingStyle.stroke;
+    canvas.drawLine(
+      Offset(center.dx - radius, center.dy + bandHeight / 2),
+      Offset(center.dx + radius, center.dy + bandHeight / 2),
+      seamBottomPaint,
     );
 
-    canvas.drawCircle(center, buttonRadius, Paint()..color = _outlineColor);
+    // Restore clip
+    canvas.restore();
+
+    // 7. Center Button Assembly (Multi-layered 3D Tactile Release Mechanism)
+    final outerRingRadius = radius * 0.35;
+    final beveledRingRadius = radius * 0.27;
+    final buttonSocketRadius = radius * 0.20;
+    final innerButtonRadius = radius * 0.14;
+
+    // A. Outer socket shadow onto the band
     canvas.drawCircle(
-      center,
-      buttonRadius * 0.66,
-      Paint()..color = Colors.white,
-    );
-    canvas.drawCircle(
-      center,
-      buttonRadius * 0.28,
-      Paint()..color = _outlineColor,
-    );
-
-    canvas.drawCircle(
-      center,
-      radius - 0.75,
+      center.translate(0, 0.7),
+      outerRingRadius + 0.3,
       Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5
-        ..color = _outlineColor,
+        ..color = Colors.black.withValues(alpha: 0.35)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.0),
     );
+
+    // B. Outer Dark Socket Ring
+    final outerRingPaint = Paint()
+      ..shader = RadialGradient(
+        center: Alignment.topLeft,
+        radius: 0.9,
+        colors: const [
+          Color(0xFF2D2F36),
+          Color(0xFF141518),
+        ],
+      ).createShader(Rect.fromCircle(center: center, radius: outerRingRadius));
+    canvas.drawCircle(center, outerRingRadius, outerRingPaint);
+
+    // C. Metallic Beveled Ring (Silver Chrome)
+    final bevelPaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: const [
+          Color(0xFFFFFFFF),
+          Color(0xFFE4E8ED),
+          Color(0xFFB8C0C9),
+          Color(0xFF88929E),
+        ],
+        stops: const [0.0, 0.35, 0.70, 1.0],
+      ).createShader(Rect.fromCircle(center: center, radius: beveledRingRadius));
+    canvas.drawCircle(center, beveledRingRadius, bevelPaint);
+
+    // D. Dark Button Inset Groove
+    final socketPaint = Paint()
+      ..color = const Color(0xFF16171B)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = (beveledRingRadius - buttonSocketRadius);
+    canvas.drawCircle(
+      center,
+      (beveledRingRadius + buttonSocketRadius) / 2,
+      socketPaint,
+    );
+
+    // E. Raised Center Push Button (Luminous pure white with soft 3D spherical gradient)
+    final buttonRect = Rect.fromCircle(center: center, radius: innerButtonRadius);
+    final buttonPaint = Paint()
+      ..shader = RadialGradient(
+        center: const Alignment(-0.35, -0.35),
+        radius: 0.85,
+        colors: const [
+          Color(0xFFFFFFFF), // pure core highlight
+          Color(0xFFF1F4F8),
+          Color(0xFFD2D8E0), // soft bevel shade
+        ],
+        stops: const [0.0, 0.60, 1.0],
+      ).createShader(buttonRect);
+    canvas.drawCircle(center, innerButtonRadius, buttonPaint);
+
+    // F. Button Specular Shine Dot
+    final shineOffset = Offset(
+      center.dx - innerButtonRadius * 0.35,
+      center.dy - innerButtonRadius * 0.35,
+    );
+    canvas.drawCircle(
+      shineOffset,
+      innerButtonRadius * 0.28,
+      Paint()..color = Colors.white.withValues(alpha: 0.95),
+    );
+
+    // 8. Crisp Outer Rim Bezel (Subtle metallic dark contour)
+    final outerBezelPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Colors.white.withValues(alpha: 0.45),
+          const Color(0xFF1A1B1F).withValues(alpha: 0.60),
+          const Color(0xFF0E0F12).withValues(alpha: 0.85),
+        ],
+        stops: const [0.0, 0.45, 1.0],
+      ).createShader(ballRect);
+    canvas.drawCircle(center, radius, outerBezelPaint);
   }
 
   @override

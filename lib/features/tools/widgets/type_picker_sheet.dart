@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/feedback_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../app/theme/app_colors.dart';
 
@@ -69,7 +70,10 @@ class TypePickerSheet extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(20),
-                      onTap: () => Navigator.pop(context, t),
+                      onTap: () {
+                        AppFeedback.selectionClick();
+                        Navigator.pop(context, t);
+                      },
                       child: Container(
                         height: double.infinity,
                         padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -137,7 +141,10 @@ class _ClearButton extends StatelessWidget {
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(14),
         child: InkWell(
-          onTap: onTap,
+          onTap: () {
+            AppFeedback.lightImpact();
+            onTap();
+          },
           borderRadius: BorderRadius.circular(14),
           child: Container(
             height: 50,

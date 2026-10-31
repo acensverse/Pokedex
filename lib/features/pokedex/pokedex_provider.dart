@@ -59,20 +59,47 @@ final toolAbilityFilterProvider =
     >((ref) => null);
 
 /// Move filter: shows only Pokemon that learn [name]
-final toolMoveFilterProvider =
-    StateProvider<
-      ({
-        String name,
-        String flavor,
-        String? eff,
-        String? type,
-        String? category,
-        int? power,
-        int? accuracy,
-        int? pp,
-        Set<int> ids,
-      })?
-    >((ref) => null);
+typedef ToolMoveFilter = ({
+  String name,
+  String flavor,
+  String? eff,
+  String? type,
+  String? category,
+  int? power,
+  int? accuracy,
+  int? pp,
+  String mode,
+  Set<int> allIds,
+  Set<int> levelUpIds,
+  Set<int> tmIds,
+  Set<int> eggIds,
+  Set<int> tutorIds,
+  Set<int> championsIds,
+});
+
+/// Move filter: shows only Pokemon that learn [name]
+final toolMoveFilterProvider = StateProvider<ToolMoveFilter?>((ref) => null);
+
+/// Returns the correct ID set for the given move filter mode.
+Set<int> _moveIdsForMode(ToolMoveFilter filter, bool championsMode) {
+  if (championsMode && filter.championsIds.isNotEmpty) {
+    return filter.championsIds;
+  }
+  switch (filter.mode) {
+    case 'level-up':
+      return filter.levelUpIds;
+    case 'tm':
+      return filter.tmIds;
+    case 'egg':
+      return filter.eggIds;
+    case 'tutor':
+      return filter.tutorIds;
+    case 'champions':
+      return filter.championsIds;
+    default:
+      return filter.allIds;
+  }
+}
 
 /// Returns the correct ID set for the given ability filter mode.
 Set<int> _abilityIdsForMode(
@@ -233,7 +260,7 @@ final filteredPokemonProvider = Provider<List<Pokemon>>((ref) {
     final matchesAbility = abilityFilter == null ||
         _abilityIdsForMode(abilityFilter).contains(pokemon.id);
     final matchesMove = moveFilter == null ||
-        moveFilter.ids.contains(pokemon.id);
+        _moveIdsForMode(moveFilter, championsMode).contains(pokemon.id);
     // Champions mode scopes the whole grid to the Champions roster; other
     // filters (search/type/gen/tool chips) still apply within that subset.
     // Before the roster asset finishes loading the grid is empty for a frame.

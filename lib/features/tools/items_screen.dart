@@ -2,14 +2,15 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import '../../core/feedback_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import '../../app/theme/app_colors.dart';
 import '../../app/theme/app_spacing.dart';
 import '../../core/champions.dart';
 import '../../core/utils/pokemon_helpers.dart';
 import '../pokedex/widgets/tools_sheet.dart';
 import 'widgets/tool_widgets.dart';
+import '../../core/widgets/app_search_bar.dart';
 
 
 class ItemEntry {
@@ -115,7 +116,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
             icon: Icon(
               LucideIcons.search,
               size: 26,
-              color: _isSearching ? AppColors.primary : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
+              color: _isSearching ? (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF26C6DA) : const Color(0xFF0097A7)) : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
             ),
             onPressed: _toggleSearch,
           ),
@@ -124,7 +125,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
             icon: Icon(
               Icons.tune,
               size: 26,
-              color: _catFilter != null ? AppColors.primary : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
+              color: _catFilter != null ? (Theme.of(context).brightness == Brightness.dark ? const Color(0xFF26C6DA) : const Color(0xFF0097A7)) : Theme.of(context).iconTheme.color?.withValues(alpha: 0.7),
             ),
             onPressed: () {
               final items = ref.read(itemsSeedProvider).value ?? const [];
@@ -180,47 +181,17 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                 child: _isSearching
                     ? Padding(
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                        child: TextField(
+                        child: AppSearchBar(
                           controller: _searchController,
+                          hintText: 'Search items...',
                           autofocus: true,
+                          voiceTitle: 'Items Voice Search',
+                          voiceHint: 'Say an item name...',
                           onChanged: (v) => setState(() => _query = v),
-                          decoration: InputDecoration(
-                            hintText: 'Search items...',
-                            hintStyle: TextStyle(color: (Theme.of(context).brightness == Brightness.dark) ? Colors.grey.shade600 : Colors.grey.shade400),
-                            prefixIcon: Icon(LucideIcons.search,
-                                color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.7)),
-                            suffixIcon: _query.isNotEmpty
-                                ? IconButton(
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(
-                                        minWidth: 36, minHeight: 36),
-                                    icon: Icon(Icons.close,
-                                        color: Theme.of(context).iconTheme.color?.withValues(alpha: 0.7), size: 20),
-                                    onPressed: _clearSearch,
-                                  )
-                                : null,
-                            isDense: true,
-                            filled: true,
-                            fillColor: Theme.of(context).colorScheme.surface,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide:
-                                  BorderSide(color: Theme.of(context).dividerColor),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide:
-                                  BorderSide(color: Theme.of(context).dividerColor),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              borderSide: BorderSide(
-                                  color: AppColors.primary, width: 1.5),
-                            ),
-                          ),
+                          onClear: _clearSearch,
                         ),
                       )
-                    : SizedBox.shrink(),
+                    : const SizedBox.shrink(),
               ),
               Expanded(
                 child: filtered.isEmpty
@@ -393,6 +364,7 @@ class _CategoryFilterSheet extends StatelessWidget {
                   for (final cat in categories)
                     GestureDetector(
                       onTap: () {
+                        AppFeedback.selectionClick();
                         onSelected(selected == cat ? null : cat);
                         Navigator.pop(context);
                       },
@@ -401,12 +373,12 @@ class _CategoryFilterSheet extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 4),
                         decoration: BoxDecoration(
                           color: selected == cat
-                              ? AppColors.primary.withValues(alpha: 0.15)
+                              ? const Color(0xFF0097A7).withValues(alpha: 0.15)
                               : Colors.grey.withValues(alpha: 0.06),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: selected == cat
-                                ? AppColors.primary
+                                ? const Color(0xFF0097A7)
                                 : Theme.of(context).dividerColor,
                             width: selected == cat ? 3 : 1.5,
                           ),
@@ -420,7 +392,7 @@ class _CategoryFilterSheet extends StatelessWidget {
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                               color: selected == cat
-                                  ? AppColors.primary
+                                  ? const Color(0xFF0097A7)
                                   : Theme.of(context).textTheme.bodyMedium?.color,
                             ),
                           ),

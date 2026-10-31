@@ -78,12 +78,16 @@ class TypePill extends StatelessWidget {
             height: fontSize + 5,
           ),
           SizedBox(width: fontSize * 0.5),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-              fontSize: fontSize,
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: fontSize,
+              ),
             ),
           ),
         ],

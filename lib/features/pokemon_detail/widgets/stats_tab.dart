@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/pokemon.dart';
+import '../../../core/feedback_service.dart';
 import 'section_header.dart';
 
 class StatsTab extends StatefulWidget {
@@ -7,7 +8,7 @@ class StatsTab extends StatefulWidget {
   final Color themeColor;
   final Widget? header;
 
-  StatsTab({
+  const StatsTab({
     super.key,
     required this.pokemon,
     required this.themeColor,
@@ -180,55 +181,81 @@ class _StatsTabState extends State<StatsTab> {
                 SizedBox(height: 24),
 
                 // Mode Selector (Base, Min, Max)
-                Container(
-                  height: 40,
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final modes = ['Base', 'Min', 'Max'];
-                      final currentIndex = modes.indexOf(_statsMode);
-                      final tabWidth = constraints.maxWidth / modes.length;
+                Builder(
+                  builder: (context) {
+                    final isDark = Theme.of(context).brightness == Brightness.dark;
+                    final int activeIndex = switch (_statsMode) {
+                      'Min' => 1,
+                      'Max' => 2,
+                      _ => 0,
+                    };
+                    final Alignment indicatorAlignment = switch (activeIndex) {
+                      1 => Alignment.center,
+                      2 => Alignment.centerRight,
+                      _ => Alignment.centerLeft,
+                    };
+                    const modes = ['Base', 'Min', 'Max'];
 
-                      return Stack(
+                    return Container(
+                      height: 42,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(
+                              alpha: isDark ? 0.25 : 0.06,
+                            ),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(4),
+                      child: Stack(
                         children: [
-                          AnimatedPositioned(
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.easeInOutCubic,
-                            left: currentIndex * tabWidth,
-                            top: 0,
-                            bottom: 0,
-                            width: tabWidth,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: widget.themeColor,
-                                borderRadius: BorderRadius.circular(16),
+                          AnimatedAlign(
+                            alignment: indicatorAlignment,
+                            duration: const Duration(milliseconds: 280),
+                            curve: Curves.easeInOut,
+                            child: FractionallySizedBox(
+                              widthFactor: 1 / 3,
+                              heightFactor: 1.0,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: widget.themeColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
                               ),
                             ),
                           ),
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: modes.map((mode) {
                               final isActive = _statsMode == mode;
                               return Expanded(
                                 child: GestureDetector(
                                   behavior: HitTestBehavior.opaque,
-                                  onTap: () =>
-                                      setState(() => _statsMode = mode),
+                                  onTap: () {
+                                    AppFeedback.selectionClick();
+                                    if (_statsMode != mode) {
+                                      setState(() => _statsMode = mode);
+                                    }
+                                  },
                                   child: Center(
                                     child: AnimatedDefaultTextStyle(
-                                      duration: Duration(
-                                        milliseconds: 300,
-                                      ),
+                                      duration: const Duration(milliseconds: 200),
+                                      curve: Curves.easeInOut,
                                       style: TextStyle(
                                         color: isActive
                                             ? Colors.white
-                                            : Theme.of(context).textTheme.bodyMedium?.color,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 12,
+                                            : (isDark
+                                                ? Colors.grey.shade400
+                                                : Colors.grey.shade600),
+                                        fontWeight: isActive
+                                            ? FontWeight.w800
+                                            : FontWeight.w600,
+                                        fontSize: 12.5,
                                       ),
                                       child: Text(mode),
                                     ),
@@ -238,9 +265,9 @@ class _StatsTabState extends State<StatsTab> {
                             }).toList(),
                           ),
                         ],
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
                 ),
                 SizedBox(height: 32),
 

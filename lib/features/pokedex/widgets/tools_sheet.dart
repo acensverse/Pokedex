@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/feedback_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../app/theme/app_spacing.dart';
@@ -40,19 +41,61 @@ void _clearPokedexFilters(WidgetRef ref) {
 }
 
 /// Tappable tool-screen header title (label + dropdown dot) that opens the
-/// tools menu sheet — same behavior as the POKEDEX title on the home screen.
+/// tools menu sheet — adapts its aesthetic color theme to the specific tool.
 class ToolsSheetTitle extends StatelessWidget {
   final String label;
+  final Color? color;
 
-  const ToolsSheetTitle({super.key, required this.label});
+  const ToolsSheetTitle({
+    super.key,
+    required this.label,
+    this.color,
+  });
+
+  /// Resolves the distinctive aesthetic theme color for each tool.
+  static Color getAestheticColor(String label, {required bool isDark}) {
+    final clean = label.trim().toLowerCase();
+    if (clean.contains('move')) {
+      return isDark ? const Color(0xFFFFA726) : const Color(0xFFE65100);
+    }
+    if (clean.contains('abilit')) {
+      return isDark ? const Color(0xFF4DB6AC) : const Color(0xFF00897B);
+    }
+    if (clean.contains('nature')) {
+      return isDark ? const Color(0xFF42A5F5) : const Color(0xFF1976D2);
+    }
+    if (clean.contains('item')) {
+      return isDark ? const Color(0xFF26C6DA) : const Color(0xFF0097A7);
+    }
+    if (clean.contains('speed')) {
+      return isDark ? const Color(0xFF4DB6AC) : const Color(0xFF00796B);
+    }
+    if (clean.contains('breed')) {
+      return isDark ? const Color(0xFFF06292) : const Color(0xFFD81B60);
+    }
+    if (clean.contains('type')) {
+      return isDark ? const Color(0xFF7986CB) : const Color(0xFF3F51B5);
+    }
+    if (clean.contains('compar')) {
+      return isDark ? const Color(0xFFCE93D8) : const Color(0xFF8E24AA);
+    }
+    if (clean.contains('team')) {
+      return isDark ? const Color(0xFF34D399) : const Color(0xFF059669);
+    }
+    return isDark ? Colors.white : const Color(0xFF1E293B);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final themeColor = color ?? getAestheticColor(label, isDark: isDark);
+
     return Semantics(
       button: true,
       label: 'Open tools menu',
       child: GestureDetector(
         onTap: () {
+          AppFeedback.lightImpact();
           showModalBottomSheet(
             context: context,
             isScrollControlled: true,
@@ -65,27 +108,18 @@ class ToolsSheetTitle extends StatelessWidget {
           children: [
             Text(
               label,
-              style: const TextStyle(
-                color: AppColors.primary,
+              style: TextStyle(
+                color: themeColor,
                 fontWeight: FontWeight.w900,
                 fontSize: 24,
+                letterSpacing: -0.2,
               ),
             ),
-            const SizedBox(width: 8),
-            Container(
-              width: 22,
-              height: 22,
-              decoration: const BoxDecoration(
-                color: AppColors.primary,
-                shape: BoxShape.circle,
-              ),
-              child: const Center(
-                child: Icon(
-                  Icons.keyboard_arrow_down,
-                  color: Colors.white,
-                  size: 16,
-                ),
-              ),
+            const SizedBox(width: 4),
+            Icon(
+              Icons.keyboard_arrow_down,
+              color: themeColor,
+              size: 24,
             ),
           ],
         ),
@@ -280,7 +314,10 @@ class _SheetButton extends StatelessWidget {
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
-        onTap: onTap,
+        onTap: () {
+          AppFeedback.selectionClick();
+          onTap();
+        },
         borderRadius: BorderRadius.circular(14),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),

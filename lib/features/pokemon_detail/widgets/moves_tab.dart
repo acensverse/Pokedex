@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/pokemon.dart';
 import '../../../app/theme/app_colors.dart';
-import '../../tools/moves_screen.dart' show MoveEntry, movesSeedProvider;
+import '../../tools/moves_screen.dart' show MoveEntry, MoveDetailSheet, movesSeedProvider;
+import '../../../core/feedback_service.dart';
 import 'section_header.dart';
-import 'package:go_router/go_router.dart';
-import '../../pokedex/pokedex_provider.dart';
 import '../../../core/utils/pokemon_helpers.dart';
 
 class MovesTab extends ConsumerStatefulWidget {
@@ -13,7 +12,7 @@ class MovesTab extends ConsumerStatefulWidget {
   final Color themeColor;
   final Widget? header;
 
-  MovesTab({
+  const MovesTab({
     super.key,
     required this.pokemon,
     required this.themeColor,
@@ -27,21 +26,21 @@ class MovesTab extends ConsumerStatefulWidget {
 class _MovesTabState extends ConsumerState<MovesTab> {
   String _activeMoveTab = 'Level up';
 
-  @override
-  Widget build(BuildContext context) {
-    final allMovesAsync = ref.watch(movesSeedProvider);
+  int? _cachedPokemonId;
+  int? _cachedMovesLength;
+  List<_LocalMove> _cachedLevelUp = [];
+  List<_LocalMove> _cachedTm = [];
+  List<_LocalMove> _cachedEgg = [];
+  List<_LocalMove> _cachedTutor = [];
 
-    return allMovesAsync.when(
-      data: (allMoves) {
-        final lookup = {for (final m in allMoves) m.name: m};
-        return _buildContent(lookup);
-      },
-      loading: () => Center(child: CircularProgressIndicator()),
-      error: (e, st) => Center(child: Text('Error loading moves: $e')),
-    );
-  }
+  void _ensureMovesExtracted(Map<String, MoveEntry> moveLookup) {
+    if (_cachedPokemonId == widget.pokemon.id &&
+        _cachedMovesLength == moveLookup.length) {
+      return;
+    }
+    _cachedPokemonId = widget.pokemon.id;
+    _cachedMovesLength = moveLookup.length;
 
-  Widget _buildContent(Map<String, MoveEntry> moveLookup) {
     final levelUpMoves = <_LocalMove>[];
     final tmMoves = <_LocalMove>[];
     final eggMoves = <_LocalMove>[];
@@ -56,12 +55,13 @@ class _MovesTabState extends ConsumerState<MovesTab> {
 
           if (methodIdx == 0) {
             levelUpMoves.add(localMove);
-          } else if (methodIdx == 1)
+          } else if (methodIdx == 1) {
             tmMoves.add(localMove);
-          else if (methodIdx == 2)
+          } else if (methodIdx == 2) {
             eggMoves.add(localMove);
-          else if (methodIdx == 3)
+          } else if (methodIdx == 3) {
             tutorMoves.add(localMove);
+          }
         }
       }
     }
@@ -76,31 +76,54 @@ class _MovesTabState extends ConsumerState<MovesTab> {
       return sorted;
     }
 
-    final sortedLevelUp = dedupe(levelUpMoves);
-    final sortedTm = dedupe(tmMoves);
-    final sortedEgg = dedupe(eggMoves);
-    final sortedTutor = dedupe(tutorMoves);
+    _cachedLevelUp = dedupe(levelUpMoves);
+    _cachedTm = dedupe(tmMoves);
+    _cachedEgg = dedupe(eggMoves);
+    _cachedTutor = dedupe(tutorMoves);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final allMovesAsync = ref.watch(movesSeedProvider);
+
+    return allMovesAsync.when(
+      data: (allMoves) {
+        final lookup = {for (final m in allMoves) m.name: m};
+        return _buildContent(lookup);
+      },
+      loading: () => const Center(child: CircularProgressIndicator()),
+      error: (e, st) => Center(child: Text('Error loading moves: $e')),
+    );
+  }
+
+  Widget _buildContent(Map<String, MoveEntry> moveLookup) {
+    _ensureMovesExtracted(moveLookup);
 
     List<_LocalMove> currentMoves;
     bool isLevelUp = false;
     if (_activeMoveTab == 'Level up') {
-      currentMoves = sortedLevelUp;
+      currentMoves = _cachedLevelUp;
       isLevelUp = true;
     } else if (_activeMoveTab == 'TM/HM') {
-      currentMoves = sortedTm;
+      currentMoves = _cachedTm;
     } else if (_activeMoveTab == 'Eggs') {
-      currentMoves = sortedEgg;
+      currentMoves = _cachedEgg;
     } else {
-      currentMoves = sortedTutor;
+      currentMoves = _cachedTutor;
     }
 
+    final modes = ['Level up', 'TM/HM', 'Eggs', 'Tutor'];
+    final currentIndex = modes.indexOf(_activeMoveTab);
+    final safeIndex = currentIndex >= 0 ? currentIndex : 0;
+    final double xAlignment = -1.0 + (2.0 * safeIndex) / (modes.length - 1);
+
     return Column(
-      key: ValueKey('Moves'),
+      key: const ValueKey('Moves'),
       children: [
         if (widget.header != null) widget.header!,
         Expanded(
           child: Container(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               top: 0,
               bottom: 16,
               left: 16,
@@ -110,77 +133,84 @@ class _MovesTabState extends ConsumerState<MovesTab> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 SectionHeader(title: 'Movesets', themeColor: widget.themeColor),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Container(
-                  height: 40,
-                  padding: EdgeInsets.all(4),
+                  height: 42,
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(20),
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(
+                          alpha: Theme.of(context).brightness == Brightness.dark
+                              ? 0.25
+                              : 0.06,
+                        ),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) {
-                      final modes = ['Level up', 'TM/HM', 'Eggs', 'Tutor'];
-                      final currentIndex = modes.indexOf(_activeMoveTab);
-                      final tabWidth = constraints.maxWidth / modes.length;
-
-                      return Stack(
-                        children: [
-                          AnimatedPositioned(
-                            duration: Duration(milliseconds: 300),
-                            curve: Curves.easeInOutCubic,
-                            left: currentIndex * tabWidth,
-                            top: 0,
-                            bottom: 0,
-                            width: tabWidth,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: widget.themeColor,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
+                  child: Stack(
+                    children: [
+                      AnimatedAlign(
+                        duration: const Duration(milliseconds: 280),
+                        curve: Curves.easeInOut,
+                        alignment: Alignment(xAlignment, 0.0),
+                        child: FractionallySizedBox(
+                          widthFactor: 1 / modes.length,
+                          heightFactor: 1.0,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: widget.themeColor,
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: modes.map((mode) {
-                              final isActive = _activeMoveTab == mode;
-                              return Expanded(
-                                child: GestureDetector(
-                                  behavior: HitTestBehavior.opaque,
-                                  onTap: () =>
-                                      setState(() => _activeMoveTab = mode),
-                                  child: Center(
-                                    child: AnimatedDefaultTextStyle(
-                                      duration: Duration(
-                                        milliseconds: 300,
-                                      ),
-                                      style: TextStyle(
-                                        color: isActive
-                                            ? Colors.white
-                                            : Theme.of(context).textTheme.bodyMedium?.color,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 11,
-                                      ),
-                                      child: Text(mode),
-                                    ),
+                        ),
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: modes.map((mode) {
+                          final isActive = _activeMoveTab == mode;
+                          return Expanded(
+                            child: GestureDetector(
+                              behavior: HitTestBehavior.opaque,
+                              onTap: () {
+                                AppFeedback.selectionClick();
+                                if (_activeMoveTab != mode) {
+                                  setState(() => _activeMoveTab = mode);
+                                }
+                              },
+                              child: Center(
+                                child: AnimatedDefaultTextStyle(
+                                  duration: const Duration(milliseconds: 200),
+                                  curve: Curves.easeInOut,
+                                  style: TextStyle(
+                                    color: isActive
+                                        ? Colors.white
+                                        : (Theme.of(context).brightness ==
+                                                Brightness.dark
+                                            ? Colors.grey.shade400
+                                            : Colors.grey.shade600),
+                                    fontWeight: isActive
+                                        ? FontWeight.w800
+                                        : FontWeight.w600,
+                                    fontSize: 11.5,
                                   ),
+                                  child: Text(mode),
                                 ),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      );
-                    },
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.only(
-                      bottom: 16 + MediaQuery.paddingOf(context).bottom,
-                    ),
-                    child: _buildMoveTable(currentMoves, isLevelUp: isLevelUp),
-                  ),
+                  child: _buildMoveTable(currentMoves, isLevelUp: isLevelUp),
                 ),
               ],
             ),
@@ -190,116 +220,127 @@ class _MovesTabState extends ConsumerState<MovesTab> {
     );
   }
 
+  Widget _buildTableHeader(bool isLevelUp) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0, left: 4, right: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 32,
+            child: Text(
+              isLevelUp ? 'Lvl' : '-',
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
+              ),
+              textAlign: TextAlign.right,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            flex: 3,
+            child: Text(
+              'Move',
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 5,
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Center(
+                    child: Text(
+                      'Type',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  flex: 2,
+                  child: Center(
+                    child: Text(
+                      'Cat',
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 36,
+                  child: Text(
+                    'Pwr',
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 36,
+                  child: Text(
+                    'Acc',
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildMoveTable(List<_LocalMove> moves, {required bool isLevelUp}) {
     if (moves.isEmpty) {
       return Padding(
-        padding: EdgeInsets.all(32.0),
+        padding: const EdgeInsets.all(32.0),
         child: Center(
           child: Text(
             'No moves found for this category.',
-            style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
+            style:
+                TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color),
           ),
         ),
       );
     }
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.only(bottom: 8.0, left: 4, right: 4),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 32,
-                child: Text(
-                  isLevelUp ? 'Lvl' : '-',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.bodyMedium?.color,
-                  ),
-                  textAlign: TextAlign.right,
-                ),
-              ),
-              SizedBox(width: 12),
-              Expanded(
-                flex: 3,
-                child: Text(
-                  'Move',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).textTheme.bodyMedium?.color,
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 5,
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Center(
-                        child: Text(
-                          'Type',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).textTheme.bodyMedium?.color,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 4),
-                    Expanded(
-                      flex: 2,
-                      child: Center(
-                        child: Text(
-                          'Cat',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).textTheme.bodyMedium?.color,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 36,
-                      child: Text(
-                        'Pwr',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).textTheme.bodyMedium?.color,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 36,
-                      child: Text(
-                        'Acc',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).textTheme.bodyMedium?.color,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        ...moves.map(
-          (m) => _LocalMoveRow(
-            move: m,
-            methodText: isLevelUp ? m.level.toString() : '-',
-          ),
-        ),
-      ],
+    return ListView.builder(
+      padding: EdgeInsets.only(
+        bottom: 16 + MediaQuery.paddingOf(context).bottom,
+      ),
+      itemCount: moves.length + 1,
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return _buildTableHeader(isLevelUp);
+        }
+        final m = moves[index - 1];
+        return _LocalMoveRow(
+          move: m,
+          methodText: isLevelUp ? m.level.toString() : '-',
+          activeTab: _activeMoveTab,
+        );
+      },
     );
   }
 }
@@ -313,8 +354,13 @@ class _LocalMove {
 class _LocalMoveRow extends ConsumerWidget {
   final _LocalMove move;
   final String methodText;
+  final String activeTab;
 
-  _LocalMoveRow({required this.move, required this.methodText});
+  const _LocalMoveRow({
+    required this.move,
+    required this.methodText,
+    required this.activeTab,
+  });
 
   String _formatName(String name) => PokemonHelpers.formatName(name);
 
@@ -324,33 +370,16 @@ class _LocalMoveRow extends ConsumerWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
-        ref.read(searchQueryProvider.notifier).state = '';
-        ref.read(debouncedSearchQueryProvider.notifier).state = '';
-        ref.read(selectedTypesProvider.notifier).state = [];
-        ref.read(genFilterProvider.notifier).state = 0;
-        ref.read(favoritesOnlyProvider.notifier).state = false;
-        ref.read(toolLearnerFilterProvider.notifier).state = null;
-        ref.read(toolAbilityFilterProvider.notifier).state = null;
-
-        ref.read(toolMoveFilterProvider.notifier).state = (
-          name: _formatName(m.name),
-          flavor: m.flavor ?? '',
-          eff: m.eff,
-          type: m.type,
-          category: m.cls,
-          power: m.power,
-          accuracy: m.acc,
-          pp: m.pp,
-          ids: {
-            ...m.learn,
-            ...m.learnDetails.map((ld) => ld[0]),
-          },
+        AppFeedback.lightImpact();
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          builder: (_) => FractionallySizedBox(
+            heightFactor: 0.85,
+            child: MoveDetailSheet(move: m),
+          ),
         );
-
-        if (context.mounted) {
-          FocusManager.instance.primaryFocus?.unfocus();
-          context.push('/');
-        }
       },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 8),
@@ -414,7 +443,7 @@ class _LocalMoveRow extends ConsumerWidget {
 
 class _TypePill extends StatelessWidget {
   final String type;
-  _TypePill({required this.type});
+  const _TypePill({required this.type});
   @override
   Widget build(BuildContext context) {
     final c = AppColors.getTypeColor(type);
@@ -440,7 +469,7 @@ class _TypePill extends StatelessWidget {
 
 class _CatPill extends StatelessWidget {
   final String cls;
-  _CatPill({required this.cls});
+  const _CatPill({required this.cls});
   @override
   Widget build(BuildContext context) {
     Color c = Colors.grey;
